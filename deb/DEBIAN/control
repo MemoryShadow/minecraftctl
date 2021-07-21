@@ -1,0 +1,9 @@
+Package: minecraftctl
+Version: 1.0.1
+Section: utils
+Priority: optional
+Architecture: i386
+Depends: screen
+Installed-Size: 512
+Maintainer: memoryshadow@outlook.com
+Description: Minecraft Server control script

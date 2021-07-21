@@ -1,0 +1,21 @@
+# 游戏文件夹路径
+GamePath="/home/private/Minecraft"
+# 会话名
+screen_name='Minecraft forge[1.16.5] Java'
+# 启动时内存
+startCache=1024
+# 最大内存
+MaxCache=2048
+# 第三方验证的验证地址
+authlib_injector="https://mcskin.littleservice.cn/api/yggdrasil"
+# 第三方验证器版本
+authlib_injectorVer="1.1.38"
+# 第三方验证核心下载地址
+authlib_injectorSoure="https://github.91chifun.workers.dev/https://github.com//yushijinhun/authlib-injector/releases/download/v1.1.38/authlib-injector-1.1.38.jar"
+# 服务器启动核心文件名(不含后缀)
+MainJAR="forge-1.16.5-36.1.24"
+# 服务器核心,支持的值为以下列表
+# 模式名称:等效的值
+# official:official,forge
+# unofficial:unofficial,spigot
+ServerCore="forge"
