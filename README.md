@@ -2,7 +2,21 @@
 
 一个Minecraft Server管理脚本
 
-## 关于打包
+## 安装后的部署
+
+此脚本允许接受机器人消息,但是需要您来手动控制消息获取时间
+
+```bash
+# 编辑计划任务
+crontab -e
+# 每隔15秒写入一次
+*/1 * * * * /bin/sh /etc/profile;sleep 0;/usr/sbin/minecraftctl QQMsg
+*/1 * * * * /bin/sh /etc/profile;sleep 15;/usr/sbin/minecraftctl QQMsg
+*/1 * * * * /bin/sh /etc/profile;sleep 30;/usr/sbin/minecraftctl QQMsg
+*/1 * * * * /bin/sh /etc/profile;sleep 45;/usr/sbin/minecraftctl QQMsg
+```
+
+## 打包
 
 此脚本仅支持Linux,在此处我将示范如何打包为deb格式和rpm格式以在Ubuntu或者CentOS上快速的安装.
 
