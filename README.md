@@ -39,6 +39,8 @@ chmod 644 ./etc/minecraftctl/*
 dpkg -i . ../minecraftctl_1.0.1_i386.deb
 ```
 
+打包后的文件将会出现在git仓库的根目录
+
 ### rpm格式
 
 ```bash
@@ -58,3 +60,5 @@ cp ./rpm/SPECS/minecraftctl.spec ~/rpmbuild/SPECS/
 # 运行构建
 rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ```
+
+打包好的文件将会出现在您设备的`~/rpmbuild/SRPMS/`目录下

@@ -6,9 +6,15 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: 
+      - master
+    tags:
+      - 'v*.*.*'
   pull_request:
-    branches: [ master ]
+    branches: 
+      - master
+    tags:
+      - 'v*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,7 +22,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build-ubuntu:
+  build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -25,12 +31,54 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Build-deb
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CURRENT_TAG: ${{ steps.version_tag.outputs.VERSION }}
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+            pwd
+            work_path=`pwd`
+            cd /home/runner/work/minecraftctl/minecraftctl/deb
+            mkdir -p ./usr/sbin ./etc/minecraftctl
+            cp -f ../bin/minecraftctl ./usr/sbin/
+            cp -f ../cfg/config ./etc/minecraftctl/
+            chmod 755 ./usr/sbin/*
+            chmod 644 ./etc/minecraftctl/*
+            dpkg -i . ${work_path}/minecraftctl_${CURRENT_TAG}_i386.deb
+            cd ..
+            git log --pretty=format:"%s" -1>${work_path}/CHANGELOG.md
+            cd ${work_path}
+
+      - name: Build-rpm
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CURRENT_TAG: ${{ steps.version_tag.outputs.VERSION }}
+        run: |
+          pwd
+          ls -lab
+          work_path=`pwd`
+          docker run -itd -v /home/runner/work/minecraftctl/minecraftctl/:/home/runner/work/minecraftctl/minecraftctl/ --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
+          yum install -y rpmdevtools
+          mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+          cd /home/runner/work/minecraftctl/minecraftctl/
+          cp -r ./bin ~/rpmbuild/
+          cp -r ./cfg ~/rpmbuild/
+          cp ./rpm/SPECS/minecraftctl.spec ~/rpmbuild/SPECS/
+          rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
+          cp ~/rpmbuild/SRPMS/minecraftctl-${CURRENT_TAG}-1.el7.x86_64.rpm /home/runner/work/minecraftctl/minecraftctl/
+          exit
+          cd ${work_path}
+          cp /home/runner/work/minecraftctl/minecraftctl/minecraftctl-${CURRENT_TAG}-1.el7.x86_64.rpm ./
+          ls -lab
+
+      # Releases
+      - name: Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.md
+          files: |
+            minecraftctl_${CURRENT_TAG}_i386.deb
+            minecraftctl-${CURRENT_TAG}-1.el7.x86_64.rpm
+        env:
+          CURRENT_TAG: ${{ steps.version_tag.outputs.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
