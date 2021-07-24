@@ -24,7 +24,7 @@ crontab -e
 
 ```bash
 # 克隆仓库
-clone https://github.com/MemoryShadow/minecraftctl
+git clone git://github.com/MemoryShadow/minecraftctl
 # 进入仓库目录
 cd minecraftctl/deb
 # 创建目录
@@ -43,11 +43,13 @@ dpkg -i . ../minecraftctl_1.0.1_i386.deb
 
 ```bash
 # 克隆仓库
-clone https://github.com/MemoryShadow/minecraftctl
+git clone git://github.com/MemoryShadow/minecraftctl
 # 安装打包工具
 yum install rpmdevtools
 # 初始化工作目录
-rpmbuild minecraftctl.spec
+mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+# 也可以使用下面这句,会出现一次报错,实际上已经初始化好了
+# rpmbuild minecraftctl.spec
 cd minecraftctl
 # 将资源拷贝到用户目录下
 cp -r ./bin ~/rpmbuild/

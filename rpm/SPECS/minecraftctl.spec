@@ -22,8 +22,8 @@ echo "BUILDROOT = $RPM_BUILD_ROOT"
 mkdir -p $RPM_BUILD_ROOT/etc/minecraftctl
 mkdir -p $RPM_BUILD_ROOT/usr/sbin
 
-cp $RPM_BUILD_ROOT/../cfg/* $RPM_BUILD_ROOT/etc/minecraftctl
-cp $RPM_BUILD_ROOT/../bin/* $RPM_BUILD_ROOT/usr/sbin
+cp ~/rpmbuild/cfg/* $RPM_BUILD_ROOT/etc/minecraftctl/
+cp ~/rpmbuild/bin/* $RPM_BUILD_ROOT/usr/sbin/
 
 exit
 
@@ -34,6 +34,7 @@ exit
 %clean
 rm -rf $RPM_BUILD_ROOT/etc/minecraftctl
 rm -rf $RPM_BUILD_ROOT/usr/sbin
+rm -rf ~/rpmbuild/cfg ~/rpmbuild/bin
 
 %changelog
 * Wed Jul 21 2021 MemoryShadow <memoryshadow@outlook.com>
