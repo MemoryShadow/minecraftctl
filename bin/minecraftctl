@@ -237,7 +237,7 @@ start)
     exit 1
   else
     # 启动服务器
-    cmd="java -server -javaagent:authlib-injector-${authlib_injectorVer}.jar=${authlib_injector} -Xmx${MaxCache}M -Xms${startCache}M -jar ${MainJAR}.jar nogui"
+    cmd="java -server -javaagent:authlib-injector-${authlib_injectorVer}.jar=${authlib_injector} -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${startCache}M -jar ${MainJAR}.jar nogui"
     # 创建一个对应名称的会话
     screen -dmS "$screen_name"
     cmd2server "$cmd"
