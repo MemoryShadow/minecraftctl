@@ -227,7 +227,7 @@ backup)
   date
   echo 即将开始备份服务器
   say2server '即将开始备份服务器'
-  cmd2server 'save-all'
+  cmd2server 'save-all flush'
   Backup
   ;;
 start)
