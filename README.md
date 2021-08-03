@@ -8,12 +8,19 @@
 
 ```bash
 # 编辑计划任务
-crontab -e
+$crontab -e
+# 在打开的文件中写下如下的内容:
+# --------------------------------------------------------
+# 每天凌晨的00:10和12:00热备份一次服务器(将会短暂的冻结服务器)
+# 启动此计划后,可以将bukkit.yml(如果您是bukkit系服务端)中的autosave字段设为0，可有效避免储存计划的大量IO导致的崩服
+10 0 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
+0 12 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
 # 每隔15秒写入一次
 */1 * * * * /bin/sh /etc/profile;sleep 0;/usr/sbin/minecraftctl QQMsg
 */1 * * * * /bin/sh /etc/profile;sleep 15;/usr/sbin/minecraftctl QQMsg
 */1 * * * * /bin/sh /etc/profile;sleep 30;/usr/sbin/minecraftctl QQMsg
 */1 * * * * /bin/sh /etc/profile;sleep 45;/usr/sbin/minecraftctl QQMsg
+# --------------------------------------------------------
 ```
 
 ## 打包
