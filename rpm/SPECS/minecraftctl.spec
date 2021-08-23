@@ -1,5 +1,5 @@
 Name:		minecraftctl
-Version:	1.0.1
+Version:	1.0.2
 Release:	1%{?dist}
 Summary:	Minecraft Server control script
 
@@ -26,6 +26,14 @@ cp ~/rpmbuild/cfg/* $RPM_BUILD_ROOT/etc/minecraftctl/
 cp ~/rpmbuild/bin/* $RPM_BUILD_ROOT/usr/sbin/
 
 exit
+
+%install
+#1
+# 检查本机是否有配置文件，如果有，就将本机配置文件追加在预备的配置文件末尾来保留配置
+if [ -f "%{_sysconfdir}/minecraftctl/config" ]; then 
+echo \# The following is the old configuration >> $RPM_BUILD_ROOT/etc/minecraftctl/config
+cat %{_sysconfdir}/minecraftctl/config >> $RPM_BUILD_ROOT/etc/minecraftctl/config
+fi
 
 %files
 %attr(0755, root, root) %{_sbindir}/minecraftctl
