@@ -1,7 +1,7 @@
 # 游戏文件夹路径
 GamePath="/home/${USER}/Minecraft"
 # 会话名
-screen_name='Minecraft forge[1.17.1] Java'
+screen_name='Minecraft[1.17.1] Java'
 # 启动时内存
 startCache=1024
 # 最大内存
