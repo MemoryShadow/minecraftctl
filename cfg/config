@@ -6,6 +6,8 @@ screen_name='Minecraft[1.17.1] Java'
 startCache=1024
 # 最大内存
 MaxCache=2048
+# 是否启用第三方验证
+authlib=true
 # 第三方验证的验证地址
 authlib_injector="https://mcskin.littleservice.cn/api/yggdrasil"
 # 第三方验证器版本
