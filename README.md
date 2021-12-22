@@ -69,3 +69,9 @@ cp ./rpm/SPECS/minecraftctl.spec ~/rpmbuild/SPECS/
 # 运行构建
 rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ```
+
+### TODO
+- [ ] 写minecraftctl的存档切换功能
+- [ ] 写minecraftctl-install命令
+- [ ] 写minecraftctl用户消息获取功能
+- [ ] 写minecraftctl的简单UI界面
