@@ -2,6 +2,8 @@
 
 一个Minecraft Server管理脚本
 
+此脚本用于帮助运维人员减少重复的操作，帮助他们更加轻松的工作
+
 ## 安装后的部署
 
 此脚本允许接受机器人消息,但是需要您来手动控制消息获取时间
@@ -73,5 +75,16 @@ rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ### TODO
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
+  - [ ] 支持官方服务端下载地址查询/获取
+      ```bash
+      # 或许我可以用这个
+      echo `curl -s https://mcversions.net/download/1.12.2 | xmllint --html --xpath '//div[@class="downloads block lg:flex lg:mt-0 p-8 md:p-12 md:pr-0 lg:col-start-1"]/div[1]/a/@href' - 2> /dev/null`
+      ```
+  - [ ] 支持Bukkit下载地址查询/获取
+  - [ ] 支持Spigot自动构建部署
+  - [x] 支持Paper下载地址查询/获取
+  - [ ] 支持Mohist下载地址查询/获取
+  - [ ] 支持airplane下载地址查询/获取
+  - [ ] 支持Sponge下载地址查询/获取
 - [ ] 写minecraftctl用户消息获取功能
 - [ ] 写minecraftctl的简单UI界面
