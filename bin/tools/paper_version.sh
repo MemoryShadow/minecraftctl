@@ -2,11 +2,12 @@
 if [ -z "$1" ]; then
   echo 参数不存在，请传入需要查询的版本号;
   echo
-  echo -e "${0} <Version> [-q]"
+  echo -e "${0} <Version|latest> [-q]"
   echo -e "    Version\tMinecraft server file version"
   echo -e "    -q\t\tOpen quiet mode:Only show the URL of the latest version of the current query"
   exit 1;
 fi;
+# 检查：只要参数列表中带有-q，就打开开关
 Quiet_F=0
 for item in $*
 do
@@ -16,6 +17,10 @@ do
   fi
 done
 version=$1
+# 校验版本是否为关键字，如果是，就自动查询最新版本
+if [ "$1" == "latest" ]; then
+  version=`curl -s https://papermc.io/api/v2/projects/paper`;version=${version##*,\"};version=${version%%\"*}
+fi
 if [ ${Quiet_F} == 0 ]; then
   echo ================
   echo 查询目标: paper
