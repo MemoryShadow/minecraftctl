@@ -1,0 +1,27 @@
+encoding GBK UTF-8
+# caption always "%{.bW}minecraftctl"
+# caption always "%{.bW}%-w%{.rW}%n %t%{-}%+w %=minecraftctl %Y/%m/%d "
+caption always "%{.bW}% %t %F Press Ctrl+a,d to exit %=%S %Y/%m/%d "
+# 解决无法滚动
+termcapinfo xterm|xterms|xs ti@:te=\E[2J
+# 关闭闪屏->关闭可视bell(打开之后就听不到bell了,系统在状态栏以可视化的方式显示vbell_msg)
+vbell off
+# 断线的时候自动detach
+autodetach on
+
+#分屏
+layout new minecraftctl
+# layout select minecraftctl
+split -v
+screen bash
+title "Tools"
+resize -h 20%
+focus
+split
+screen bash
+title "Server"
+focus
+screen bash
+title "terminal"
+resize -v 20%
+focus
