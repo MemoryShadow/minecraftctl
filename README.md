@@ -75,7 +75,8 @@ rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ### TODO
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
-  - [ ] 支持官方服务端下载地址查询/获取[https://afdian.net/@bangbang93](https://bmclapidoc.bangbang93.com/ "感谢")
+  - [ ] 支持官方服务端下载地址查询/获取
+    > 感谢BMCLAPI提供的镜像服务[https://bmclapidoc.bangbang93.com/](https://afdian.net/@bangbang93 "如果你想要赞助，请点击这个链接")
   - [ ] 支持Bukkit下载地址查询/获取
   - [ ] 支持Spigot自动构建部署
   - [x] 支持Paper下载地址查询/获取
