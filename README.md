@@ -75,11 +75,7 @@ rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ### TODO
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
-  - [ ] 支持官方服务端下载地址查询/获取
-      ```bash
-      # 或许我可以用这个
-      echo `curl -s https://mcversions.net/download/1.12.2 | xmllint --html --xpath '//div[@class="downloads block lg:flex lg:mt-0 p-8 md:p-12 md:pr-0 lg:col-start-1"]/div[1]/a/@href' - 2> /dev/null`
-      ```
+  - [ ] 支持官方服务端下载地址查询/获取[https://afdian.net/@bangbang93](https://bmclapidoc.bangbang93.com/ "感谢")
   - [ ] 支持Bukkit下载地址查询/获取
   - [ ] 支持Spigot自动构建部署
   - [x] 支持Paper下载地址查询/获取
