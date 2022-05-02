@@ -29,11 +29,15 @@ $crontab -e
 # --------------------------------------------------------
 ```
 
-## 打包
+## 打包&安装
 
 此脚本仅支持Linux,在此处我将示范如何打包为deb格式和rpm格式以在Ubuntu或者CentOS上快速的安装.
 
+要注意的是，由于我们采用了screen作为依赖，安装软件包可能不会自动解决依赖问题，所以请确保您在安装软件包之前已经在系统上安装了screen
+
 ### deb格式
+
+#### 打包
 
 ```bash
 # 克隆仓库
@@ -52,7 +56,16 @@ chmod 644 ./etc/minecraftctl/*
 dpkg -i . ../minecraftctl_1.0.1_i386.deb
 ```
 
+#### 安装
+
+```bash
+sudo apt install -y screen
+sudo apt install minecraftctl*.deb
+```
+
 ### rpm格式
+
+#### 打包
 
 ```bash
 # 克隆仓库
@@ -72,16 +85,24 @@ cp ./rpm/SPECS/minecraftctl.spec ~/rpmbuild/SPECS/
 rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 ```
 
-### TODO
+#### 安装
+
+```bash
+sudo yum install -y screen
+sudo rpm -i minecraftctl*.rpm
+```
+
+## TODO
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
   - [ ] 支持官方服务端下载地址查询/获取
-    > 感谢BMCLAPI提供的镜像服务[https://bmclapidoc.bangbang93.com/](https://afdian.net/@bangbang93 "如果你想要赞助，请点击这个链接")
-  - [ ] 支持Bukkit下载地址查询/获取
-  - [ ] 支持Spigot自动构建部署
-  - [x] 支持Paper下载地址查询/获取
-  - [ ] 支持Mohist下载地址查询/获取
-  - [ ] 支持airplane下载地址查询/获取
-  - [ ] 支持Sponge下载地址查询/获取
+    > 感谢BMCLAPI提供的镜像服务[https://bmclapidoc.bangbang93.com/](https://afdian.net/@bangbang93 "如果你想要赞助BMCLAPI，请点击这个链接")
+  - [ ] 支持[Bukkit](https://dev.bukkit.org "点击前往")下载地址查询/获取
+  - [ ] 支持[Spigot](https://www.spigotmc.org/ "点击前往")自动构建部署
+  - [x] 支持[Paper](https://papermc.io/ "点击前往")下载地址查询/获取
+  - [ ] 支持[Purpur](https://purpurmc.org/ "点击前往")下载地址查询/获取
+  - [*] 支持[Mohist](https://mohistmc.com/ "点击前往")下载地址查询/获取
+  - [ ] 支持[airplane](https://airplane.gg/ "点击前往")下载地址查询/获取
+  - [ ] 支持[Sponge](https://github.com/SpongePowered/SpongeForge "点击前往")下载地址查询/获取
 - [ ] 写minecraftctl用户消息获取功能
 - [ ] 写minecraftctl的简单UI界面
