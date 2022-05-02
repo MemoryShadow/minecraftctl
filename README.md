@@ -1,4 +1,8 @@
-# 欢迎阅读
+# minecraftctl
+
+[![GitHub](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE "查看协议")
+[![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/AutoReleases.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/downloads/MemoryShadow/minecraftctl/latest/total)](https://github.com/MemoryShadow/minecraftctl/releases/latest)
 
 一个Minecraft Server管理脚本
 
@@ -32,6 +36,8 @@ $crontab -e
 ## 打包&安装
 
 此脚本仅支持Linux,在此处我将示范如何打包为deb格式和rpm格式以在Ubuntu或者CentOS上快速的安装.
+
+`注意: 由于使用shell编写，理论上可以无改动的安装在任何linux发行版中，这里只是做一个演示`
 
 要注意的是，由于我们采用了screen作为依赖，安装软件包可能不会自动解决依赖问题，所以请确保您在安装软件包之前已经在系统上安装了screen
 
@@ -93,6 +99,7 @@ sudo rpm -i minecraftctl*.rpm
 ```
 
 ## TODO
+
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
   - [ ] 支持官方服务端下载地址查询/获取
