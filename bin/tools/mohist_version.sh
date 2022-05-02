@@ -6,7 +6,6 @@ if [ -z "$1" ]; then
   echo -e "    Version\tMinecraft server file version"
   exit 1;
 fi;
-
 declare -A versionList=(
   ['1.7.1']=1.7.10
   ['1.7.10']=1.7.10
