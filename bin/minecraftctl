@@ -93,7 +93,7 @@ function BackupInofficial() {
     fi
     mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
     # 将备份好的文件进行压缩
-    tar -Jcf "Backup.tar.xz" Backup/*
+    tar cf - Backup/* 2> /dev/null | xz -9T 8 - > "Backup.tar.xz"
     # 删除多余的备份文件
     rm -rf Backup/world* Backup/Config/*
     # 移回备份存档
@@ -148,7 +148,7 @@ function BackupInUnofficial() {
     fi
     mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
     # 将备份好的文件进行压缩
-    tar -Jcf "Backup.tar.xz" Backup/*
+    tar cf - Backup/* 2> /dev/null | xz -9T 8 - > "Backup.tar.xz"
     # 删除多余的备份文件
     rm -rf Backup/world* Backup/Config/*
     # 移回备份存档
