@@ -12,7 +12,7 @@ if [ "$1" == "latest" ]; then
   version=`curl -s https://papermc.io/api/v2/projects/paper`;version=${version##*,\"};version=${version%%\"*}
   else
   # Check if the version exists
-  curl -s https://papermc.io/api/v2/projects/paper | grep "${version}" > /dev/null
+  curl -s https://papermc.io/api/v2/projects/paper | grep -w "${version}" > /dev/null
 fi
 # (0)
 if [ $? != 0 ]; then echo Version does not exist, script has exited;exit 1;fi
