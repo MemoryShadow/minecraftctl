@@ -12,7 +12,7 @@ if [ "$1" == "latest" ]; then
   version=`curl -s https://api.purpurmc.org/v2/purpur`;version=${version##*,\"};version=${version%%\"*}
   else
   # Check if the version exists
-  curl -s https://api.purpurmc.org/v2/purpur | grep -w "${version}" > /dev/null
+  curl -s https://api.purpurmc.org/v2/purpur | grep -w "$1" > /dev/null
 fi
 # (0)
 if [ $? != 0 ]; then echo Version does not exist, script has exited;exit 2;fi
