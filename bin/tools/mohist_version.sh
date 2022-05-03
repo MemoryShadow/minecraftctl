@@ -15,7 +15,7 @@ declare -A versionList=(
   ['1.18.2-testing']=1.18.2
 )
 if [ -z ${versionList[$1]} ]; then
-  echo "Version does not exist, script has exited";exit 1;
+  echo "Version does not exist, script has exited";exit 2;
 else
   URL=`curl -s https://mohistmc.com/api/${versionList[$1]}/latest`
   URL=${URL%\",*};URL=${URL%\",*};echo ${URL##*:\"};exit 0;

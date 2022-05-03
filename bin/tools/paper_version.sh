@@ -15,7 +15,7 @@ if [ "$1" == "latest" ]; then
   curl -s https://papermc.io/api/v2/projects/paper | grep -w "${version}" > /dev/null
 fi
 # (0)
-if [ $? != 0 ]; then echo Version does not exist, script has exited;exit 1;fi
+if [ $? != 0 ]; then echo Version does not exist, script has exited;exit 2;fi
 # Get the latest build name
 build=`curl -s https://papermc.io/api/v2/projects/paper/versions/${version}`;build=${build##*,};build=${build%%]*};
 # Get file name
