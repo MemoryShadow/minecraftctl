@@ -87,18 +87,6 @@ function BackupInofficial() {
       fi
       cp "/etc/minecraftctl/config" "Backup/Config/config"
     fi
-    # 移出备份存档
-    if [ -e "Backup/Backup.tar.xz" ]; then
-      mv "Backup/Backup.tar.xz" ./
-    fi
-    mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
-    # 将备份好的文件进行压缩
-    tar cf - Backup/* 2> /dev/null | xz -9T ${BackupThread} - > "Backup.tar.xz"
-    # 删除多余的备份文件
-    rm -rf Backup/world* Backup/Config/*
-    # 移回备份存档
-    mv "Backup.tar.xz" Backup/
-    mv "Backup*.tar.xz" Backup/ 2>/dev/null
     # 迁移跑图区块
     #if [ -d "Backup/mcaFile" ]; then
     # 如果文件夹存在，就开始迁移
@@ -142,18 +130,6 @@ function BackupInUnofficial() {
       fi
       cp "/etc/minecraftctl/config" "Backup/Config/config"
     fi
-    # 移出备份存档
-    if [ -e "Backup/Backup.tar.xz" ]; then
-      mv "Backup/Backup.tar.xz" ./
-    fi
-    mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
-    # 将备份好的文件进行压缩
-    tar cf - Backup/* 2> /dev/null | xz -9T ${BackupThread} - > "Backup.tar.xz"
-    # 删除多余的备份文件
-    rm -rf Backup/world* Backup/Config/*
-    # 移回备份存档
-    mv "Backup.tar.xz" Backup/
-    mv "Backup*.tar.xz" Backup/ 2>/dev/null
     # 迁移跑图区块
     #if [ -d "Backup/mcaFile" ]; then
     # 如果文件夹存在，就开始迁移
@@ -181,9 +157,23 @@ function Backup() {
     BackupInUnofficial
     ;;
   *)
-    echo 配置存在问题,服务器核心未知,无法进行备份.
+    echo 配置存在问题,服务器核心未知,无法进行备份.;date;exit 1;
     ;;
   esac
+  date
+  echo "备份完成，正在归档\(归档期间可以放后台自己跑\)..."
+  # 移出备份存档
+  if [ -e "Backup/Backup.tar.xz" ]; then
+    mv "Backup/Backup.tar.xz" ./
+  fi
+  mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
+  # 将备份好的文件进行压缩
+  XZ_OPT="-9T ${BackupThread}" tar -cJf "Backup.tar.xz" Backup/* 2> /dev/null
+  # 删除多余的备份文件
+  rm -rf Backup/world* Backup/Config/*
+  # 移回备份存档
+  mv "Backup.tar.xz" Backup/
+  mv "Backup*.tar.xz" Backup/ 2>/dev/null
   date
   echo 完成操作.
 }
