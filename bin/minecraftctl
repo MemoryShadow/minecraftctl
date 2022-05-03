@@ -45,7 +45,7 @@ function GetServerCoreVersion() {
   official | forge)
     return 1
     ;;
-  unofficial | spigot)
+  unofficial|bukkit|spigot|paper|purpur|airplane)
     return 2
     ;;
   *)

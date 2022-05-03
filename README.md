@@ -98,12 +98,13 @@ sudo yum install -y screen
 sudo rpm -i minecraftctl*.rpm
 ```
 
-## TODO
+## TODO(鸽子画饼)
 
 - [ ] 写minecraftctl的存档切换功能
 - [ ] 写minecraftctl-install命令
   - [ ] 支持官方服务端下载地址查询/获取
     > 感谢BMCLAPI提供的镜像服务[https://bmclapidoc.bangbang93.com/](https://afdian.net/@bangbang93 "如果你想要赞助BMCLAPI，请点击这个链接")
+  - [ ] 支持[Forge](https://files.minecraftforge.net/net/minecraftforge/forge/ "点击前往")下载地址查询/获取
   - [ ] 支持[Bukkit](https://dev.bukkit.org "点击前往")下载地址查询/获取
   - [ ] 支持[Spigot](https://www.spigotmc.org/ "点击前往")自动构建部署
   - [x] 支持[Paper](https://papermc.io/ "点击前往")下载地址查询/获取
@@ -111,5 +112,6 @@ sudo rpm -i minecraftctl*.rpm
   - [x] 支持[Mohist](https://mohistmc.com/ "点击前往")下载地址查询/获取
   - [ ] 支持[airplane](https://airplane.gg/ "点击前往")下载地址查询/获取
   - [ ] 支持[Sponge](https://github.com/SpongePowered/SpongeForge "点击前往")下载地址查询/获取
+  - [ ] 支持[authlib injector](https://github.com/yushijinhun/authlib-injector "点击前往")下载地址查询/获取
 - [ ] 写minecraftctl用户消息获取功能
 - [ ] 写minecraftctl的简单UI界面

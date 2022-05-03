@@ -1,23 +1,24 @@
 # 游戏文件夹路径
 GamePath="/home/${USER}/Minecraft"
-# 会话名
-screen_name='Minecraft[1.17.1] Java'
-# 启动时内存
-startCache=1024
-# 最大内存
-MaxCache=2048
+# 会话名(若在修改时任有服务端在运行，会导致残留进程)
+screen_name='Minecraft[1.18.2] Java'
+# 启动时内存(MB)
+startCache=2048
+# 最大内存(MB)
+MaxCache=4096
 # 是否启用第三方验证
-authlib=true
+authlib=false
 # 第三方验证的验证地址
 authlib_injector="https://littleskin.cn/api/yggdrasil"
 # 第三方验证器版本
-authlib_injectorVer="1.1.39"
-# 第三方验证核心下载地址
-authlib_injectorSoure="https://github.91chifun.workers.dev/https://github.com//yushijinhun/authlib-injector/releases/download/v1.1.39/authlib-injector-1.1.39.jar"
+authlib_injectorVer="1.1.43"
+# 第三方验证核心下载地址(下载过慢推荐使用代理地址:https://github.91chi.fun/)
+authlib_injectorSoure="https://github.com/yushijinhun/authlib-injector/releases/download/v${authlib_injectorVer}/authlib-injector-${authlib_injectorVer}.jar"
 # 服务器启动核心文件名(不含后缀)
-MainJAR="spigot-1.17.1"
-# 服务器核心,支持的值为以下列表
+MainJAR="spigot-1.18.2"
+# 服务器核心,备份文件时使用,支持的值为以下列表
 # 模式名称:等效的值
 # official:official,forge
-# unofficial:unofficial,bukkit,spigot,paper,airplane
+# unofficial:unofficial,bukkit,spigot,paper,purpur,airplane
+# 注: 要启用备份配置文件功能请在Backup目录下创建Config文件夹
 ServerCore="spigot"
