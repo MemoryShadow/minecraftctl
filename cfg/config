@@ -22,3 +22,5 @@ MainJAR="spigot-1.18.2"
 # unofficial:unofficial,bukkit,spigot,paper,purpur,airplane
 # 注: 要启用备份配置文件功能请在Backup目录下创建Config文件夹
 ServerCore="spigot"
+# 备份所使用的线程数量
+BackupThread=8
