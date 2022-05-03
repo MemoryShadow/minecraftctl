@@ -107,8 +107,8 @@ sudo rpm -i minecraftctl*.rpm
   - [ ] 支持[Bukkit](https://dev.bukkit.org "点击前往")下载地址查询/获取
   - [ ] 支持[Spigot](https://www.spigotmc.org/ "点击前往")自动构建部署
   - [x] 支持[Paper](https://papermc.io/ "点击前往")下载地址查询/获取
-  - [ ] 支持[Purpur](https://purpurmc.org/ "点击前往")下载地址查询/获取
-  - [*] 支持[Mohist](https://mohistmc.com/ "点击前往")下载地址查询/获取
+  - [x] 支持[Purpur](https://purpurmc.org/ "点击前往")下载地址查询/获取
+  - [x] 支持[Mohist](https://mohistmc.com/ "点击前往")下载地址查询/获取
   - [ ] 支持[airplane](https://airplane.gg/ "点击前往")下载地址查询/获取
   - [ ] 支持[Sponge](https://github.com/SpongePowered/SpongeForge "点击前往")下载地址查询/获取
 - [ ] 写minecraftctl用户消息获取功能
