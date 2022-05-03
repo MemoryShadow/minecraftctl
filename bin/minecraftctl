@@ -88,17 +88,17 @@ function BackupInofficial() {
       cp "/etc/minecraftctl/config" "Backup/Config/config"
     fi
     # 移出备份存档
-    if [ -e "Backup/Backup.tar.bz2" ]; then
-      mv "Backup/Backup.tar.bz2" ./
+    if [ -e "Backup/Backup.tar.xz" ]; then
+      mv "Backup/Backup.tar.xz" ./
     fi
-    mv "Backup/Backup*.tar.bz2" ./ 2>/dev/null
+    mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
     # 将备份好的文件进行压缩
-    tar -cjf "Backup.tar.bz2" Backup/*
+    tar -Jcf "Backup.tar.xz" Backup/*
     # 删除多余的备份文件
     rm -rf Backup/world* Backup/Config/*
     # 移回备份存档
-    mv "Backup.tar.bz2" Backup/
-    mv "Backup*.tar.bz2" Backup/ 2>/dev/null
+    mv "Backup.tar.xz" Backup/
+    mv "Backup*.tar.xz" Backup/ 2>/dev/null
     # 迁移跑图区块
     #if [ -d "Backup/mcaFile" ]; then
     # 如果文件夹存在，就开始迁移
@@ -143,17 +143,17 @@ function BackupInUnofficial() {
       cp "/etc/minecraftctl/config" "Backup/Config/config"
     fi
     # 移出备份存档
-    if [ -e "Backup/Backup.tar.bz2" ]; then
-      mv "Backup/Backup.tar.bz2" ./
+    if [ -e "Backup/Backup.tar.xz" ]; then
+      mv "Backup/Backup.tar.xz" ./
     fi
-    mv "Backup/Backup*.tar.bz2" ./ 2>/dev/null
+    mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
     # 将备份好的文件进行压缩
-    tar -cjf "Backup.tar.bz2" Backup/*
+    tar -Jcf "Backup.tar.xz" Backup/*
     # 删除多余的备份文件
     rm -rf Backup/world* Backup/Config/*
     # 移回备份存档
-    mv "Backup.tar.bz2" Backup/
-    mv "Backup*.tar.bz2" Backup/ 2>/dev/null
+    mv "Backup.tar.xz" Backup/
+    mv "Backup*.tar.xz" Backup/ 2>/dev/null
     # 迁移跑图区块
     #if [ -d "Backup/mcaFile" ]; then
     # 如果文件夹存在，就开始迁移
