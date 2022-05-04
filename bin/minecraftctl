@@ -167,8 +167,12 @@ function Backup() {
     mv "Backup/Backup.tar.xz" ./
   fi
   mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
-  # 将备份好的文件进行压缩
-  XZ_OPT="-9T ${BackupThread}" tar -cJf "Backup.tar.xz" Backup/* 2> /dev/null
+  # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
+  if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
+    tar -Jcf Backup.tar.xz Backup/*
+  else
+    XZ_OPT="-${BackupCompressLevel}T ${BackupThread}" tar -cJf "Backup.tar.xz" Backup/* 
+  fi
   # 删除多余的备份文件
   rm -rf Backup/world* Backup/Config/*
   # 移回备份存档
