@@ -161,12 +161,12 @@ function Backup() {
     ;;
   esac
   date
-  echo "备份完成，正在归档\(归档期间可以放后台自己跑\)..."
+  echo "备份完成，正在归档(归档期间可以放后台自己跑)..."
   # 移出备份存档
   if [ -e "Backup/Backup.tar.xz" ]; then
     mv "Backup/Backup.tar.xz" ./
   fi
-  mv "Backup/Backup*.tar.xz" ./ 2>/dev/null
+  mv Backup/Backup*.tar.xz ./ 2>/dev/null
   # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
   if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
     tar -Jcf Backup.tar.xz Backup/*
@@ -176,8 +176,7 @@ function Backup() {
   # 删除多余的备份文件
   rm -rf Backup/world* Backup/Config/*
   # 移回备份存档
-  mv "Backup.tar.xz" Backup/
-  mv "Backup*.tar.xz" Backup/ 2>/dev/null
+  mv Backup*.tar.xz Backup/ 2>/dev/null
   date
   echo 完成操作.
 }
