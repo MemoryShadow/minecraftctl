@@ -1,19 +1,19 @@
 # 游戏文件夹路径
 GamePath="/home/${USER}/Minecraft"
 # 会话名(若在修改时任有服务端在运行，会导致残留进程)
-screen_name='Minecraft[1.18.2] Java'
+ScreenName='Minecraft[1.18.2] Java'
 # 启动时内存(MB)
-startCache=2048
+StartCache=2048
 # 最大内存(MB)
 MaxCache=4096
 # 是否启用第三方验证
 authlib=false
 # 第三方验证的验证地址
-authlib_injector="https://littleskin.cn/api/yggdrasil"
+AuthlibInjector="https://littleskin.cn/api/yggdrasil"
 # 第三方验证器版本
-authlib_injectorVer="1.1.43"
+AuthlibInjectorVer="1.1.43"
 # 第三方验证核心下载地址(下载过慢推荐使用代理地址:https://github.91chi.fun/)
-authlib_injectorSoure="https://github.com/yushijinhun/authlib-injector/releases/download/v${authlib_injectorVer}/authlib-injector-${authlib_injectorVer}.jar"
+AuthlibInjectorSoure="https://github.com/yushijinhun/authlib-injector/releases/download/v${authlib_injectorVer}/authlib-injector-${authlib_injectorVer}.jar"
 # 服务器启动核心文件名(不含后缀)
 MainJAR="spigot-1.18.2"
 # 服务器核心,备份文件时使用,支持的值为以下列表
@@ -27,3 +27,5 @@ BackupThread=1
 # 备份文件的压缩质量(调整至更大会占用相当大的内存空间)
 # 可选的值: 0~9
 BackupCompressLevel=6
+# 离开时等待的秒数(若是超过此时间服务器还没停止，就会强制杀死进程)
+StopWaitTimeMax=20

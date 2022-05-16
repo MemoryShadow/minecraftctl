@@ -23,7 +23,7 @@ function say2server() {
 # 向服务器发送命令
 function cmd2server() {
   if [ "$1" != "" ]; then
-    screen -x -S "$screen_name" -p 0 -X stuff "$1\n"
+    screen -x -S "$ScreenName" -p 0 -X stuff "$1\n"
   fi
   return 0
 }
@@ -142,7 +142,7 @@ function BackupInUnofficial() {
 
 # 检查是否有服务器实例已经存在,如果存在则返回0，否则返回其他值
 function ExistServerExample() {
-  screen -ls | grep "${screen_name//[/\\[}" >/dev/null 2>/dev/null
+  screen -ls | grep "${ScreenName//[/\\[}" >/dev/null 2>/dev/null
 }
 
 # 备份服务器存档
@@ -243,7 +243,12 @@ function AnalysisConfiguration() {
 case $1 in
 restart)
   # 在启动前先关闭之前的服务
-  $0 stop 重启服务器
+  ExistServerExample
+  if [ $? -ne 0 ]; then
+    echo 当前无任何实例正在运行，若是希望启动服务器，使用start参数
+  else
+    $0 stop 重启服务器
+  fi
   # 等待子进程结束
   wait $!
   $0 start
@@ -262,16 +267,16 @@ start)
     exit 1
   else
     # 启动服务器
-    if [ $authlib == true ]; then
-      cmd="java -server -javaagent:authlib-injector-${authlib_injectorVer}.jar=${authlib_injector}"
+    if [ $Authlib == true ]; then
+      cmd="java -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
     else
       cmd="java -server"
     fi
-    cmd=$cmd" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${startCache}M -jar ${MainJAR}.jar nogui"
+    cmd=$cmd" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui; exit"
     # 创建一个对应名称的会话
-    screen -dmS "$screen_name"
+    screen -dmS "$ScreenName"
     cmd2server "$cmd"
-    echo "${screen_name} 已提交启动命令,正在启动..."
+    echo "${ScreenName} 已提交启动命令,正在启动..."
   fi
   ;;
 QQMsg)
@@ -284,7 +289,7 @@ QQMsg)
   AnalysisConfiguration ${arr_Msg[0]} "${arr_Msg[2]}(${arr_Msg[1]})" ${arr_Msg[3]}
   ;;
 stop)
-  # 检查是否有示例正在进行
+  # 检查是否有实例正在运行(如果没有就直接退出)
   ExistServerExample
   if [ $? -ne 0 ]; then
     echo 当前无任何实例正在运行，若是希望启动服务器，使用start参数
@@ -303,12 +308,21 @@ stop)
   done
   # 停止服务器运行
   cmd2server "stop"
-  # 等一会
-  sleep 10
-  # 然后关闭通话
-  cmd2server "exit"
-
-  echo "${screen_name} 已终止运行"
+  # 等待进程退出(如果超过指定的时间没有退出，就杀死进程)
+  WaitTime=0
+  ESE=0
+  while [ ${ESE} == 0 ] ;
+  do
+    ExistServerExample
+    ESE=$?
+    sleep 1
+    ((WaitTime++))
+    if [ ${WaitTime} -gt ${StopWaitTimeMax} ]; then
+      screen -S "${ScreenName}" -X quit
+    fi
+  done
+  unset WaitTimes ESE
+  echo "${ScreenName} 已终止运行"
   ;;
 join)
   ExistServerExample
@@ -316,7 +330,7 @@ join)
     echo 当前无任何实例正在运行，若是希望启动服务器，使用start参数
     exit 1
   fi
-  screen -rd "${screen_name}"
+  screen -rd "${ScreenName}"
   ;;
 view)
   # 目前还是Beta功能
