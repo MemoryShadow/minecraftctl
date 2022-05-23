@@ -109,8 +109,8 @@ git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git
 sudo mkdir /usr/bin/minecraftctl /etc/minecraftctl
 sudo cp -r minecraftctl/bin/* /usr/bin/minecraftctl/
 sudo cp -r minecraftctl/cfg/* /etc/minecraftctl/
-sudo chmod -R 755 /usr/bin/minecraftctl/
-sudo chmod -R 644 /etc/minecraftctl
+sudo chmod -R 755 /usr/bin/minecraftctl/ /etc/minecraftctl
+sudo chmod -R 644 /etc/minecraftctl/*
 sudo ln /usr/bin/minecraftctl/minecraftctl /usr/bin/minecraftctl
 rm -rf minecraftctl
 ```
