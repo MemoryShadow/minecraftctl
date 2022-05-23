@@ -36,7 +36,6 @@
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 [![GitHub release (latest by date)](https://img.shields.io/github/downloads/MemoryShadow/minecraftctl/latest/total)](https://github.com/MemoryShadow/minecraftctl/releases/latest)
 
-
 ## 构建包管理器安装包
 
 ### deb
@@ -102,17 +101,28 @@ sudo rpm -i minecraftctl*.rpm
 
 `注意: 使用此方案将会导致您失去包管理器的管理，但您能以最快的速度体验到最新的支持(相当于alpha版本)`
 
+`注意: 使用通用安装时请保持root身份`
+
 ~~在master分支滚动更新的我是屑~~
 
 ```bash
-git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git
-sudo mkdir /usr/bin/minecraftctl /etc/minecraftctl
-sudo cp -r minecraftctl/bin/* /usr/bin/minecraftctl/
-sudo cp -r minecraftctl/cfg/* /etc/minecraftctl/
-sudo chmod -R 755 /usr/bin/minecraftctl/ /etc/minecraftctl
-sudo chmod -R 644 /etc/minecraftctl/*
-sudo ln /usr/bin/minecraftctl/minecraftctl /usr/bin/minecraftctl
-rm -rf minecraftctl
+#!/bin/bash
+# install minecraftctl
+git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git /usr/local/src/minecraftctl
+mkdir /etc/minecraftctl
+cp -r /usr/local/src/minecraftctl/cfg/* /etc/minecraftctl/
+chmod -R 644 /etc/minecraftctl/* /etc/minecraftctl/theme/*
+chmod 755 /usr/local/src/minecraftctl/bin /etc/minecraftctl /etc/minecraftctl/theme
+# make `sudo` available
+ln /usr/local/src/minecraftctl/bin/minecraftctl /usr/sbin/minecraftctl
+```
+
+```bash
+#!/bin/bash
+# uninstall minecraftctl software
+rm -rf /usr/local/bin/minecraftctl /usr/local/src/minecraftctl
+# remove config file
+rm -rf /etc/minecraftctl
 ```
 
 ## 使用说明
