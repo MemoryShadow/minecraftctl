@@ -7,7 +7,7 @@ StartCache=2048
 # 最大内存(MB)
 MaxCache=4096
 # 是否启用第三方验证
-authlib=false
+Authlib=false
 # 第三方验证的验证地址
 AuthlibInjector="https://littleskin.cn/api/yggdrasil"
 # 第三方验证器版本
