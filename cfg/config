@@ -6,12 +6,19 @@ ScreenName='Minecraft[1.18.2] Java'
 StartCache=2048
 # 最大内存(MB)
 MaxCache=4096
+# 你要连接的中转主机的地址是什么
+MasterHost=master
+# 启用SSL(https)?
+HostProtocol=https
+# 是否忽略可能不安全的链接
+# 如果你的中转主机SSL证书与这个域名不匹配或者不由某官方机构颁发就填true
+Insecure=false
 # 是否启用第三方验证
 Authlib=false
 # 第三方验证的验证地址
 AuthlibInjector="https://littleskin.cn/api/yggdrasil"
 # 第三方验证器版本
-AuthlibInjectorVer="1.1.43"
+AuthlibInjectorVer="1.1.44"
 # 第三方验证核心下载地址(下载过慢推荐使用代理地址:https://github.91chi.fun/)
 AuthlibInjectorSoure="https://github.com/yushijinhun/authlib-injector/releases/download/v${authlib_injectorVer}/authlib-injector-${authlib_injectorVer}.jar"
 # 服务器启动核心文件名(不含后缀)

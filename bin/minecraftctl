@@ -1,5 +1,4 @@
 #!/bin/bash
-# Mincraft[1.16.5] Java版 forge 管理脚本
 # 配置区域
 source /etc/minecraftctl/config
 
@@ -267,12 +266,8 @@ start)
     exit 1
   else
     # 启动服务器
-    if [ $Authlib == true ]; then
-      cmd="java -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
-    else
-      cmd="java -server"
-    fi
-    cmd=$cmd" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui; exit"
+    $Authlib && cmd="java -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
+    cmd=${cmd:-"java -server"}" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui; exit"
     # 创建一个对应名称的会话
     screen -dmS "$ScreenName"
     cmd2server "$cmd"
@@ -281,8 +276,9 @@ start)
   ;;
 QQMsg)
   # 向服务器拉取消息心跳事件
-  hostnameStr=$(hostname)
-  Msg=$(curl -e "${hostnameStr}" -A "${hostnameStr}" https://memoryshadow.cn/Template/Public/ToolAPI/?Function=Robot -d 'Text=Text&PlayerID=0')
+  hostnameStr=`hostname`
+  $Insecure && curlCmd='curl --insecure'
+  Msg=$(${curlCmd:-curl} -s -e "${hostnameStr}" -A "${hostnameStr}" "${HostProtocol:-https}://${MasterHost:-master}/Template/Public/ToolAPI/?Function=Robot" -d 'Text=Text&PlayerID=0')
   arr_Msg=(${Msg// / })
   #*拉取完成后，解析消息配置
   echo $Msg
@@ -344,7 +340,7 @@ edit)
     EditConfig $2
   fi
   ;;
---h | help)
+-h | help | --help)
   echo -e "此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制"
   echo -e "minecraftctl <功能名称> [可能的参数]"
   echo
@@ -356,7 +352,7 @@ edit)
   echo -e "\tjoin\t此功能用于连接后台"
   echo -e "\tview\t(Beta)此功能用于打开一个\"简易控制台\""
   echo -e "\tedit [cfg|ser|op|wh|sp]\t编辑文档功能"
-  echo -e "\t--h help\t此功能用于获取帮助文档"
+  echo -e "\t-h help --help\t此功能用于获取帮助文档"
   echo -e "\tsay <要发送的消息> [要模拟的ID]\t向服务器发送消息"
   ;;
 say)
