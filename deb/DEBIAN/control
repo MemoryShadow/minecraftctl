@@ -1,9 +1,14 @@
 Package: minecraftctl
-Version: 1.0.1
-Section: utils
-Priority: optional
-Architecture: i386
-Depends: screen
+Version: 1.2.0
+Section: admin
+Priority: extra
+Essential: no
+Source: minecraftctl
+Architecture: amd64
+Depends: screen,vim
+Recommends: tar
+Suggests: diatheke-tui|dialog,curl,wget,aria2
 Installed-Size: 512
-Maintainer: memoryshadow@outlook.com
+Maintainer: MemoryShadow[memoryshadow@outlook.com]
+Homepage: https://github.com/MemoryShadow/minecraftctl
 Description: Minecraft Server control script
