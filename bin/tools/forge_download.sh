@@ -40,5 +40,6 @@ sha1sum forge-${version}-*.jar | grep ${FileHash} > /dev/null
 if [ $? -ne 0 ]; then
   echo "Hash check failed, script has exited";exit 3;
 else
+  echo "This high -speed download is partially accelerated by the BMCL project to provide some accelerated support"
   echo "File download and hash check succeeded";exit 0;
 fi

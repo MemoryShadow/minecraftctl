@@ -21,7 +21,8 @@
   - [用法示例](#用法示例)
   - [相关仓库](#相关仓库)
   - [维护者](#维护者)
-  - [如何贡献](#如何贡献)
+    - [如何贡献](#如何贡献)
+    - [特别鸣谢](#特别鸣谢)
   - [展望未来](#展望未来)
   - [使用许可](#使用许可)
 
@@ -189,11 +190,17 @@ minecraftctl <功能名称> [可能的参数]
 
 [@MemoryShadow](https://github.com/MemoryShadow)
 
-## 如何贡献
+### 如何贡献
 
 非常欢迎你的加入！[提一个 Issue](https://github.com/MemoryShadow/minecraftctl/issues/new) 或者提交一个 Pull Request。
 
 标准 Readme 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
+
+### 特别鸣谢
+
+本项目高速下载由[BMCL](https://github.com/bangbang93/BMCL "点击查看详情")项目提供部分加速支持
+
+感谢[bangbang93](https://github.com/bangbang93 "点击前往")与[MCBBS](https://www.mcbbs.net/ "点几前往")为我们的Minecraft之旅提供极高的下载速度
 
 ## 展望未来
 

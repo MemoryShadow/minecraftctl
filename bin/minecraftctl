@@ -344,6 +344,8 @@ edit)
   echo -e "此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制"
   echo -e "minecraftctl <功能名称> [可能的参数]"
   echo
+  echo -e "\tinstall\t快速安装Minecraft服务端(尚未正式启用)"
+  echo -e "\t\t此功能的高速下载由BMCL项目提供部分加速支持"
   echo -e "\trestart\t重启服务器"
   echo -e "\tbackup\t备份服务器(如果已经存在实例，就会进行紧急备份)"
   echo -e "\tstart\t启动服务器"
