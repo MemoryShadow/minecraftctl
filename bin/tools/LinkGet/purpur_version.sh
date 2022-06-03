@@ -10,7 +10,7 @@ version=$1
 # Check whether the version is a keyword, if so, automatically query the latest version
 if [ "$1" == "latest" ]; then
   version=`curl -s https://api.purpurmc.org/v2/purpur`;version=${version##*,\"};version=${version%%\"*}
-  else
+else
   # Check if the version exists
   curl -s https://api.purpurmc.org/v2/purpur | grep -w "$1" > /dev/null
 fi

@@ -10,7 +10,7 @@ version=$1
 # Check whether the version is a keyword, if so, automatically query the latest version
 if [ "$1" == "latest" ]; then
   version=`curl -s https://papermc.io/api/v2/projects/paper`;version=${version##*,\"};version=${version%%\"*}
-  else
+else
   # Check if the version exists
   curl -s https://papermc.io/api/v2/projects/paper | grep -w "${version}" > /dev/null
 fi

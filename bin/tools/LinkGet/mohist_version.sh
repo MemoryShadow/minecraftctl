@@ -13,6 +13,7 @@ declare -A versionList=(
   ['1.16.5']=1.16.5
   ['1.18.2']='1.18.2-testing'
   ['1.18.2-testing']='1.18.2-testing'
+  ['latest']='1.18.2-testing'
 )
 if [ -z ${versionList[$1]} ]; then
   echo "Version does not exist, script has exited";exit 2;
