@@ -6,6 +6,7 @@ source /etc/minecraftctl/config
 # 如果配置文件存在，就加载旧的配置文件
 if [ -e /etc/minecraftctl/config.bak ]; then
   source /etc/minecraftctl/config.bak
+  rm /etc/minecraftctl/config
 fi
 # 对旧的配置文件进行兼容性处理(映射)
 cat<<EOF>/etc/minecraftctl/config
