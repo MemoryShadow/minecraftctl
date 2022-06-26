@@ -29,21 +29,21 @@ MainJAR="spigot-1.18.2"
 # unofficial:unofficial,bukkit,spigot,paper,purpur,airplane
 # 注: 要启用备份配置文件功能请在Backup目录下创建Config文件夹
 ServerCore="spigot"
-# 备份所使用的线程数量(如果因为线程过多被杀，请调回来)
+# 备份所使用的线程数量(如果因为线程过多被杀, 请调回来)
 BackupThread=1
 # 备份文件的压缩质量(调整至更大会占用相当大的内存空间)
 # 可选的值: 0~9
 BackupCompressLevel=6
-# 离开时等待的秒数(若是超过此时间服务器还没停止，就会强制杀死进程)
+# 离开时等待的秒数(若是超过此时间服务器还没停止, 就会强制杀死进程)
 StopWaitTimeMax=20
 
 # minecraftctl安装路径
-InstallPath = '/opt/minecraftctl'
-# 配置刹车时长(秒)，避免长时间过高的CPU占用
+InstallPath='/opt/minecraftctl'
+# 配置刹车时长(秒), 避免长时间过高的CPU占用
 SleepSecond=15
 # 配置工作时长(秒)
 WorkSecond=15
-# 设置切片超时时间(秒)，如果完成切片的时间超过这个值就放弃刹车
+# 设置切片超时时间(秒), 如果完成切片的时间超过这个值就放弃刹车
 WorkExceedSecond=50
 # 配置每个工作切片周期(行)
 WorkPart=1000

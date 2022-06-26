@@ -30,20 +30,20 @@ do
   fi
   # 在这里处理额外的显示
   # 检查是否为玩家说话，如果是，就做处理(这里只匹配是为了不损坏原始消息)
-  echo $line | grep -e '^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <[0-9a-zA-Z ]*> .*$' > /dev/null
+  echo "$line" | grep -e '^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <[0-9a-zA-Z ]*> .*$' > /dev/null
   if [ $? -eq 0 ]; then
     # 删去无用的信息
-    str=`echo $line | sed 's/^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <//'`
+    str=`echo "$line" | sed 's/^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <//'`
     # 取出玩家名和玩家说的话
-    PlayerName=${str%%\>*}
-    PlayerMessage=${str#*> }
+    PlayerName="${str%%\>*}"
+    PlayerMessage="${str#*> }"
     # 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
-    echo $PlayerMessage | grep -e '^!!qq' > /dev/null
+    echo "$PlayerMessage" | grep -e '^!!qq' > /dev/null
     if [ $? -eq 0 ]; then
-      echo 玩家 ${PlayerName} 试图向QQ群发送: ${PlayerMessage#*\!\!qq }
+      echo -e "\e[1;35m玩家 \e[1;34m${PlayerName} \e[1;35m试图向QQ群发送: \e[1;32m${PlayerMessage#*\!\!qq }\e[0m"
     fi
   fi
   # 在这里无条件正常回显终端内容
-  echo $line;
+  echo "$line";
 done<&0;    #从标准输入读取数据
 exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）
