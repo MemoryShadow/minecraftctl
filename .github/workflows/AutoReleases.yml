@@ -55,7 +55,7 @@ jobs:
             docker exec -t ubuntuInstance chmod 644 -R ${work_path}/deb/etc/minecraftctl/*
             docker exec -t ubuntuInstance chmod 755 ${work_path}/deb/etc/minecraftctl ${work_path}/deb/etc/minecraftctl/theme ${work_path}/deb/usr/sbin/minecraftctl
             docker exec -t ubuntuInstance chmod 755 -R ${work_path}/deb/opt/minecraftctl ${work_path}/deb/DEBIAN
-            docker exec -t ubuntuInstance dpkg -b ${work_path}/deb ${work_path}/minecraftctl_${tag//v/}_i386.deb
+            docker exec -t ubuntuInstance dpkg -b ${work_path}/deb ${work_path}/minecraftctl_${tag//v/}_x86_64.deb
             docker kill -s KILL ubuntuInstance
             docker rm ubuntuInstance
 

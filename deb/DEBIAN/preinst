@@ -1,5 +1,5 @@
 #!/bin/bash
-# 升级时保留配置信息
+#*升级时保留配置信息
 
 # 加载等待升级的配置文件
 source /etc/minecraftctl/config
@@ -26,12 +26,8 @@ HostProtocol=${HostProtocol}
 Insecure=${Insecure}
 # 是否启用第三方验证
 Authlib=${authlib:-${Authlib}}
-# 第三方验证的验证地址
+# 第三方验证的验证服务地址
 AuthlibInjector="${authlib_injectorVer:-${AuthlibInjector}}"
-# 第三方验证器版本
-AuthlibInjectorVer="${authlib_injectorVer:-${AuthlibInjectorVer}}"
-# 第三方验证核心下载地址(下载过慢推荐使用代理地址:https://github.91chi.fun/)
-AuthlibInjectorSoure="${authlib_injectorSoure:-${AuthlibInjectorSoure}}"
 # 服务器启动核心文件名(不含后缀)
 MainJAR="${MainJAR}"
 # 服务器核心,备份文件时使用,支持的值为以下列表
@@ -47,6 +43,19 @@ BackupThread=${BackupThread}
 BackupCompressLevel=${BackupCompressLevel}
 # 离开时等待的秒数(若是超过此时间服务器还没停止，就会强制杀死进程)
 StopWaitTimeMax=${StopWaitTimeMax}
+
+# minecraftctl安装路径
+InstallPath="${InstallPath:-/opt/minecraftctl}"
+# 配置刹车时长(秒), 避免长时间过高的CPU占用
+SleepSecond=${SleepSecond:-15}
+# 配置工作时长(秒)
+WorkSecond=${WorkSecond:-15}
+# 设置切片超时时间(秒), 如果完成切片的时间超过这个值就放弃刹车
+WorkExceedSecond=${WorkExceedSecond:-50}
+# 配置每个工作切片周期(行)
+WorkPart=${WorkPart:-1000}
 EOF
 
-rm /etc/minecraftctl/config.bak
+if [ -e /etc/minecraftctl/config.bak ]; then
+  rm /etc/minecraftctl/config.bak
+fi

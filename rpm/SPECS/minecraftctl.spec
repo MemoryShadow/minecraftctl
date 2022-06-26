@@ -7,7 +7,7 @@ License:	GPL
 URL:		https://github.com/MemoryShadow/minecraftctl
 
 Requires:	bash
-Requires:	screen,vim,aric2
+Requires:	screen,vim,aria2
 BuildRoot:	~/rpmbuild/
 
 %description

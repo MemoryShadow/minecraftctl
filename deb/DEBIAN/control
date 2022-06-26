@@ -5,9 +5,8 @@ Priority: extra
 Essential: no
 Source: minecraftctl
 Architecture: amd64
-Depends: screen,vim,aric2
-Recommends: tar
-Suggests: diatheke-tui|dialog,curl,wget
+Depends: screen,vim,aria2,tar,zip,unzip
+Suggests: whiptail|dialog,curl,wget
 Installed-Size: 512
 Maintainer: MemoryShadow[memoryshadow@outlook.com]
 Homepage: https://github.com/MemoryShadow/minecraftctl

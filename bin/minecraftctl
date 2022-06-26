@@ -34,6 +34,10 @@ function openEditer() {
   if [ $? -eq 0 ]; then
     code $1
   else
+    # 尝试自动解决中文乱码的问题
+    if [ ! -e ~/.vimrc ]; then
+      echo "set enc=utf8">~/.vimrc
+    fi
     vim $1
   fi
 }
