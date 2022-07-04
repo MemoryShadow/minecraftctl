@@ -62,6 +62,8 @@ dpkg -b . ../minecraftctl_1.2.0_amd64.deb
 
 ### rpm
 
+> 目前此条目可能存在问题，如果失败请尝试使用[Linux通用安装](#linux通用安装)
+
 ```bash
 # 克隆仓库
 git clone https://github.com/MemoryShadow/minecraftctl
@@ -82,7 +84,7 @@ rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 
 ## 安装
 
-这个项目使用 [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "这是计划中的依赖，后续为加速下载提供支持")。请确保你本地安装了它们。
+这个项目使用 [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "点击查看")。请确保你本地安装了它们。
 
 ```bash
 sudo yum/apt-get install screen aria2
