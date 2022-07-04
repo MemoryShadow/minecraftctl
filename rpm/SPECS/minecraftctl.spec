@@ -1,13 +1,30 @@
+ #
+ # spec file for package minecraftctl
+ #
+ # Copyright (c) MemoryShadow MemoryShadow@outlook.com
+ #
+ # All modifications and additions to the file contributed by third parties
+ # remain the property of their copyright owners, unless otherwise agreed
+ # upon. The license for this file, and modifications and additions to the
+ # file, is the same license as for the pristine package itself (unless the
+ # license for the pristine package is not an Open Source License, in which
+ # case the license is the MIT License). An "Open Source License" is a
+ # license that conforms to the Open Source Definition (Version 1.9)
+ # published by the Open Source Initiative.
+ 
+ # Please submit bugfixes or comments via https://github.com/MemoryShadow/minecraftctl/issues
+ #
+
 Name:		minecraftctl
 Version:	1.2.0
 Release:	1%{?dist}
 Summary:	Minecraft Server control script
 
-License:	GPL
+License:	GPLv3.0
 URL:		https://github.com/MemoryShadow/minecraftctl
 
 Requires:	bash
-Requires:	screen,vim,aria2
+Requires:	screen,vim,aria2,tar,zip,unzip
 BuildRoot:	~/rpmbuild/
 
 %description
@@ -22,8 +39,8 @@ echo "BUILDROOT = $RPM_BUILD_ROOT"
 mkdir -p $RPM_BUILD_ROOT/etc/minecraftctl
 mkdir -p $RPM_BUILD_ROOT/usr/sbin
 
-cp ~/rpmbuild/cfg/* $RPM_BUILD_ROOT/etc/minecraftctl/
-cp ~/rpmbuild/bin/* $RPM_BUILD_ROOT/usr/sbin/
+cp -r ~/rpmbuild/cfg/* $RPM_BUILD_ROOT/etc/minecraftctl/
+cp -r ~/rpmbuild/bin/* $RPM_BUILD_ROOT/usr/sbin/
 
 exit
 

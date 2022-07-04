@@ -81,11 +81,11 @@ jobs:
       # Releases
       - name: Releases
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v1 
         with:
           body_path: CHANGELOG.md
           files: |
-            minecraftctl_${{ steps.init.outputs.VERSION }}_i386.deb
+            minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
             minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
