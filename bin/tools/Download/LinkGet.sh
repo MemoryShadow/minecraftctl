@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-06 13:10:19
+ # @LastEditTime: 2022-07-06 13:56:27
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -26,7 +26,7 @@ function paper(){
   # Get file name
   filename=`curl -s "https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}"`;
   filename=${filename##*application\":\{\"name\":\"};filename=${filename%%\"*}
-  echo "--url=\"https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/${filename}\""
+  echo "--url=https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/${filename}"
   return 0;
 }
 
@@ -44,7 +44,7 @@ function purpur(){
   # (0)
   if [ $? != 0 ]; then return 2;fi
   # Get the latest download URL
-  echo "--url=\"https://api.purpurmc.org/v2/purpur/${version}/latest/download?name=purpur-${version}.jar\""
+  echo "--url=https://api.purpurmc.org/v2/purpur/${version}/latest/download?name=purpur-${version}.jar"
   return 0;
 }
 
@@ -64,7 +64,7 @@ function mohist(){
     return 2;
   else
     URL=`curl -s https://mohistmc.com/api/${versionList[$1]}/latest`
-    URL=${URL%\",*};URL=${URL%\",*};echo "--url=\"${URL##*:\"}\"";
+    URL=${URL%\",*};URL=${URL%\",*};echo "--url=${URL##*:\"}";
     return 0;
   fi;
 }
@@ -88,7 +88,7 @@ function forge(){
   build=${build%%,*};FileHash=${FileHash%%\"*}
   # echo download link
   URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${build}"`
-  echo "--url=\"https://files.minecraftforge.net/${URL#*\/}\" --sha1=\"${FileHash}\""
+  echo "--url=https://files.minecraftforge.net/${URL#*\/} --sha1=${FileHash}"
   return 0;
 }
 
@@ -97,7 +97,7 @@ function authlib-injector(){
   DLLink=`curl -s "https://bmclapi2.bangbang93.com/mirrors/authlib-injector/artifact/latest.json"`
   DLLink=${DLLink#*authlib-injector\/}
   FileHash=${DLLink#*sha256\": \"};FileHash=${FileHash%\"*}
-  echo "--url=\"https://authlib-injector.yushi.moe/${DLLink%%\"*}\" --sha1=\"${FileHash}\""
+  echo "--url=https://authlib-injector.yushi.moe/${DLLink%%\"*} --sha1=${FileHash}"
   return 0;
 }
 
@@ -110,7 +110,7 @@ function vanilla(){
   else
     DLLink=${DLLink#*\/}
     FileHash=${DLLink%\/*};FileHash=${FileHash##*\/}
-    echo "--url=\"https://launcher.mojang.com/$DLLink\" --sha1=\"${FileHash}\""
+    echo "--url=https://launcher.mojang.com/$DLLink --sha1=${FileHash}"
     return 0;
   fi
 }
