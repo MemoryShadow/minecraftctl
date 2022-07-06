@@ -3,20 +3,24 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-04 21:09:05
- # @Description: 对传入URL进行分析并尝试找到最合适的下载方式
+ # @LastEditTime: 2022-07-06 13:11:18
+ # @Description: Analyze incoming URLs and try to find the most suitable download method
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
+#* show this help menu
 function helpMenu() {
-  echo -e "${0} -u <URL> [-o [OutputFile] [--md5|sha1]=[Hash]]"
+  echo -e "${0} -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h]"
   echo -e "  -u,\t--url\t\tThe URL of the file waiting to be downloaded"
   echo -e "  -o,\t--output\tThe name of the output file"
   echo -e "  -h,\t--help\t\tGet this help menu"
   echo -e "  \t--md5|sha1\tSpecifies how the hash value is verified after the file download is complete.\n\t\t\tIf there are multiple flags, only the one closest to the left of this list will take effect"
 }
 
-# 将镜像列表合并为多来源下载的参数
+#* Merge mirrorlists into parameters for multi-source downloads
+#? @param $1|must: mirror list prefix
+#? @param $2|must: URL suffix to download
+#? @return: Multi-source download parameters recognized by aria2
 function ImageList2DLpara() {
   local DownloadDomain=$1
   local DownloadURL=""
@@ -29,11 +33,10 @@ function ImageList2DLpara() {
 
 ARGS=`getopt -o u:o:h -l url:,output:,md5:,sha1:,help -- "$@"`
 if [ $? != 0 ]; then
-    echo "Terminating..."
-    exit 1
+    helpMenu > /dev/stderr;exit 1;
 fi
 
-#将规范化后的命令行参数分配至位置参数（$1,$2,...)
+# Assign normalized command line arguments to positional arguments（$1,$2,...)
 eval set -- "${ARGS}"
 
 URL=''
@@ -69,33 +72,24 @@ do
       break
       ;;
     *)
-      echo "Internal error!"
+      echo "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
 done
 
-if [ -z "$URL" ]; then echo -e "The parameter does not exist, please pass in the version number to be queried\n"; helpMenu; exit 1; fi;
+if [ -z "${URL}" ]; then echo -e "The parameter does not exist, please pass in the version number to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
 
-# 拥有镜像源的域名列表
+# List of domain names with mirror sources
 declare -A AllowDownloadMirror=(
+  ['http://launcher.mojang.com']="BMCLAPI_def"
   ['https://launcher.mojang.com']="BMCLAPI_def"
   ['http://launchermeta.mojang.com']="BMCLAPI_def"
   ["https://files.minecraftforge.net"]="BMCLAPI_def"
   ["https://authlib-injector.yushi.moe"]="BMCLAPI_AI"
 )
 
-# 支持下载的项目列表
-AllowDownloadItems=(
-  "vanilla"
-  "forge"
-  "authlib-injector"
-  "mohist"
-  "paper"
-  "purpur"
-)
-
-# BMCLAPI镜像列表
+# BMCLAPI mirror list
 BMCLAPI_def=(
   "https://bmclapi2.bangbang93.com"
   "https://download.mcbbs.net"
@@ -106,16 +100,16 @@ BMCLAPI_AI=(
   "https://download.mcbbs.net/mirrors/authlib-injector"
 )
 
-# 获取域名并检测是否存在镜像源
+# Get the domain name and detect whether there is a mirror source
 TargetHost=`echo ${URL} | grep -oP '^[a-z]*?://.*?/'`
 if [ -z ${AllowDownloadMirror[${TargetHost%/*}]} ]; then
   DownloadURL=${URL}
 else
   echo "==============================================================================="
   echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
-  # 如果存在镜像源，就识别变量准备合成下载参数
+  # If there is a mirror source, identify the variables and prepare to synthesize download parameters
   eval "DownloadDomain=(\"\${${AllowDownloadMirror[${TargetHost%/*}]}[@]}\")"
-  # 将源站写入下载源中
+  # Write the source site to the download source list
   DownloadDomain[${#DownloadDomain[@]}]=${TargetHost%/*}
   DownloadURL=`ImageList2DLpara "${DownloadDomain[*]}" "${URL#*${TargetHost}}"`
   echo "==============================================================================="
@@ -133,15 +127,17 @@ if [ ! -z ${MD5}${SHA1} ] ; then
   elif [ ! -z ${SHA1} ] ; then
     sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
   fi
-fi
-
-if [ $? -ne 0 ]; then
-  echo "Hash check failed, script has exited";exit 3;
-else
-  if [ ! -z ${AllowDownloadMirror[${TargetHost%/*}]} ]; then
-    echo "==============================================================================="
-    echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
-    echo "==============================================================================="
+  if [ $? -ne 0 ]; then
+    echo "Hash check failed, script has exited";exit 3;
+  else
+    # Re-credit the BMCL project after verifying the hash successfully, to avoid negative reputation after download failure
+    if [ ! -z ${AllowDownloadMirror[${TargetHost%/*}]} ]; then
+      echo "==============================================================================="
+      echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
+      echo "==============================================================================="
+    fi
+    echo "File download and hash check succeeded";exit 0;
   fi
-  echo "File download and hash check succeeded";exit 0;
+else
+  echo "file download complete";exit 0;
 fi
