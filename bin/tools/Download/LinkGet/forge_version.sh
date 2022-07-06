@@ -17,7 +17,7 @@ fi
 # (0)
 if [ $? != 0 ]; then echo Version does not exist, script has exited;exit 2;fi
 # Get the latest build name
-build=`curl -s https://bmclapi2.bangbang93.com/forge/minecraft/${version}`;build=${build#*\"build\":};
+build=`curl -s https://bmclapi2.bangbang93.com/forge/minecraft/${version}`;build=${build##*\"build\":};
 FileHash=${build#*\"hash\":\"};
 build=${build%%,*};FileHash=${FileHash%%\"*}
 # echo download link
