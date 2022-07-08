@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-06 13:11:18
+ # @LastEditTime: 2022-07-08 11:52:23
  # @Description: Analyze incoming URLs and try to find the most suitable download method
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -29,6 +29,21 @@ function ImageList2DLpara() {
     DownloadURL="${DownloadURL} ${Domain}/$2"
   done
   echo ${DownloadURL}
+}
+
+function Thanks() {
+  case "${1}" in
+    BMCLAPI)
+      echo "==============================================================================="
+      echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
+      echo "==============================================================================="
+    ;;
+    GITHUB)
+      echo "==============================================================================="
+      echo "This high-speed download is partially accelerated by 91chi.fun, ghproxy.com, fastgit.org to provide partial acceleration support"
+      echo "==============================================================================="
+    ;;
+  esac
 }
 
 ARGS=`getopt -o u:o:h -l url:,output:,md5:,sha1:,help -- "$@"`
@@ -79,14 +94,36 @@ do
 done
 
 if [ -z "${URL}" ]; then echo -e "The parameter does not exist, please pass in the version number to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
+if [ -z "${OUTPUT}" ]; then OUTPUT=${URL##*/}; fi
+
+if [ -f "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
+  if [ ! -z ${MD5} ] ; then
+    md5sum ${OUTPUT} | grep ${MD1} > /dev/null
+  elif [ ! -z ${SHA1} ] ; then
+    sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
+  fi
+  if [ $? == 0 ]; then echo -e "The file ${OUTPUT} already exists and the hash value is correct, no need to download\n" > /dev/stderr; exit 0; fi
+fi
 
 # List of domain names with mirror sources
 declare -A AllowDownloadMirror=(
+  ['https://github.com']="GITHUB_def"
+  ['https://raw.githubusercontent.com']="GITHUB_raw"
   ['http://launcher.mojang.com']="BMCLAPI_def"
   ['https://launcher.mojang.com']="BMCLAPI_def"
   ['http://launchermeta.mojang.com']="BMCLAPI_def"
-  ["https://files.minecraftforge.net"]="BMCLAPI_def"
-  ["https://authlib-injector.yushi.moe"]="BMCLAPI_AI"
+  ['https://files.minecraftforge.net']="BMCLAPI_def"
+  ['https://authlib-injector.yushi.moe']="BMCLAPI_AI"
+)
+
+# Github mirror list
+GITHUB_def=(
+  "https://github.91chi.fun/https://github.com"
+  "https://ghproxy.com/https://github.com"
+  "https://hub.fastgit.xyz"
+)
+GITHUB_raw=(
+  "https://ghproxy.com/https://raw.githubusercontent.com"
 )
 
 # BMCLAPI mirror list
@@ -105,22 +142,21 @@ TargetHost=`echo ${URL} | grep -oP '^[a-z]*?://.*?/'`
 if [ -z ${AllowDownloadMirror[${TargetHost%/*}]} ]; then
   DownloadURL=${URL}
 else
-  echo "==============================================================================="
-  echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
+  MirrorProject=${AllowDownloadMirror[${TargetHost%/*}]};MirrorProject=${MirrorProject%%_*}
   # If there is a mirror source, identify the variables and prepare to synthesize download parameters
   eval "DownloadDomain=(\"\${${AllowDownloadMirror[${TargetHost%/*}]}[@]}\")"
   # Write the source site to the download source list
   DownloadDomain[${#DownloadDomain[@]}]=${TargetHost%/*}
   DownloadURL=`ImageList2DLpara "${DownloadDomain[*]}" "${URL#*${TargetHost}}"`
-  echo "==============================================================================="
-fi
-if [ -z "$OUTPUT" ]; then
-  OUTPUT=${URL##*/}
-  aria2c -c -s 9 --min-split-size 3M ${DownloadURL}
-else
-  aria2c -c -s 9 --min-split-size 3M -o $OUTPUT ${DownloadURL}
 fi
 
+Thanks ${MirrorProject}
+
+aria2c -c -s 9 -k 3M -o $OUTPUT ${DownloadURL}
+
+Thanks ${MirrorProject}
+
+# Verify the hash value of the downloaded file
 if [ ! -z ${MD5}${SHA1} ] ; then
   if [ ! -z ${MD5} ] ; then
     md5sum ${OUTPUT} | grep ${MD1} > /dev/null
@@ -130,12 +166,6 @@ if [ ! -z ${MD5}${SHA1} ] ; then
   if [ $? -ne 0 ]; then
     echo "Hash check failed, script has exited";exit 3;
   else
-    # Re-credit the BMCL project after verifying the hash successfully, to avoid negative reputation after download failure
-    if [ ! -z ${AllowDownloadMirror[${TargetHost%/*}]} ]; then
-      echo "==============================================================================="
-      echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
-      echo "==============================================================================="
-    fi
     echo "File download and hash check succeeded";exit 0;
   fi
 else
