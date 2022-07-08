@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-06 13:56:27
+ # @LastEditTime: 2022-07-08 11:21:07
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -175,7 +175,8 @@ case "$?" in
     exit 0;
     ;;
   2)
-    echo "Version does not exist, script has exited" > /dev/stderr;
+    echo -e "Version does not exist, script has exited\n" > /dev/stderr;
+    helpMenu > /dev/stderr;
     exit 2;
     ;;
   *)
