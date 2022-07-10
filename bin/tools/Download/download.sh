@@ -3,14 +3,15 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-08 11:52:23
- # @Description: Analyze incoming URLs and try to find the most suitable download method
+ # @LastEditTime: 2022-07-08 16:13:30
+ # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
 #* show this help menu
 function helpMenu() {
-  echo -e "${0} -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h]"
+  echo -e "Analyze the incoming URL and try to use the most appropriate download method found"
+  echo -e "Instructions: ${0} -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h]\n"
   echo -e "  -u,\t--url\t\tThe URL of the file waiting to be downloaded"
   echo -e "  -o,\t--output\tThe name of the output file"
   echo -e "  -h,\t--help\t\tGet this help menu"
@@ -20,7 +21,7 @@ function helpMenu() {
 #* Merge mirrorlists into parameters for multi-source downloads
 #? @param $1|must: mirror list prefix
 #? @param $2|must: URL suffix to download
-#? @return: Multi-source download parameters recognized by aria2
+#? @return(echo): Multi-source download parameters recognized by aria2
 function ImageList2DLpara() {
   local DownloadDomain=$1
   local DownloadURL=""
@@ -31,19 +32,22 @@ function ImageList2DLpara() {
   echo ${DownloadURL}
 }
 
+#* Merge mirrorlists into parameters for multi-source downloads
+#? @param $1|optional: mirror list prefix
+#? @return: Multi-source download parameters recognized by aria2
 function Thanks() {
+  if [ -z $1 ]; then return 1;fi
+  echo "==============================================================================="
   case "${1}" in
     BMCLAPI)
-      echo "==============================================================================="
       echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
-      echo "==============================================================================="
     ;;
     GITHUB)
-      echo "==============================================================================="
       echo "This high-speed download is partially accelerated by 91chi.fun, ghproxy.com, fastgit.org to provide partial acceleration support"
-      echo "==============================================================================="
     ;;
   esac
+  echo "==============================================================================="
+  return 0
 }
 
 ARGS=`getopt -o u:o:h -l url:,output:,md5:,sha1:,help -- "$@"`

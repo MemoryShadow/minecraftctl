@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-08 11:21:07
+ # @LastEditTime: 2022-07-08 16:14:01
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -117,7 +117,8 @@ function vanilla(){
 
 #* show this help menu
 function helpMenu() {
-  echo -e "${0} -i <item> [-v <version>] [-h]"
+  echo -e "Get file download parameters for the specified item and game version"
+  echo -e "Instructions: ${0} -i <item> [-v <version>] [-h]"
   echo -e "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper"
   echo -e "  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank"
   echo -e "  -h,\t--help\t\tGet this help menu"
