@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-08 16:14:01
+ # @LastEditTime: 2022-07-10 14:07:43
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -11,7 +11,7 @@
 # Get paper version
 #? @param $1|must: game version or latest
 function paper(){
-  version=$1
+  local version=$1
   # Check whether the version is a keyword, if so, automatically query the latest version
   if [ "$1" == "latest" ]; then
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
@@ -22,9 +22,9 @@ function paper(){
   # (0)
   if [ $? != 0 ]; then return 2;fi
   # Get the latest build name
-  build=`curl -s "https://papermc.io/api/v2/projects/paper/versions/${version}"`;build=${build##*,};build=${build%%]*};
+  local build=`curl -s "https://papermc.io/api/v2/projects/paper/versions/${version}"`;build=${build##*,};build=${build%%]*};
   # Get file name
-  filename=`curl -s "https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}"`;
+  local filename=`curl -s "https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}"`;
   filename=${filename##*application\":\{\"name\":\"};filename=${filename%%\"*}
   echo "--url=https://papermc.io/api/v2/projects/paper/versions/${version}/builds/${build}/downloads/${filename}"
   return 0;
@@ -33,7 +33,7 @@ function paper(){
 # Get purpur version
 #? @param $1|must: game version or latest
 function purpur(){
-  version=$1
+  local version=$1
   # Check whether the version is a keyword, if so, automatically query the latest version
   if [ "$1" == "latest" ]; then
     version=`curl -s "https://api.purpurmc.org/v2/purpur"`;version=${version##*,\"};version=${version%%\"*}
@@ -63,7 +63,7 @@ function mohist(){
   if [ -z ${versionList[$1]} ]; then
     return 2;
   else
-    URL=`curl -s https://mohistmc.com/api/${versionList[$1]}/latest`
+    local URL=`curl -s https://mohistmc.com/api/${versionList[$1]}/latest`
     URL=${URL%\",*};URL=${URL%\",*};echo "--url=${URL##*:\"}";
     return 0;
   fi;
@@ -72,7 +72,7 @@ function mohist(){
 # Get forge version
 #? @param $1|must: game version or latest
 function forge(){
-  version=$1
+  local version=$1
   # Check whether the version is a keyword, if so, automatically query the latest version
   if [ "$1" == "latest" ]; then
     version=`curl -s "https://bmclapi2.bangbang93.com/forge/last"`;version=${version#*mcversion\":\"};version=${version%%\"*}
@@ -83,20 +83,20 @@ function forge(){
   # (0)
   if [ $? != 0 ]; then return 2;fi
   # Get the latest build name
-  build=`curl -s "https://bmclapi2.bangbang93.com/forge/minecraft/${version}"`;build=${build##*\"build\":};
-  FileHash=${build#*\"installer\",\"hash\":\"};
+  local build=`curl -s "https://bmclapi2.bangbang93.com/forge/minecraft/${version}"`;build=${build##*\"build\":};
+  local FileHash=${build#*\"installer\",\"hash\":\"};
   build=${build%%,*};FileHash=${FileHash%%\"*}
   # echo download link
-  URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${build}"`
+  local URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${build}"`
   echo "--url=https://files.minecraftforge.net/${URL#*\/} --sha1=${FileHash}"
   return 0;
 }
 
 # Get authlib-injector version
 function authlib-injector(){
-  DLLink=`curl -s "https://bmclapi2.bangbang93.com/mirrors/authlib-injector/artifact/latest.json"`
+  local DLLink=`curl -s "https://bmclapi2.bangbang93.com/mirrors/authlib-injector/artifact/latest.json"`
   DLLink=${DLLink#*authlib-injector\/}
-  FileHash=${DLLink#*sha256\": \"};FileHash=${FileHash%\"*}
+  local FileHash=${DLLink#*sha256\": \"};FileHash=${FileHash%\"*}
   echo "--url=https://authlib-injector.yushi.moe/${DLLink%%\"*} --sha1=${FileHash}"
   return 0;
 }
@@ -104,12 +104,12 @@ function authlib-injector(){
 # Get vanilla version
 #? @param $1|must: game version or latest
 function vanilla(){
-  DLLink=`curl -s "https://bmclapi2.bangbang93.com/version/$1/server"`
+  local DLLink=`curl -s "https://bmclapi2.bangbang93.com/version/$1/server"`
   if [ "$DLLink" == "Not Found" ]; then 
     return 2;
   else
     DLLink=${DLLink#*\/}
-    FileHash=${DLLink%\/*};FileHash=${FileHash##*\/}
+    local FileHash=${DLLink%\/*};FileHash=${FileHash##*\/}
     echo "--url=https://launcher.mojang.com/$DLLink --sha1=${FileHash}"
     return 0;
   fi
