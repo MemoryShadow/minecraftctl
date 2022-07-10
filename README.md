@@ -1,6 +1,6 @@
 # minecraftctl
 
-这是一套Minecraft Server管理脚本
+这是一个Minecraft服务端管理工具，支持后台运行，快速下载部署(beta)，启动，停止，重启，备份，恢复备份(alpha)，向玩家发送消息，监控玩家消息并响应(alpha)
 
 此脚本用于帮助运维人员减少重复的操作，帮助他们更加轻松的工作
 
@@ -28,7 +28,7 @@
 
 ## 说明
 
-这是一套Minecraft Server管理脚本
+这是一个Minecraft服务端管理工具，支持后台运行，快速下载部署(beta)，启动，停止，重启，备份，恢复备份(alpha)，向玩家发送消息，监控玩家消息并响应(alpha)
 
 此脚本用于帮助运维人员减少重复的操作，帮助他们更加轻松的工作
 
@@ -47,18 +47,22 @@ git clone https://github.com/MemoryShadow/minecraftctl
 # 进入仓库目录
 cd minecraftctl/deb
 # 创建目录
-mkdir -p ./usr/sbin ./etc/minecraftctl
+mkdir -p ./usr/sbin
 # 将文件内容拷贝至固定目录
-cp -f ../bin/minecraftctl ./usr/sbin/
-cp -f ../cfg/config ./etc/minecraftctl/
+cp -r ../bin ./opt/minecraftctl
+cp ../bin/minecraftctl ./usr/sbin/
+cp -r ../cfg ./etc/minecraftctl
 # 调整权限
-chmod 755 ./usr/sbin/*
-chmod 644 ./etc/minecraftctl/*
+chmod 644 -R ./etc/minecraftctl/*
+chmod 755 ./etc/minecraftctl ./etc/minecraftctl/theme ./usr/sbin/minecraftctl
+chmod 755 -R ./opt/minecraftctl DEBIAN
 # 打包成为deb
 dpkg -b . ../minecraftctl_1.2.0_amd64.deb
 ```
 
 ### rpm
+
+> 目前此条目可能存在问题，如果失败请尝试使用[Linux通用安装](#linux通用安装)
 
 ```bash
 # 克隆仓库
@@ -80,7 +84,7 @@ rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
 
 ## 安装
 
-这个项目使用 [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "这是计划中的依赖，后续为加速下载提供支持")。请确保你本地安装了它们。
+这个项目使用 [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "点击查看")。请确保你本地安装了它们。
 
 ```bash
 sudo yum/apt-get install screen aria2
@@ -112,17 +116,18 @@ sudo rpm -i minecraftctl*.rpm
 git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git /usr/local/src/minecraftctl
 mkdir /etc/minecraftctl
 cp -r /usr/local/src/minecraftctl/cfg/* /etc/minecraftctl/
+cp -r /usr/local/src/minecraftctl/bin /opt/minecraftctl
 chmod -R 644 /etc/minecraftctl/* /etc/minecraftctl/theme/*
 chmod 755 /etc/minecraftctl /etc/minecraftctl/theme 
-chmod 755 -R /usr/local/src/minecraftctl/bin
+chmod 755 -R /opt/minecraftctl
 # make `sudo` available
-ln /usr/local/src/minecraftctl/bin/minecraftctl /usr/sbin/minecraftctl
+ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
 ```
 
 ```bash
 #!/bin/bash
-# uninstall minecraftctl software
-rm -rf /usr/local/bin/minecraftctl /usr/local/src/minecraftctl
+# uninstall minecraftctl software(remove the source code directory, installation directory, and the symbolic link)
+rm -rf /usr/local/bin/minecraftctl /opt/minecraftctl /usr/sbin/minecraftctl
 # remove config file
 rm -rf /etc/minecraftctl
 ```
@@ -176,15 +181,17 @@ minecraftctl <功能名称> [可能的参数]
         edit [cfg|ser|op|wh|sp]
                 编辑文档功能
         view    打开一个多会话的页面，使得后台终端不再处于独占模式(beta)
-        --h help        此功能用于获取帮助文档
-        say <要发送的消息> [要模拟的ID] 向服务器发送消息
-
+        --h help
+                此功能用于获取帮助文档
+        say <要发送的消息> [要模拟的ID] 
+                向服务器发送消息
 ```
 
 ## 相关仓库
 
 - [screen](https://git.savannah.gnu.org/cgit/screen.git) — 一个优秀的会话管理工具
-- [aric2](https://github.com/aria2/aria2) — 一个支持多线程和多协议的下载程序 `这是计划中的依赖，后续为加速下载提供支持`
+- [aric2](https://github.com/aria2/aria2.git) — 一个支持多线程和多协议的下载程序
+- [whiptail](https://salsa.debian.org/mckinstry/newt/-/tree/debian/master) - 用于支持whiptail窗口，来实现部分区域的窗口化交互 [文档](https://linux.die.net/man/1/whiptail)
 
 ## 维护者
 
@@ -200,7 +207,7 @@ minecraftctl <功能名称> [可能的参数]
 
 本项目高速下载由[BMCL](https://github.com/bangbang93/BMCL "点击查看详情")项目提供部分加速支持
 
-感谢[bangbang93](https://github.com/bangbang93 "点击前往")与[MCBBS](https://www.mcbbs.net/ "点几前往")为我们的Minecraft之旅提供极高的下载速度
+感谢[bangbang93](https://github.com/bangbang93 "点击前往")与[MCBBS](https://www.mcbbs.net/ "点击前往")为我们的Minecraft之旅提供极高的下载速度
 
 ## 展望未来
 
