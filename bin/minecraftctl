@@ -271,7 +271,7 @@ start)
   else
     # 启动服务器
     $Authlib && cmd="java -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
-    cmd=${cmd:-"java -server"}" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | ${InstallPath}/bin/tools/Interact/filter.sh; exit"
+    cmd=${cmd:-"java -server"}" -Xss512K -Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | ${InstallPath}/tools/Interact/filter.sh; exit"
     # 创建一个对应名称的会话
     screen -dmS "$ScreenName"
     cmd2server "$cmd"

@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-10 14:07:43
+ # @LastEditTime: 2022-07-12 17:41:51
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -83,11 +83,25 @@ function forge(){
   # (0)
   if [ $? != 0 ]; then return 2;fi
   # Get the latest build name
-  local build=`curl -s "https://bmclapi2.bangbang93.com/forge/minecraft/${version}"`;build=${build##*\"build\":};
-  local FileHash=${build#*\"installer\",\"hash\":\"};
-  build=${build%%,*};FileHash=${FileHash%%\"*}
+  local build=`curl -s "https://bmclapi2.bangbang93.com/forge/minecraft/${version}"`;
+  
+  # 将build号作为基准点，查找该条配置
+  local buildID=`echo "${build}" | grep -oP '"build":[0-9]*?,'`
+  buildID=(${buildID//,/ })
+  # 收集每一行的信息，由于是无序列表，只能逐个查找, 速度比较慢
+  local MaxBuildID=0
+  local ThisBuildID=0
+  for ThisBuildID in ${buildID[@]}
+  do
+    if [ ${ThisBuildID##*:} -gt ${MaxBuildID} ]; then
+      MaxBuildID=${ThisBuildID##*:}
+    fi
+  done
+  buildID=${MaxBuildID}
+  ## 通过buildID查找文件hash
+  local FileHash=`echo "$build" | grep -oP "\"build\":${buildID}.*?\"jar.*?hash\":\"[0-9a-z]*"`; FileHash=${FileHash##*\"}
   # echo download link
-  local URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${build}"`
+  local URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${buildID}"`
   echo "--url=https://files.minecraftforge.net/${URL#*\/} --sha1=${FileHash}"
   return 0;
 }
@@ -104,7 +118,11 @@ function authlib-injector(){
 # Get vanilla version
 #? @param $1|must: game version or latest
 function vanilla(){
-  local DLLink=`curl -s "https://bmclapi2.bangbang93.com/version/$1/server"`
+  local version=$1
+  if [ "$1" == "latest" ]; then
+    version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
+  fi
+  local DLLink=`curl -s "https://bmclapi2.bangbang93.com/version/${version}/server"`
   if [ "$DLLink" == "Not Found" ]; then 
     return 2;
   else
