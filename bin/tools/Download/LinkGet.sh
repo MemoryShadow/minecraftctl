@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: BuildTools unconfigured@null.spigotmc.org
- # @LastEditTime: 2022-07-22 18:22:08
+ # @LastEditTime: 2022-07-22 19:59:21
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -52,10 +52,10 @@ function purpur(){
 #? @param $1|must: game version or latest
 function mohist(){
   declare -A versionList=(
-    ['1.7.1']=1.7.10
-    ['1.7.10']=1.7.10
-    ['1.12.2']=1.12.2
-    ['1.16.5']=1.16.5
+    ['1.7.1']='1.7.10'
+    ['1.7.10']='1.7.10'
+    ['1.12.2']='1.12.2'
+    ['1.16.5']='1.16.5'
     ['1.18.2']='1.18.2-testing'
     ['1.18.2-testing']='1.18.2-testing'
     ['latest']='1.18.2-testing'
@@ -188,6 +188,26 @@ function tuinity(){
     echo "--url=https://serverjars.com/api/fetchJar/tuinity/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
     return 0;
   fi
+}
+
+# Get cat version
+#? @param $1|must: game version or latest
+function cat(){
+  declare -A versionList=(
+    ['1.12.2']='0'
+    ['1.16.5']='1'
+    ['latest']='1'
+  )
+  if [ -z ${versionList[$1]} ]; then
+    return 2;
+  else
+    local VerInfo=`curl -s https://api.github.com/repos/Luohuayu/CatServer/releases | grep -oP "browser_download_url[\": ]*https://[a-zA-Z0-9/\-.]*"`
+    VerInfo=`echo ${VerInfo// /} | grep -oP "https.*?.jar"`
+    VerInfo=(${VerInfo})
+    URL="${VerInfo[${versionList[$1]}]}"
+    URL=${URL%\",*};URL=${URL%\",*};echo "--url=${URL##*:\"}";
+    return 0;
+  fi;
 }
 
 #* show this help menu
