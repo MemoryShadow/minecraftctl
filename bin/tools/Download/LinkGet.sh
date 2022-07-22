@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-12 17:41:51
+ # @LastEditors: BuildTools unconfigured@null.spigotmc.org
+ # @LastEditTime: 2022-07-22 18:22:08
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -133,11 +133,68 @@ function vanilla(){
   fi
 }
 
+# Get spigot version
+#? @param $1|must: game version or latest
+function spigot(){
+  local version=$1
+  if [ "$1" == "latest" ]; then
+    version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
+  fi
+  local VerInfo=`curl -s https://serverjars.com/api/fetchAll/spigot/`
+  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  if [ "$?" == "1" ]; then 
+    return 2;
+  else
+    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
+    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    echo "--url=https://serverjars.com/api/fetchJar/spigot/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
+    return 0;
+  fi
+}
+
+# Get bukkit version
+#? @param $1|must: game version or latest
+function bukkit(){
+  local version=$1
+  if [ "$1" == "latest" ]; then
+    version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
+  fi
+  local VerInfo=`curl -s https://serverjars.com/api/fetchAll/bukkit/`
+  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  if [ "$?" == "1" ]; then 
+    return 2;
+  else
+    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
+    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    echo "--url=https://serverjars.com/api/fetchJar/bukkit/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
+    return 0;
+  fi
+}
+
+# Get tuinity version
+#? @param $1|must: game version or latest
+function tuinity(){
+  local version=$1
+  if [ "$1" == "latest" ]; then
+    version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
+  fi
+  local VerInfo=`curl -s https://serverjars.com/api/fetchAll/tuinity/`
+  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  if [ "$?" == "1" ]; then 
+    return 2;
+  else
+    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
+    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    echo "--url=https://serverjars.com/api/fetchJar/tuinity/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
+    return 0;
+  fi
+}
+
 #* show this help menu
 function helpMenu() {
   echo -e "Get file download parameters for the specified item and game version"
   echo -e "Instructions: ${0} -i <item> [-v <version>] [-h]"
-  echo -e "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper"
+  echo -e "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper, spigot, bukkit"
   echo -e "  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank"
   echo -e "  -h,\t--help\t\tGet this help menu"
 }

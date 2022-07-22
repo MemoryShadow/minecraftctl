@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-10 17:34:32
+ # @LastEditors: error: git config user.name && git config user.email & please set dead value or install git
+ # @LastEditTime: 2022-07-22 12:01:40
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -131,8 +131,8 @@ function GameVersionFind() {
 function helpMenu() {
   echo -e "Check which JVM should be used to start the specified task, if there is no suitable JVM try to help"
   echo -e "${0} -a <build|run> -v <version> [-h]"
-  echo -e "  -a,\t--action\t\tThe URL of the file waiting to be downloaded"
-  echo -e "  -v,\t--version\tThe name of the output file"
+  echo -e "  -a,\t--action\tThe URL of the file waiting to be downloaded"
+  echo -e "  -v,\t--version\ttarget game version, defaults to \"latest\""
   echo -e "  -h,\t--help\t\tGet this help menu"
 }
 
