@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
- # @LastEditors: BuildTools unconfigured@null.spigotmc.org
- # @LastEditTime: 2022-07-22 15:47:38
+ # @LastEditors: MemoryShadow MemoryShadow@outlook.com
+ # @LastEditTime: 2022-07-23 20:41:32
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -56,7 +56,7 @@ done
 
 # 如果compile参数存在, 就检测是否合法
 if [[ ! -z "${COMPILE}" && ! "${COMPILE}" =~ ^(spigot|craftbukkit)$ ]]; then
-  echo -e "The parameter does not exist or the action is unknown, please pass in the action to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 2;
+  echo -e "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 2;
 fi
 
 # 如果VERSION为latest, 就获取真正的版本号
