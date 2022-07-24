@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
- # @LastEditors: BuildTools unconfigured@null.spigotmc.org
- # @LastEditTime: 2022-07-22 19:59:21
+ # @LastEditors: MemoryShadow MemoryShadow@outlook.com
+ # @LastEditTime: 2022-07-24 00:31:06
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -261,7 +261,7 @@ if [ -z "${ITEM}" ]; then echo -e "The parameter does not exist, please pass in 
 if [ "$(type -t ${ITEM})" == function ]; then
   Result=`${ITEM} ${VERSION}`
 else
-  echo -e "Please set a valid value for item\n" > /dev/stderr;
+  echo -e "The item is not supported, please set a valid value for item\n" > /dev/stderr;
   helpMenu > /dev/stderr;
   exit 127;
 fi

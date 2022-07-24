@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-08 16:13:30
+ # @LastEditors: MemoryShadow MemoryShadow@outlook.com
+ # @LastEditTime: 2022-07-24 10:22:45
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -170,8 +170,8 @@ if [ ! -z ${MD5}${SHA1} ] ; then
   if [ $? -ne 0 ]; then
     echo "Hash check failed, script has exited";exit 3;
   else
-    echo "File download and hash check succeeded";exit 0;
+    echo -e "\e[1;32mFile download and hash check succeeded\e[0m";exit 0;
   fi
 else
-  echo "file download complete";exit 0;
+  echo -e "\e[1;34mfile download complete\e[0m";exit 0;
 fi
