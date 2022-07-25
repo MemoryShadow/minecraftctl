@@ -2,16 +2,19 @@
 ###
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow MemoryShadow@outlook.com
- # @LastEditTime: 2022-07-24 10:22:45
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-07-25 11:31:16
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
+cd $WorkDir
+
 #* show this help menu
 function helpMenu() {
   echo -e "Analyze the incoming URL and try to use the most appropriate download method found"
-  echo -e "Instructions: ${0} -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h]\n"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  echo -e "Usage: minecraftctl download -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h[mini]]\n"
   echo -e "  -u,\t--url\t\tThe URL of the file waiting to be downloaded"
   echo -e "  -o,\t--output\tThe name of the output file"
   echo -e "  -h,\t--help\t\tGet this help menu"
@@ -50,7 +53,7 @@ function Thanks() {
   return 0
 }
 
-ARGS=`getopt -o u:o:h -l url:,output:,md5:,sha1:,help -- "$@"`
+ARGS=`getopt -o u:o:h:: -l url:,output:,md5:,sha1:,help:: -- "$@"`
 if [ $? != 0 ]; then
     helpMenu > /dev/stderr;exit 1;
 fi
@@ -83,7 +86,7 @@ do
       shift 2
       ;;
     -h|--help)
-      helpMenu
+      helpMenu "$2"
       exit 0
       ;;
     --)

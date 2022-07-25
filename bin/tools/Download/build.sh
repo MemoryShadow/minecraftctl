@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow MemoryShadow@outlook.com
- # @LastEditTime: 2022-07-23 20:41:32
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-07-25 11:32:29
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -11,13 +11,14 @@
 #* show this help menu
 function helpMenu() {
   echo -e "Quickly build spigot or craftbukkit server and move to current working directory"
-  echo -e "${0} [-c <BuildTarget>] [-v <version>] [-h]"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  echo -e "${0} [-c <BuildTarget>] [-v <version>] [-h[mini]]"
   echo -e "  -c,\t--compile\t\tTarget to build, defaults to \"spigot\", allowed values are as follows:\n\t\t\t  spigot, craftbukkit"
   echo -e "  -v,\t--version\ttarget game version, defaults to \"latest\""
   echo -e "  -h,\t--help\t\tGet this help menu"
 }
 
-ARGS=`getopt -o c:v:h -l compile:,version:,help -- "$@"`
+ARGS=`getopt -o c:v:h:: -l compile:,version:,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 1;
 fi
@@ -40,7 +41,7 @@ do
       shift 2
       ;;
     -h|--help)
-      helpMenu
+      helpMenu "$2";
       exit 0
       ;;
     --)

@@ -1,9 +1,50 @@
 #!/bin/bash
+###
+ # @Date: 2022-07-23 20:45:10
+ # @Author: MemoryShadow
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-07-25 11:40:36
+ # @Description: 倾听传入的信息,并执行相应的操作
+ # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
+### 
 #*在工作切片结束时检查是否已经超时(WorkSecond),如果超时就休眠指定的秒数,如果达成WorkPart超过WorkExceedSecond指定的秒数就不进入休眠直接进入下一轮(因为这意味着几乎没有额外性能损耗)
 # TODO 优化1: 消息按分的片整体发送, 避免频繁echo带来的高额IO开销
 # TODO 优化2: 额外的解析功能按异步进行处理，避免堵塞
 
-source /etc/minecraftctl/config
+source $InstallPath/tools/Base.sh
+
+#* show this help menu
+function helpMenu() {
+  echo -e "Listen to incoming information and take appropriate action"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  echo -e "Usage: minecraftctl listen [-h[mini]]"
+}
+
+ARGS=`getopt -o h:: -l help:: -- "$@"`
+if [ $? != 0 ]; then
+  helpMenu > /dev/stderr;exit 1;
+fi
+
+# Assign normalized command line arguments to positional arguments($1,$2,...)
+eval set -- "${ARGS}"
+
+while true
+do
+  case "$1" in
+    -h|--help)
+      helpMenu "$2"
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Internal error!" > /dev/stderr;
+      exit 1
+      ;;
+  esac
+done
 
 # 初始化工作
 if [ $# -gt 0 ];then

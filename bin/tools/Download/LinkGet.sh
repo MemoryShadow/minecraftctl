@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
- # @LastEditors: MemoryShadow MemoryShadow@outlook.com
- # @LastEditTime: 2022-07-24 00:31:06
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-07-25 11:33:16
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -213,13 +213,14 @@ function cat(){
 #* show this help menu
 function helpMenu() {
   echo -e "Get file download parameters for the specified item and game version"
-  echo -e "Instructions: ${0} -i <item> [-v <version>] [-h]"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  echo -e "Instructions: ${0} -i <item> [-v <version>] [-h[mini]]"
   echo -e "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper, spigot, bukkit"
   echo -e "  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank"
   echo -e "  -h,\t--help\t\tGet this help menu"
 }
 
-ARGS=`getopt -o i:v:h -l item:,version:,help -- "$@"`
+ARGS=`getopt -o i:v:h:: -l item:,version:,help:: -- "$@"`
 if [ $? != 0 ]; then
     helpMenu > /dev/stderr;exit 1;
 fi
@@ -242,7 +243,7 @@ do
       shift 2
       ;;
     -h|--help)
-      helpMenu
+      helpMenu "$2";
       exit 0
       ;;
     --)

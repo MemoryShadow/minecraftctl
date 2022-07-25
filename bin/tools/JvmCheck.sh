@@ -2,8 +2,8 @@
 ###
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
- # @LastEditors: error: git config user.name && git config user.email & please set dead value or install git
- # @LastEditTime: 2022-07-22 12:01:40
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-07-25 11:34:05
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -130,13 +130,14 @@ function GameVersionFind() {
 #* show this help menu
 function helpMenu() {
   echo -e "Check which JVM should be used to start the specified task, if there is no suitable JVM try to help"
-  echo -e "${0} -a <build|run> -v <version> [-h]"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  echo -e "${0} -a <build|run> -v <version> [-h[mini]]"
   echo -e "  -a,\t--action\tThe URL of the file waiting to be downloaded"
   echo -e "  -v,\t--version\ttarget game version, defaults to \"latest\""
   echo -e "  -h,\t--help\t\tGet this help menu"
 }
 
-ARGS=`getopt -o a:v:h -l action:,version:,help -- "$@"`
+ARGS=`getopt -o a:v:h:: -l action:,version:,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 50;
 fi
@@ -159,7 +160,7 @@ do
       shift 2
       ;;
     -h|--help)
-      helpMenu
+      helpMenu "$2";
       exit 0
       ;;
     --)
