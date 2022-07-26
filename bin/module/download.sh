@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:31:16
+ # @LastEditTime: 2022-07-25 16:21:05
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -53,7 +53,7 @@ function Thanks() {
   return 0
 }
 
-ARGS=`getopt -o u:o:h:: -l url:,output:,md5:,sha1:,help:: -- "$@"`
+ARGS=`getopt -o u:o:h:: -l url:,output:,md5:,sha1:,sha256:,help:: -- "$@"`
 if [ $? != 0 ]; then
     helpMenu > /dev/stderr;exit 1;
 fi
@@ -65,6 +65,7 @@ URL=''
 OUTPUT=''
 MD5=''
 SHA1=''
+SHA256=''
 
 while true
 do
@@ -83,6 +84,10 @@ do
       ;;
     --sha1)
       SHA1="$2";
+      shift 2
+      ;;
+    --sha256)
+      SHA256="$2";
       shift 2
       ;;
     -h|--help)
@@ -164,11 +169,13 @@ aria2c -c -s 9 -k 3M -o $OUTPUT ${DownloadURL}
 Thanks ${MirrorProject}
 
 # Verify the hash value of the downloaded file
-if [ ! -z ${MD5}${SHA1} ] ; then
+if [ ! -z ${MD5}${SHA1}${SHA256} ] ; then
   if [ ! -z ${MD5} ] ; then
     md5sum ${OUTPUT} | grep ${MD1} > /dev/null
   elif [ ! -z ${SHA1} ] ; then
     sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
+  elif [ ! -z ${SHA256} ] ; then
+    sha256sum ${OUTPUT} | grep ${SHA256} > /dev/null
   fi
   if [ $? -ne 0 ]; then
     echo "Hash check failed, script has exited";exit 3;

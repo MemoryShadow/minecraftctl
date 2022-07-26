@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:40:36
+ # @LastEditTime: 2022-07-26 13:40:19
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -70,14 +70,19 @@ do
     WorkPartIndex=$((${WorkPartIndex}+1))
   fi
   # 在这里处理额外的显示
+  # 去除颜色信息, 方便后续解析信息
+  line_str=`echo "$line" | sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' | sed 's/[[:cntrl:]]//g'`
   # 检查是否为玩家说话，如果是，就做处理(这里只匹配是为了不损坏原始消息)
-  echo "$line" | grep -e '^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <[0-9a-zA-Z ]*> .*$' > /dev/null
+  echo "$line_str" | grep -P '^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <[0-9a-zA-Z ]*> .*$'
   if [ $? -eq 0 ]; then
+    echo "[Debug@Listen] 是一条玩家消息" > /dev/stderr
     # 删去无用的信息
-    str=`echo "$line" | sed 's/^\[[0-9:]\{0,8\}\] \[Server thread\/INFO\]: <//'`
+    str=`echo "$line_str" | sed -E 's/^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <//'`
     # 取出玩家名和玩家说的话
+    echo "[Debug@Listen] 取出玩家名和玩家说的话: $str" > /dev/stderr
     PlayerName="${str%%\>*}"
     PlayerMessage="${str#*> }"
+    echo "[Debug@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
     # 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
     echo "$PlayerMessage" | grep -e '^!!qq' > /dev/null
     if [ $? -eq 0 ]; then

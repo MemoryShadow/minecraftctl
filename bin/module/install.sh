@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 13:26:34
+ # @LastEditTime: 2022-07-25 16:45:13
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -109,7 +109,13 @@ unset ITEMCheck
 
 # 根据指定目标下载对应的项目
 DLPara=`bash /opt/minecraftctl/tools/Download/LinkGet.sh -i "${ITEM}" -v "${VERSION}"`
-bash /opt/minecraftctl/tools/download.sh $DLPara --output=${ITEM}-${VERSION}.jar
+echo $DLPara
+
+if [ ${ITEM} != "authlib-injector" ]; then
+  # 如果不是指定安装authlib-injector, 就自定义输出文件名
+  DLPara="$DLPara --output=${ITEM}-${VERSION}.jar"
+fi
+minecraftctl download $DLPara
 
 # 对vanilla做特殊处理，当ITEM为vanilla时，才会自动为此版本安装forge
 if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then 
@@ -117,7 +123,7 @@ if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then
   mkdir -p ./libraries/net/minecraft/server/$VERSION/
   ln minecraft_server.$VERSION.jar ./libraries/net/minecraft/server/$VERSION/server-$VERSION.jar
   DLPara=`bash /opt/minecraftctl/tools/Download/LinkGet.sh -i forge -v ${VERSION}`
-  bash /opt/minecraftctl/tools/download.sh $DLPara -o forge-$VERSION.jar
+  minecraftctl download $DLPara -o forge-$VERSION.jar
   JvmPath=`bash /opt/minecraftctl/tools/JvmCheck.sh -a build -v ${VERSION}`
   echo ${JvmPath}
   $JvmPath -jar forge-$VERSION.jar --installServer
@@ -131,8 +137,8 @@ fi
 
 # 安装authlib-injector
 if [ ${AUTHLIBINJECTOR} == true ]; then 
-  DLPara=`bash /opt/minecraftctl/tools/Download/LinkGet.sh -i authlib-injector -v ${VERSION}`
-  bash /opt/minecraftctl/tools/download.sh $DLPara
+  DLPara=`bash /opt/minecraftctl/tools/Download/LinkGet.sh -i authlib-injector`
+  minecraftctl download $DLPara
   unset DLPara
 fi
 
@@ -145,9 +151,13 @@ if [ ${CONFIG} == true ]; then
   cat<<EOF>minecraftctl.conf
 export ScreenName='Minecraft[${VERSION}] Java'
 export JvmPath='${JvmPath}'
-export MainJAR='${ITEM}-${VERSION}.jar'
+export MainJAR='${ITEM}-${VERSION}'
 export ServerCore='${ITEM}'
 EOF
+  if [ ${AUTHLIBINJECTOR} == true ]; then 
+    AIVer=`ls authlib-injector*`;AIVer=${AIVer##*-};AIVer=${AIVer%.*};
+    echo -e "export Authlib=true\nexport AuthlibInjectorVer='${AIVer}'" >> minecraftctl.conf
+  fi
 
 fi
 

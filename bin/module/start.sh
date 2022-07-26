@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:30:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:47:26
+ # @LastEditTime: 2022-07-25 16:58:45
  # @Description: 启动服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -49,7 +49,7 @@ if [ $? -eq 0 ]; then
 else
   # 启动服务器
   $Authlib && cmd="${JvmPath:-java} -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
-  cmd=${cmd:-"${JvmPath:-java} -server"}" -Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen;"
+  cmd=${cmd:-"${JvmPath:-java} -server"}" -Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen; exit 0;"
   # 创建一个对应名称的会话
   screen -dmS "$ScreenName"
   cmd2server "$cmd"

@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:33:16
+ # @LastEditTime: 2022-07-25 16:18:21
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -111,7 +111,7 @@ function authlib-injector(){
   local DLLink=`curl -s "https://bmclapi2.bangbang93.com/mirrors/authlib-injector/artifact/latest.json"`
   DLLink=${DLLink#*authlib-injector\/}
   local FileHash=${DLLink#*sha256\": \"};FileHash=${FileHash%\"*}
-  echo "--url=https://authlib-injector.yushi.moe/${DLLink%%\"*} --sha1=${FileHash}"
+  echo "--url=https://authlib-injector.yushi.moe/${DLLink%%\"*} --sha256=${FileHash}"
   return 0;
 }
 

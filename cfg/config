@@ -17,6 +17,8 @@ export Insecure=false
 export Authlib=false
 # 第三方验证的验证服务地址
 export AuthlibInjector="https://littleskin.cn/api/yggdrasil"
+# 第三方验证器版本
+AuthlibInjectorVer="1.1.47"
 # 服务器启动核心文件名(不含后缀)
 export MainJAR="spigot-1.18.2"
 # 服务器核心,备份文件时使用,支持的值为以下列表
