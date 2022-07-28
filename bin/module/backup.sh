@@ -3,133 +3,86 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:31:07
+ # @LastEditTime: 2022-07-28 23:08:20
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
-# TODO 实现BackupName功能
-
 source $InstallPath/tools/Base.sh
 
-# 在官方核心的状态下备份服务器
-function BackupInofficial() {
-  date
-  echo "官方核心模式备份数据中..."
-  if [ -d "Backup" ]; then
-    if [ -d "Backup/world" ]; then
-      # 如果备份数据存在,就将其删除
-      rm -rf "Backup/world"
-    fi
-    cp -r "world" "Backup/world"
-    if [ -d "Backup/world_nether" ]; then
-      rm -rf "Backup/world_nether"
-    fi
-    cp -r "world/DIM-1" "Backup/world_nether"
-    if [ -d "Backup/world_the_end" ]; then
-      rm -rf "Backup/world_the_end"
-    fi
-    cp -r "world/DIM1" "Backup/world_the_end"
-    # 备份配置文件
-    if [ -d "Backup/Config" ]; then
-      if [ -e "Backup/Config/server.properties" ]; then
-        rm -rf "Backup/Config/server.properties"
-      fi
-      cp "server.properties" "Backup/Config/server.properties"
-      if [ -e "Backup/Config/ops.json" ]; then
-        rm -rf "Backup/Config/ops.json"
-      fi
-      cp "ops.json" "Backup/Config/ops.json"
-      if [ -e "Backup/Config/config" ]; then
-        rm -rf "Backup/Config/config"
-      fi
-      cp "/etc/minecraftctl/config" "Backup/Config/config"
-    fi
-    # 迁移跑图区块
-    #if [ -d "Backup/mcaFile" ]; then
-    # 如果文件夹存在，就开始迁移
-    # 迁移主世界区块文件
-    #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
-    #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
-    #fi
-  fi
-}
-
-# 在非官方核心的状态下备份服务器
-function BackupInUnofficial() {
-  date
-  echo "非官方核心模式备份数据中..."
-  if [ -d "Backup" ]; then
-    if [ -d "Backup/world" ]; then
-      # 如果备份数据存在,就将其删除
-      rm -rf "Backup/world"
-    fi
-    cp -r "world" "Backup/world"
-    if [ -d "Backup/world_nether" ]; then
-      rm -rf "Backup/world_nether"
-    fi
-    cp -r "world_nether" "Backup/world_nether"
-    if [ -d "Backup/world_the_end" ]; then
-      rm -rf "Backup/world_the_end"
-    fi
-    cp -r "world_the_end" "Backup/world_the_end"
-    # 备份配置文件
-    if [ -d "Backup/Config" ]; then
-      if [ -e "Backup/Config/server.properties" ]; then
-        rm -rf "Backup/Config/server.properties"
-      fi
-      cp "server.properties" "Backup/Config/server.properties"
-      if [ -e "Backup/Config/ops.json" ]; then
-        rm -rf "Backup/Config/ops.json"
-      fi
-      cp "ops.json" "Backup/Config/ops.json"
-      if [ -e "Backup/Config/config" ]; then
-        rm -rf "Backup/Config/config"
-      fi
-      cp "/etc/minecraftctl/config" "Backup/Config/config"
-    fi
-    # 迁移跑图区块
-    #if [ -d "Backup/mcaFile" ]; then
-    # 如果文件夹存在，就开始迁移
-    # 迁移主世界区块文件
-    #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
-    #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
-    #fi
-  fi
-}
+BACKUPNAME=''
 
 # 备份服务器存档
 function Backup() {
-  GetServerCoreVersion
-  case $? in
-  1)
-    BackupInofficial
-    ;;
+  # 进行基本的配置
+  local BackupDir="Backup"
+  local BackupConfigDir="$BackupDir/Config"
 
-  2)
-    BackupInUnofficial
-    ;;
-  *)
-    echo 配置存在问题,服务器核心未知,无法进行备份.;date;exit 1;
-    ;;
-  esac
-  date
-  echo "备份完成，正在归档(归档期间可以放后台自己跑)..."
-  # 移出备份存档
-  if [ -e "Backup/Backup.tar.xz" ]; then
-    mv "Backup/Backup.tar.xz" ./
-  fi
-  mv Backup/Backup*.tar.xz ./ 2>/dev/null
-  # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
-  if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
-    tar -Jcf Backup.tar.xz Backup/*
+  if [ -d "$BackupDir" ]; then
+    if [ -d "$BackupDir/world" ]; then
+      # 如果备份数据存在,就将其删除
+      rm -rf "$BackupDir/world"
+    fi
+    cp -r "world" "$BackupDir/world"
+
+    # 官方版本备份完成, 检测是否为非官方版本, 如果是, 则进行非官方版本备份
+    GetServerCoreVersion
+    if [ "$?" == "2" ]; then
+      cp -r "world_nether" "$BackupDir/world/DIM-1"
+      cp -r "world_the_end" "$BackupDir/world/DIM1"
+    fi
+    # 备份配置文件
+    if [ -d "Backup/Config" ]; then
+      if [ -e "Backup/Config/server.properties" ]; then
+        rm -rf "Backup/Config/server.properties"
+      fi
+      cp "server.properties" "Backup/Config/server.properties"
+      if [ -e "Backup/Config/ops.json" ]; then
+        rm -rf "Backup/Config/ops.json"
+      fi
+      cp "ops.json" "Backup/Config/ops.json"
+      if [ -e "Backup/Config/config" ]; then
+        rm -rf "Backup/Config/config"
+      fi
+      cp "/etc/minecraftctl/config" "Backup/Config/config"
+      if [ -e "Backup/Config/minecraftctl.conf" ]; then
+        rm -rf "Backup/Config/minecraftctl.conf"
+      fi
+      cp "minecraftctl.conf" "Backup/Config/minecraftctl.conf"
+    fi
+    # 迁移跑图区块
+    #if [ -d "Backup/mcaFile" ]; then
+    # 如果文件夹存在，就开始迁移
+    # 迁移主世界区块文件
+    #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
+    #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
+    #fi
+
+    date
+
+    echo "备份完成，正在归档(归档期间可以放后台自己跑)..."
+    # 移出备份存档
+    if [ -e "Backup/Backup.tar.xz" ]; then
+      mv "Backup/Backup.tar.xz" ./
+    fi
+    mv Backup/Backup*.tar.xz ./ 2>/dev/null
+    # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
+    if [ ! -z ${BACKUPNAME} ]; then
+      BACKUPNAME="-$BACKUPNAME"
+    fi
+    if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
+      tar -Jcf "Backup${BACKUPNAME}.tar.xz" Backup/*
+    else
+      XZ_OPT="-${BackupCompressLevel}T ${BackupThread}" tar -cJf "Backup${BACKUPNAME}.tar.xz" Backup/* 
+    fi
+    # 删除多余的备份文件
+    rm -rf Backup/world* Backup/Config/*
+    # 移回备份存档
+    mv Backup*.tar.xz Backup/ 2>/dev/null
   else
-    XZ_OPT="-${BackupCompressLevel}T ${BackupThread}" tar -cJf "Backup.tar.xz" Backup/* 
+    echo "没有找到Backup文件夹, 如果你希望备份, 需要创建此文件夹, 如果你希望备份配置文件, 你需要创建Backup/Config文件夹."; > /dev/stderr
   fi
-  # 删除多余的备份文件
-  rm -rf Backup/world* Backup/Config/*
-  # 移回备份存档
-  mv Backup*.tar.xz Backup/ 2>/dev/null
+
   date
   echo 完成操作.
 }
@@ -138,12 +91,11 @@ function Backup() {
 function helpMenu() {
   echo -e "Backup the server archive (if the server is running, an emergency backup is made)"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  # echo -e "Usage: minecraftctl backup [-n BackupName] [-h[mini]]\n"
-  echo -e "Usage: minecraftctl backup [-h[mini]]\n"
-  # echo -e "  -n,\t--backupname\t\tthe name of the backup file"
+  echo -e "Usage: minecraftctl backup [-n BackupName] [-h[mini]]\n"
+  echo -e "  -n,\t--backupname\t\tthe name of the backup file"
 }
 
-ARGS=`getopt -o h:: -l help:: -- "$@"`
+ARGS=`getopt -o n:h:: -l name:,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 1;
 fi
@@ -158,6 +110,10 @@ do
       helpMenu "$2"
       exit 0
       ;;
+    -n|--name)
+      BACKUPNAME="$2"
+      shift 2
+      ;;
     --)
       shift
       break
@@ -171,6 +127,7 @@ done
 
 date
 echo 即将开始备份服务器
+mkdir -p "Backup/Config"
 minecraftctl say '即将开始备份服务器'
 cmd2server 'save-all flush'
 Backup
