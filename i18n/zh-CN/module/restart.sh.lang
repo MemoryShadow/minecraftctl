@@ -1,0 +1,5 @@
+Help_module_Introduction:重启 Minecraft 服务端
+Help_module_usage:用法: minecraftctl restart [-h[mini]]
+Help_module_content:
+Error_NoInstance:当前无任何实例正在运行, 若是希望启动服务器, 使用 \e[1;32mstart\e[0m 参数
+Info_reason:重启服务器

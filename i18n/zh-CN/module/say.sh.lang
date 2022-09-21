@@ -1,0 +1,5 @@
+Help_module_Introduction:向游戏内发送消息
+Help_module_usage:用法: minecraftctl say <-m 等待发送的消息> [-u 玩家名称] [-h[mini]]\n
+Help_module_content:  -m,\t--msg\t\t要发送的消息\n  -u,\t--username\t要模拟的游戏ID\n  -h,\t--help\t\t获取此帮助菜单
+Info_Emulate_clickEvent:!!qq 
+Info_Emulate_hoverEvent:消息来自QQ群

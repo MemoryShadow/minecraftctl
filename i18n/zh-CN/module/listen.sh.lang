@@ -1,0 +1,3 @@
+Help_module_Introduction:听取传入的信息并采取适当的行动
+Help_module_usage:用法: minecraftctl listen [-h[mini]]\n
+Help_module_content:

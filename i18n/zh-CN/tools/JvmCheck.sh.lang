@@ -1,0 +1,6 @@
+Help_module_Introduction:检查应该使用哪个 JVM 来启动指定的任务
+Help_module_usage:用法: %s -a <build|run> -v <version> [-h[mini]]\n
+Help_module_content:  -a,\t--action\t等待执行的动作, 允许的值为: build,run\n  -v,\t--version\t目标游戏版本, 缺省状态为 \"latest\"\n  -h,\t--help\t\t获取此帮助列表
+Error_Missing_parameters_Action:参数 "%s" 不存在或动作未知，请传入要执行的动作\n
+Info_NotFoundJVM:在系统上找不到JVM，如果确认安装了JVM，请用ln命令链接到目录/usr/lib/jvm/下
+Info_NoSuitableJavaFound:找不到合适的Java，请尝试安装Java %s \n

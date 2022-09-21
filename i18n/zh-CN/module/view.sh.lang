@@ -1,0 +1,7 @@
+Help_module_Introduction:[测试中]打开一个视图，可以查看服务器的状态的同时操作终端
+Help_module_usage:用法: minecraftctl view [-h[mini]]\n
+Help_module_content:
+Error_NoInstance:当前无任何实例正在运行, 若是希望启动服务器, 使用 \e[1;32mstart\e[0m 参数
+Info_Server_Close_Prompt:即将关闭服务器, 请各位做好准备.
+Info_Server_Close_Prompt_Reason:由于%s, 即将关闭服务器, 请各位做好准备.
+Info_ServerTerminated: %s 已终止运行

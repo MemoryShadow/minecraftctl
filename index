@@ -1,0 +1,16 @@
+module/join.sh.lang
+module/say.sh.lang
+module/edit.sh.lang
+module/restart.sh.lang
+module/listen.sh.lang
+module/help.sh.lang
+module/view.sh.lang
+module/start.sh.lang
+module/backup.sh.lang
+module/install.sh.lang
+module/stop.sh.lang
+module/QQMsg.sh.lang
+module/download.sh.lang
+tools/JvmCheck.sh.lang
+tools/Download/build.sh.lang
+tools/Download/LinkGet.sh.lang

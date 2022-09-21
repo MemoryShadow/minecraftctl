@@ -1,0 +1,4 @@
+Help_module_Introduction:获取QQ群消息
+Help_module_usage:用法: minecraftctl QQMsg [-h[mini]]\n
+Help_module_content:
+Info_RequestTheGroup: %s 在群内要求

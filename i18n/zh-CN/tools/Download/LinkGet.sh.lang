@@ -1,0 +1,7 @@
+Help_module_Introduction:获取指定项目和游戏版本的文件下载参数
+Help_module_usage:用法: %s -i <item> [-v <version>] [-h[mini]]\n
+Help_module_content:  -i,\t--item\t\t要检索的条目, 允许的值如下:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper, spigot, bukkit\n  -v,\t--version\t要检索的游戏版本, 如果留空则默认为最新版本\n  -h,\t--help\t\t获取此帮助菜单
+Error_Missing_parameters_Version:参数 "version" 不存在，请传入要查询的条目\n
+Error_Not_Supported_Item:不支持该条目，请为"item"设置一个有效值\n
+Error_Version_Not_Exist:版本不存在，脚本已退出\n
+Error_Unknown:未知错误，脚本已退出\n

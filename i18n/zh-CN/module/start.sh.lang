@@ -1,0 +1,5 @@
+Help_module_Introduction:启动 Minecraft 服务端
+Help_module_usage:用法: minecraftctl start [-h[mini]]\n
+Help_module_content:
+Error_InstanceExists:当前已经有正在运行的实例, 若是希望重启服务器, 使用 \e[1;32mrestart\e[0m 参数
+Info_CommandSubmitted: %s 已提交启动命令,正在启动...

@@ -1,0 +1,7 @@
+Help_module_Introduction:连接服务器后台控制台
+Help_module_usage:用法: minecraftctl join [-h[mini]]\n
+Help_module_content:  -b,\t--backend\t\t要连接的服务器后端的名称
+Error_NoInstance:当前无任何实例正在运行, 若是希望启动服务器, 使用 \e[1;32mstart\e[0m 参数
+Info_Server_Close_Prompt:即将关闭服务器, 请各位做好准备.
+Info_Server_Close_Prompt_Reason:由于%s, 即将关闭服务器, 请各位做好准备.
+Info_ServerTerminated: %s 已终止运行
