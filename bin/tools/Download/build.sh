@@ -3,19 +3,17 @@
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 15:58:15
+ # @LastEditTime: 2022-09-21 23:01:05
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Quickly build spigot or craftbukkit server and move to current working directory"
+  GetI18nText Help_module_Introduction "Quickly build spigot or craftbukkit server and move to current working directory"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "${0} [-c <BuildTarget>] [-v <version>] [-h[mini]]"
-  echo -e "  -c,\t--compile\t\tTarget to build, defaults to \"spigot\", allowed values are as follows:\n\t\t\t  spigot, craftbukkit"
-  echo -e "  -v,\t--version\ttarget game version, defaults to \"latest\""
-  echo -e "  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_usage "${0} [-c <BuildTarget>] [-v <version>] [-h[mini]]"
+  GetI18nText Help_module_content "  -c,\t--compile\t\tTarget to build, defaults to \"spigot\", allowed values are as follows:\n\t\t\t  spigot, craftbukkit\n  -v,\t--version\ttarget game version, defaults to \"latest\"\n  -h,\t--help\t\tGet this help menu"
 }
 
 ARGS=`getopt -o c:v:h:: -l compile:,version:,help:: -- "$@"`
@@ -49,7 +47,7 @@ do
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
@@ -57,7 +55,7 @@ done
 
 # 如果compile参数存在, 就检测是否合法
 if [[ ! -z "${COMPILE}" && ! "${COMPILE}" =~ ^(spigot|craftbukkit)$ ]]; then
-  echo -e "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 2;
+  GetI18nText Error_Missing_parameters_item "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 2;
 fi
 
 # 如果VERSION为latest, 就获取真正的版本号
@@ -71,7 +69,7 @@ if [ ! -d /tmp/buildtools ]; then
 fi
 work_dir=`pwd`
 cd /tmp/buildtools/
-if [ ! -f BuildTools.jar ] ; then
+if [ ! -e BuildTools.jar ] ; then
   wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 fi;
 

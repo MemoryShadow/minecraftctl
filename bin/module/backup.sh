@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-28 23:08:20
+ # @LastEditTime: 2022-09-19 19:16:01
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -89,10 +89,11 @@ function Backup() {
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Backup the server archive (if the server is running, an emergency backup is made)"
+  GetI18nText Help_module_Introduction "Backup the server archive (if the server is running, an emergency backup is made)"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl backup [-n BackupName] [-h[mini]]\n"
-  echo -e "  -n,\t--backupname\t\tthe name of the backup file"
+  GetI18nText Help_module_usage "Usage: minecraftctl backup [-n BackupName] [-h[mini]]\n"
+  GetI18nText Help_module_content "  -n,\t--backupname\tthe name of the backup file\n  -h,\t--help\t\tGet this help menu"
+  return 0;
 }
 
 ARGS=`getopt -o n:h:: -l name:,help:: -- "$@"`
@@ -108,7 +109,7 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     -n|--name)
       BACKUPNAME="$2"
@@ -119,7 +120,7 @@ do
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac

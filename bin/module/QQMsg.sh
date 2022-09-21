@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:33:29
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:40:27
+ # @LastEditTime: 2022-09-19 21:51:21
  # @Description: 获取QQ群的消息
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -12,9 +12,10 @@ source $InstallPath/tools/Base.sh
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Get the news of the QQ group"
+  GetI18nText Help_module_Introduction "Get the news of the QQ group"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl QQMsg [-h[mini]]"
+  GetI18nText Help_module_usage "Usage: minecraftctl QQMsg [-h[mini]]"
+  return 0;
 }
 
 ARGS=`getopt -o h:: -l help:: -- "$@"`
@@ -30,14 +31,14 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
@@ -53,8 +54,9 @@ function AnalysisConfiguration() {
     for i in "${cmd_list_arr[@]}"; do
       if [ $i==$1 ]; then
         # 若是找到匹配，就调用服务器管理工具
-        echo $0 $1 " $2 在群内要求"
-        $0 $1 " $2 在群内要求"
+        local ToServerMsg=`GetI18nText Info_RequestTheGroup "${2} is requested in the group" ${2}`
+        echo $0 $1 ${ToServerMsg}
+        $0 $1 ${ToServerMsg}
         return 0
       fi
     done

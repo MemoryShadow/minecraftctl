@@ -3,10 +3,12 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 16:18:21
+ # @LastEditTime: 2022-09-20 00:18:09
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+source $InstallPath/tools/Base.sh
 
 # Get paper version
 #? @param $1|must: game version or latest
@@ -212,12 +214,10 @@ function cat(){
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Get file download parameters for the specified item and game version"
+  GetI18nText Help_module_Introduction "Get file download parameters for the specified item and game version"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Instructions: ${0} -i <item> [-v <version>] [-h[mini]]"
-  echo -e "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper, spigot, bukkit"
-  echo -e "  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank"
-  echo -e "  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_usage "Usage: ${0} -i <item> [-v <version>] [-h[mini]]"
+  GetI18nText Help_module_content "  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t  vanilla, forge, authlib-injector, mohist, purpur, paper, spigot, bukkit\n  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank\n  -h,\t--help\t\tGet this help menu"
 }
 
 ARGS=`getopt -o i:v:h:: -l item:,version:,help:: -- "$@"`
@@ -251,18 +251,18 @@ do
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
 done
 
-if [ -z "${ITEM}" ]; then echo -e "The parameter does not exist, please pass in the version number to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
+if [ -z "${ITEM}" ]; then GetI18nText Error_Missing_parameters_Item "The parameter does not exist, please pass in the item to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
 
 if [ "$(type -t ${ITEM})" == function ]; then
   Result=`${ITEM} ${VERSION}`
 else
-  echo -e "The item is not supported, please set a valid value for item\n" > /dev/stderr;
+  GetI18nText Error_Not_Supported_Item "The item is not supported, please set a valid value for \"item\"\n" > /dev/stderr;
   helpMenu > /dev/stderr;
   exit 127;
 fi
@@ -272,12 +272,12 @@ case "$?" in
     exit 0;
     ;;
   2)
-    echo -e "Version does not exist, script has exited\n" > /dev/stderr;
+    GetI18nText Error_Version_Not_Exist "Version does not exist, script has exited\n" > /dev/stderr;
     helpMenu > /dev/stderr;
     exit 2;
     ;;
   *)
-    echo "Unknown error, script has exited : $?" > /dev/stderr;
+    GetI18nText Error_Unknown "Unknown error, script has exited : $?" > /dev/stderr;
     exit 1;
     ;;
 esac

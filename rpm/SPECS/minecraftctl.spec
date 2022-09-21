@@ -24,7 +24,7 @@ License:	GPLv3.0
 URL:		https://github.com/MemoryShadow/minecraftctl
 
 Requires:	bash
-Requires:	screen,vim,aria2,tar,zip,unzip
+Requires:	screen,vim,aria2,curl,wget,tar,zip,unzip
 BuildRoot:	~/rpmbuild/
 
 %description
@@ -47,7 +47,7 @@ exit
 %install
 #1
 # 检查本机是否有配置文件，如果有，就做更新处理
-if [ -f "%{_sysconfdir}/minecraftctl/config" ]; then 
+if [ -e "%{_sysconfdir}/minecraftctl/config" ]; then 
   mv /etc/minecraftctl/config /etc/minecraftctl/config.bak
   sed -i "s/\\\$/\\\\\$/g" /etc/minecraftctl/config.bak
   # 加载等待升级的配置文件

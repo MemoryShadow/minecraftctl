@@ -3,14 +3,14 @@
  # @Date: 2022-07-24 14:55:37
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:31:29
+ # @LastEditTime: 2022-09-21 23:06:35
  # @Description: 编辑文件
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
-# TODO 完成-m和-s的功能
-
 source $InstallPath/tools/Base.sh
+
+cd $WorkDir
 
 # 在编辑器中打开指定的文件
 function openEditer() {
@@ -29,22 +29,16 @@ function openEditer() {
 
 # 编辑配置文件
 function EditConfig() {
-  if [ $1 ]; then
+  if [ ! -z $1 ]; then
+    local filePath=""
     case $1 in
-    ser | server | server.properties)
-      filePath="server.properties"
-      ;;
-    op | ops | ops.json)
-      filePath="ops.json"
-      ;;
-    wh | wl | whitelist | whitelist.json)
-      filePath="whitelist.json"
-      ;;
-    sp | spigot | spigot.yml)
-      filePath="spigot.yml"
-      ;;
     cfg | conf | config)
-      filePath="/etc/minecraftctl/config"
+      # 编辑配置文件, 检测已有的文件(当前文件夹文件->全局文件)
+      if [ -e "$WorkDir/minecraftctl.conf" ]; then
+        filePath="$WorkDir/minecraftctl.conf"
+      else
+        filePath="/etc/minecraftctl/config"
+      fi
     ;;
     *)
       return 1
@@ -54,17 +48,43 @@ function EditConfig() {
   fi
 }
 
-#* show this help menu
-function helpMenu() {
-  echo -e "Edit minecraftctl and minecraft related files"
-  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl edit [-h[mini]]\n"
-  # echo -e "Usage: minecraftctl edit [-m ModuleName] -[s serverfile] [-h[mini]]\n"
-  # echo -e "  -m,\t--module\t\tSpecify the module name to edit"
-  # echo -e "  -s,\t--server\t\tSpecifies the server filename to edit"
+# 编辑模块文件
+function EditModuleFile(){
+  local completions=`find "$InstallPath/module/" -name "*.sh" -exec basename {} \;`;
+  local COMPREPLY=(`compgen -W "$completions" "${1:-ed}"`);
+  openEditer "$InstallPath/module/${COMPREPLY}";
+  return 0;
 }
 
-ARGS=`getopt -o h:: -l help:: -- "$@"`
+# 编辑服务器配置文件
+function EditServerConfigFile(){
+  # 按照这个顺序查找对应的文件
+  declare -A SearchOrder=(
+    ['.']=1
+    ['config']=1
+  )
+  for dir in ${!SearchOrder[@]}; do
+    # 先列出目录下的配置文件
+    local completions=`find "${GamePath}/$dir/" -maxdepth ${SearchOrder[$dir]} -regextype posix-extended -regex ".*\.(json|conf|yml|txt|properties)$" -exec basename {} \;`;
+    # 匹配文件名
+    local COMPREPLY=(`compgen -W "$completions" "${1:-config}"`);
+    if [ ! -z ${COMPREPLY} ]; then
+      openEditer "${GamePath}/${dir}/${COMPREPLY}"
+    fi
+  done
+  return 0;
+}
+
+#* show this help menu
+function helpMenu() {
+  GetI18nText Help_module_Introduction "Edit minecraftctl and minecraft related files"
+  if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
+  GetI18nText Help_module_usage "Usage: minecraftctl edit [-m ModuleName] -[s serverfile] [-h[mini]]\n"
+  GetI18nText Help_module_content "  -m,\t--module\t\tSpecify the module name to edit\n  -s,\t--server\t\tSpecifies the server filename to edit, The search order is: server root directory, config"
+  return 0;
+}
+
+ARGS=`getopt -o m:s:h:: -l module:,server:,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 1;
 fi
@@ -77,21 +97,29 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
+      ;;
+    -m|--module)
+      EditModuleFile "$2"
+      exit $?
+      ;;
+    -s|--server)
+      EditServerConfigFile "$2"
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
 done
 
-if [ ! $1 ]; then
-  openEditer $InstallPath/minecraftctl
+if [ -z $1 ]; then
+  openEditer "$InstallPath/minecraftctl"
 else
   EditConfig $1
 fi

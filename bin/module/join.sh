@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:58:26
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:35:14
+ # @LastEditTime: 2022-09-19 21:16:19
  # @Description: 连接服务器后台控制台
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -14,11 +14,12 @@ source $InstallPath/tools/Base.sh
 
 #* show this help menu
 function helpMenu() {
-  echo -e "connection server backend"
+  GetI18nText Help_module_Introduction "connection server backend"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl join [-h[mini]]\n"
-  # echo -e "Usage: minecraftctl join [-b BackendName] [-h[mini]]\n"
-  # echo -e "  -b,\t--backend\t\tThe name of the server backend to connect to"
+  GetI18nText Help_module_usage "Usage: minecraftctl join [-h[mini]]\n"
+  # GetI18nText Help_module_usage "Usage: minecraftctl join [-b BackendName] [-h[mini]]\n"
+  # GetI18nText Help_module_content "  -b,\t--backend\t\tThe name of the server backend to connect to"
+  return 0;
 }
 
 ARGS=`getopt -o h:: -l help:: -- "$@"`
@@ -34,14 +35,14 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
@@ -49,7 +50,7 @@ done
 
 ExistServerExample
 if [ $? -ne 0 ]; then
-  echo 当前无任何实例正在运行，若是希望启动服务器，使用start参数
+  GetI18nText Error_NoInstance "No instance is currently running, if you want to start the server, use the \e[1;32mstart\e[0m parameter"
   exit 1
 fi
 screen -rd "${ScreenName}"

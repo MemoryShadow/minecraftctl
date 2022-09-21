@@ -3,10 +3,12 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:34:05
+ # @LastEditTime: 2022-09-21 16:11:59
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+source $InstallPath/tools/Base.sh
 
 declare -A TaskConfig=(
   ['build']="build"
@@ -129,12 +131,10 @@ function GameVersionFind() {
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Check which JVM should be used to start the specified task, if there is no suitable JVM try to help"
+  GetI18nText Help_module_Introduction "Check which JVM should be used to start the specified task, if there is no suitable JVM try to help"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "${0} -a <build|run> -v <version> [-h[mini]]"
-  echo -e "  -a,\t--action\tThe URL of the file waiting to be downloaded"
-  echo -e "  -v,\t--version\ttarget game version, defaults to \"latest\""
-  echo -e "  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_usage "Usage: ${0} -a <build|run> -v <version> [-h[mini]]\n" ${0}
+  GetI18nText Help_module_content "  -a,\t--action\tAction waiting to be executed, allowed values: build,run\n  -v,\t--version\ttarget game version, defaults to \"latest\"\n  -h,\t--help\t\tGet this help menu"
 }
 
 ARGS=`getopt -o a:v:h:: -l action:,version:,help:: -- "$@"`
@@ -168,13 +168,13 @@ do
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 49
       ;;
   esac
 done
 
-if [[ -z "${ACTION}" || -z "${TaskConfig[$ACTION]}" ]]; then echo -e "The parameter does not exist or the action is unknown, please pass in the action to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 2; fi;
+if [[ -z "${ACTION}" || -z "${TaskConfig[$ACTION]}" ]]; then GetI18nText Error_Missing_parameters_Action "The parameter \"${ACTION}\" does not exist or the action is unknown, please pass in the action to be executed\n" ${ACTION} > /dev/stderr; helpMenu > /dev/stderr; exit 2; fi;
 
 # 根据任务加载对应的配置信息
 cp_source="TaskConfig_${TaskConfig[${ACTION}]}"
@@ -199,7 +199,7 @@ done
 unset ThisTaskUniqueConfig
 
 if [ $VERSION == 'latest' ]; then VERSION=${ThisTaskConfig[latest]}; fi
-if [ ! -d '/usr/lib/jvm/' ]; then echo -e "Unable to find Java on the system, if you confirm that Java is installed, use the ln command to link it to the directory /usr/lib/jvm/" > /dev/stderr; exit 127; fi
+if [ ! -d '/usr/lib/jvm/' ]; then GetI18nText Info_NotFoundJVM "Unable to find JVM on the system, if you confirm that JVM is installed, use the ln command to link it to the directory /usr/lib/jvm/" > /dev/stderr; exit 127; fi
 
 # 检查本机java信息
 JvmList=`find /usr/lib/jvm/ | grep -e "/java$"`
@@ -218,7 +218,7 @@ do
   fi
 done
 
-if [ ${#AvailableJvmList[@]} == 0 ]; then echo -e "No suitable Java found, please try to install the Java ${ThisTaskConfig[${SelectGameVersion}]}\n" > /dev/stderr; exit 3; fi
+if [ ${#AvailableJvmList[@]} == 0 ]; then GetI18nText Info_NoSuitableJavaFound "No suitable Java found, please try to install the Java ${ThisTaskConfig[${SelectGameVersion}]}\n" ${ThisTaskConfig[${SelectGameVersion}]} > /dev/stderr; exit 3; fi
 
 # 判断是否有合适的JVM实现，如果没有，就返回次一级的并返回1
 for JvmInfo in "${AvailableJvmList[@]}"

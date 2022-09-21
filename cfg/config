@@ -35,6 +35,8 @@ export BackupCompressLevel=6
 # 离开时等待的秒数(若是超过此时间服务器还没停止, 就会强制杀死进程)
 export StopWaitTimeMax=20
 
+# minecraftctl显示的语言
+export Language="zh-CN"
 # minecraftctl安装路径
 export InstallPath='/opt/minecraftctl'
 # 配置刹车时长(秒), 避免长时间过高的CPU占用

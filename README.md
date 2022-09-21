@@ -104,7 +104,7 @@ sudo rpm -i minecraftctl*.rpm
 
 ### Linux通用安装
 
-`注意: 使用此方案将会导致您失去包管理器的管理，但您能以最快的速度体验到最新的支持(相当于alpha版本)`
+`注意: 使用此方案将会导致您无法使用包管理器管理此程序，但您能以最快的速度体验到最新的支持(相当于alpha版本)`
 
 `注意: 使用通用安装时请保持root身份`
 
@@ -122,6 +122,20 @@ chmod 755 /etc/minecraftctl /etc/minecraftctl/theme
 chmod 755 -R /opt/minecraftctl
 # make `sudo` available
 ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
+# register autocomplete
+cat<<EOF>>~/.bashrc
+
+# minecraftctl autocomplete
+_minecraftctl() {
+  COMPREPLY=()
+  local word="\${COMP_WORDS[COMP_CWORD]}"
+  local completions=\$(find /opt/minecraftctl/module/ -name "*.sh" -exec basename {} \; | grep -oe "^[a-zA-Z]*")
+  COMPREPLY=( \$(compgen -W "\$completions" -- "\$word") )
+}
+
+complete -f -F _minecraftctl minecraftctl
+
+EOF
 ```
 
 ```bash

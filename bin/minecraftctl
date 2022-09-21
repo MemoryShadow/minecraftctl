@@ -1,22 +1,82 @@
+###
+ # @Date: 2022-07-23 20:45:10
+ # @Author: MemoryShadow
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-09-21 23:00:31
+ # @Description: 
+ # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
+### 
 #!/bin/bash
 
+function DLLangFile(){
+  # 获取翻译文件列表
+  # 先检查本地有没有翻译列表, 没有就下载
+  if [ ! -e "/etc/minecraftctl/i18n/lang.list" ]; then
+    echo "Download and install language index files...";
+    sudo aria2c "https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/lang.list" -d "/etc/minecraftctl" -o "i18n/lang.list"
+  fi
+  # 检查请求的语言是否存在翻译文件
+  grep -qwe "^${Language}$" /etc/minecraftctl/i18n/lang.list
+  if [ $? != 0 ] ; then
+    # 如果没有找到对应的翻译文件, 就使用默认字符串并退出
+    export Language="default"
+    return 1;
+  fi
+  echo "/etc/minecraftctl/i18n/${Language}.lang not found";
+  echo "Download and install language files...";
+  # 如果发现下载标志存在, 就删除下载文件重新下载
+  if [ -e "/etc/minecraftctl/i18n/${Language}.lang.tmp" ]; then
+    sudo rm -rf "/etc/minecraftctl/i18n/${Language}.lang.tmp" "/etc/minecraftctl/i18n/${Language}";
+  fi
+  # 设置下载基址
+  local DownloadBaseURL="https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/i18n/${Language}";
+  # 标志开始下载
+  sudo aria2c -c "${DownloadBaseURL}.lang" -d "/etc/minecraftctl/i18n" -o "${Language}.lang.tmp";
+  local ModuleLanguageFilesIndex=`curl -s https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/index`;
+  # 将列表转为数组
+  ModuleLanguageFilesIndex=(${ModuleLanguageFilesIndex// / });
+  # 遍历数组, 生成下载列表
+  for i in ${ModuleLanguageFilesIndex[@]}; do
+    echo -e "${DownloadBaseURL}/${i}\n dir=/etc/minecraftctl/i18n/${Language}\n out=${i}" >> "aria2c_dl.list";
+  done
+  # 下载文件
+  sudo aria2c -x 9 --input-file=aria2c_dl.list
+  if [ $? != 0 ]; then
+    # 删除下载标志
+    sudo rm -rf "/etc/minecraftctl/i18n/${Language}.lang.tmp";
+    # 删除下载列表
+    rm -rf aria2c_dl.list;
+    echo "Download failed!";
+    exit 2;
+  fi
+  # 下载完成, 改变下载标志
+  sudo mv "/etc/minecraftctl/i18n/${Language}.lang.tmp" "/etc/minecraftctl/i18n/${Language}.lang";
+  # 删除下载列表
+  rm -rf "aria2c_dl.list";
+  echo "=========================================================================";
+}
+
 # 加载全局配置
-if [ -f /etc/minecraftctl/config ]; then
+if [ -e /etc/minecraftctl/config ]; then
   source /etc/minecraftctl/config
 else
   echo "Not found /etc/minecraftctl/config !!" > /dev/stderr
   exit 2
 fi
 
+# 在此处检测是否存在配置中的翻译文件, 如果不存在就尝试下载
+if [[ ${Language} != "default" && ! -e "/etc/minecraftctl/i18n/${Language}.lang" ]]; then DLLangFile; fi
+
 export WorkDir=`pwd`
 
 source $InstallPath/tools/Base.sh
 
-if [ -f "$InstallPath/module/$1.sh" ]; then
+if [ -e "$InstallPath/module/$1.sh" ]; then
   module=$1
   shift
   exec -a "${module}" "${InstallPath}/module/${module}.sh" $@
   exit $?
 else
-  echo "You haven't entered any parameters" > /dev/stderr; $0 help > /dev/stderr; exit 1
+  GetI18nText Error_Missing_parameters "You haven't entered any parameters\n" > /dev/stderr;
+  $0 help > /dev/stderr; exit 1
 fi

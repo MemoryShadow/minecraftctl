@@ -3,22 +3,20 @@
  # @Date: 2022-07-24 14:28:36
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 11:50:48
+ # @LastEditTime: 2022-09-19 21:50:07
  # @Description: 停止服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
-# TODO 转为新版参数化
 
 source $InstallPath/tools/Base.sh
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Stop the Minecraft server"
+  GetI18nText Help_module_Introduction "Stop the Minecraft server"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  # echo -e "Usage: minecraftctl say <-m Msg> [-u GameID] [-h[mini]]\n"
-  echo -e "Usage: minecraftctl stop [reason] [-h[mini]]\n"
-  echo -e "  reason: Reason for shutting down the server"
-  # echo -e "  -n,\t--backupname\t\tthe name of the backup file"
+  GetI18nText Help_module_usage "Usage: minecraftctl stop [reason] [-h[mini]]\n"
+  GetI18nText Help_module_content "  reason: Reason for shutting down the server"
+  return 0;
 }
 
 ARGS=`getopt -o h:: -l help:: -- "$@"`
@@ -34,14 +32,14 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
@@ -50,15 +48,16 @@ done
 # 检查是否有实例正在运行(如果没有就直接退出)
 ExistServerExample
 if [ $? -ne 0 ]; then
-  echo 当前无任何实例正在运行，若是希望启动服务器，使用start参数
+  GetI18nText Error_NoInstance "No instance is currently running, if you want to start the server, use the \e[1;32mstart\e[0m parameter"
   exit 1
 fi
 # 向服务器中发出提示
 if [ "$1" != "" ]; then
-  say2server "由于$2,即将关闭服务器，请各位做好准备."
+  ToServerMsg=`GetI18nText Info_Server_Close_Prompt_Reason "The server is about to shut down due to ${2}, please be prepared" ${2}`
 else
-  say2server "即将关闭服务器,请各位做好准备."
+  ToServerMsg=`GetI18nText Info_Server_Close_Prompt "The server will be shut down soon, please be prepared."`
 fi
+say2server "${ToServerMsg}"
 # 等一会
 for i in $(seq 10 -1 1); do
   sleep 1
@@ -66,7 +65,7 @@ for i in $(seq 10 -1 1); do
 done
 # 停止服务器运行
 cmd2server "stop"
-# 等待进程退出(如果超过指定的时间没有退出，就杀死进程)
+# 等待进程退出(如果超过指定的时间没有退出, 就杀死进程)
 WaitTime=0
 ESE=0
 while [ ${ESE} == 0 ] ;
@@ -80,4 +79,4 @@ do
   fi
 done
 unset WaitTimes ESE
-echo "${ScreenName} 已终止运行"
+eGetI18nText Info_ServerTerminated "${ScreenName} has terminated" ${ScreenName}

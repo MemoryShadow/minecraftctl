@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:30:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 16:58:45
+ # @LastEditTime: 2022-09-19 20:51:56
  # @Description: 启动服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -11,9 +11,10 @@ source $InstallPath/tools/Base.sh
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Start the Minecraft server"
+  GetI18nText Help_module_Introduction "Start the Minecraft server"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl start [-h[mini]]"
+  GetI18nText Help_module_usage "Usage: minecraftctl start [-h[mini]]"
+  return 0;
 }
 
 ARGS=`getopt -o h:: -l help:: -- "$@"`
@@ -29,14 +30,14 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
@@ -44,7 +45,7 @@ done
 
 ExistServerExample
 if [ $? -eq 0 ]; then
-  echo 当前已经有正在运行的实例，若是希望重启服务器，使用restart参数
+  GetI18nText Error_InstanceExists "There is already a running instance, if you want to restart the server, use the \e[1;32mrestart\e[0m parameter"
   exit 1
 else
   # 启动服务器
@@ -53,5 +54,5 @@ else
   # 创建一个对应名称的会话
   screen -dmS "$ScreenName"
   cmd2server "$cmd"
-  echo "${ScreenName} 已提交启动命令,正在启动..."
+  GetI18nText Info_CommandSubmitted "${ScreenName} has submitted the startup command" "${ScreenName}"
 fi

@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-26 13:40:19
+ # @LastEditTime: 2022-09-19 19:55:14
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -15,9 +15,10 @@ source $InstallPath/tools/Base.sh
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Listen to incoming information and take appropriate action"
+  GetI18nText Help_module_Introduction "Listen to incoming information and take appropriate action"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl listen [-h[mini]]"
+  GetI18nText Help_module_usage "Usage: minecraftctl listen [-h[mini]]"
+  return 0;
 }
 
 ARGS=`getopt -o h:: -l help:: -- "$@"`
@@ -33,14 +34,14 @@ do
   case "$1" in
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac

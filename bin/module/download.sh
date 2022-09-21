@@ -3,22 +3,25 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-07-25 16:21:05
+ # @LastEditTime: 2022-09-21 22:59:11
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+source $InstallPath/tools/Base.sh
 
 cd $WorkDir
 
 #* show this help menu
 function helpMenu() {
-  echo -e "Analyze the incoming URL and try to use the most appropriate download method found"
+  GetI18nText Help_module_Introduction "Analyze the incoming URL and try to use the most appropriate download method found"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  echo -e "Usage: minecraftctl download -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h[mini]]\n"
-  echo -e "  -u,\t--url\t\tThe URL of the file waiting to be downloaded"
-  echo -e "  -o,\t--output\tThe name of the output file"
-  echo -e "  -h,\t--help\t\tGet this help menu"
-  echo -e "  \t--md5|sha1\tSpecifies how the hash value is verified after the file download is complete.\n\t\t\tIf there are multiple flags, only the one closest to the left of this list will take effect"
+  GetI18nText Help_module_usage "Usage: minecraftctl download -u <URL> [-o <OutputFile>] [--md5|sha1=<Hash>] [-h[mini]]\n"
+  GetI18nText Help_module_content "  -u,\t--url\t\tThe URL of the file waiting to be downloaded\
+  \n  -o,\t--output\tThe name of the output file\n  -h,\t--help\t\tGet this help menu\
+  \n  \t--md5|sha1|sha256\n\t\tSpecifies how the hash value is verified after the file download is complete.\
+  \n\t\t\tIf there are multiple flags, only the one closest to the left of this list will take effect"
+  return 0;
 }
 
 #* Merge mirrorlists into parameters for multi-source downloads
@@ -43,10 +46,10 @@ function Thanks() {
   echo "==============================================================================="
   case "${1}" in
     BMCLAPI)
-      echo "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
+      GetI18nText Thanks_module_BMCLAPI "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
     ;;
     GITHUB)
-      echo "This high-speed download is partially accelerated by 91chi.fun, ghproxy.com, fastgit.org to provide partial acceleration support"
+      GetI18nText Thanks_module_GITHUB "This high-speed download is partially accelerated by 91chi.fun, ghproxy.com, fastgit.org to provide partial acceleration support"
     ;;
   esac
   echo "==============================================================================="
@@ -92,29 +95,29 @@ do
       ;;
     -h|--help)
       helpMenu "$2"
-      exit 0
+      exit $?
       ;;
     --)
       shift
       break
       ;;
     *)
-      echo "Internal error!" > /dev/stderr;
+      GetI18nText Error_Internal "Internal error!" > /dev/stderr;
       exit 1
       ;;
   esac
 done
 
-if [ -z "${URL}" ]; then echo -e "The parameter does not exist, please pass in the version number to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
+if [ -z "${URL}" ]; then GetI18nText Error_Missing_parameters_version "The parameter does not exist, please pass in the version number to be queried\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
 if [ -z "${OUTPUT}" ]; then OUTPUT=${URL##*/}; fi
 
-if [ -f "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
+if [ -e "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
   if [ ! -z ${MD5} ] ; then
     md5sum ${OUTPUT} | grep ${MD1} > /dev/null
   elif [ ! -z ${SHA1} ] ; then
     sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
   fi
-  if [ $? == 0 ]; then echo -e "The file ${OUTPUT} already exists and the hash value is correct, no need to download\n" > /dev/stderr; exit 0; fi
+  if [ $? == 0 ]; then GetI18nText Info_NoNeedDownloadFiles "The file ${OUTPUT} already exists and the hash value is correct, no need to download\n" ${OUTPUT}; exit 0; fi
 fi
 
 # List of domain names with mirror sources
@@ -178,10 +181,10 @@ if [ ! -z ${MD5}${SHA1}${SHA256} ] ; then
     sha256sum ${OUTPUT} | grep ${SHA256} > /dev/null
   fi
   if [ $? -ne 0 ]; then
-    echo "Hash check failed, script has exited";exit 3;
+    GetI18nText Info_HashCheckFailed "Hash check failed, script has exited";exit 3;
   else
-    echo -e "\e[1;32mFile download and hash check succeeded\e[0m";exit 0;
+    GetI18nText Info_DownloadHashSucceeded "\e[1;32mFile download and hash check succeeded\e[0m";exit 0;
   fi
 else
-  echo -e "\e[1;34mfile download complete\e[0m";exit 0;
+  GetI18nText Info_DownloadSucceeded "\e[1;34mfile download complete\e[0m";exit 0;
 fi
