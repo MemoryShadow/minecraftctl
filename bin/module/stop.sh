@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:28:36
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-19 21:50:07
+ # @LastEditTime: 2022-09-22 19:16:08
  # @Description: 停止服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -57,11 +57,11 @@ if [ "$1" != "" ]; then
 else
   ToServerMsg=`GetI18nText Info_Server_Close_Prompt "The server will be shut down soon, please be prepared."`
 fi
-say2server "${ToServerMsg}"
+minecraftctl say -m "${ToServerMsg}"
 # 等一会
 for i in $(seq 10 -1 1); do
   sleep 1
-  say2server "${i}"
+  minecraftctl say -m "${i}"
 done
 # 停止服务器运行
 cmd2server "stop"
@@ -79,4 +79,4 @@ do
   fi
 done
 unset WaitTimes ESE
-eGetI18nText Info_ServerTerminated "${ScreenName} has terminated" ${ScreenName}
+GetI18nText Info_ServerTerminated "${ScreenName} has terminated" ${ScreenName}

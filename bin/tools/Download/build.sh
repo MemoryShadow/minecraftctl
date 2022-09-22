@@ -3,7 +3,7 @@
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 23:01:05
+ # @LastEditTime: 2022-09-22 20:41:42
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -73,10 +73,10 @@ if [ ! -e BuildTools.jar ] ; then
   wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 fi;
 
-DownloadPara=`bash /opt/minecraftctl/tools/Download/LinkGet.sh -i vanilla -v $VERSION`
+DownloadPara=`${InstallPath}/tools/Download/LinkGet.sh -i vanilla -v $VERSION`
 minecraftctl download $DownloadPara -o "work/minecraft_server.$VERSION.jar"
 # 检测java版本
-JvmPath=`bash /opt/minecraftctl/tools/JvmCheck.sh -a build -v $VERSION`
+JvmPath=`${InstallPath}/tools/JvmCheck.sh -a build -v $VERSION`
 # 构建(构建要求必须由完全符合的jvm版本运行,不允许"勉强")
 if [ $? == 0 ]; then
   $JvmPath -jar BuildTools.jar -rev $VERSION

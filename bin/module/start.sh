@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:30:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-19 20:51:56
+ # @LastEditTime: 2022-09-22 21:04:00
  # @Description: 启动服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -49,8 +49,13 @@ if [ $? -eq 0 ]; then
   exit 1
 else
   # 启动服务器
-  $Authlib && cmd="${JvmPath:-java} -server -javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector}"
-  cmd=${cmd:-"${JvmPath:-java} -server"}" -Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen; exit 0;"
+  ExtraParameters='';
+  $Authlib && ExtraParameters="${ExtraParameters:+ }-javaagent:authlib-injector-${AuthlibInjectorVer}.jar=${AuthlibInjector} ";
+  "$InstallPath/tools/JvmCheck.sh" -p "${JvmPath}"
+  if [ $? == 2 ]; then 
+    ExtraParameters="${ExtraParameters:+ }-Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops "
+  fi
+  cmd=${cmd:-"${JvmPath:-java}"}" -server ${ExtraParameters}-Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen;"
   # 创建一个对应名称的会话
   screen -dmS "$ScreenName"
   cmd2server "$cmd"

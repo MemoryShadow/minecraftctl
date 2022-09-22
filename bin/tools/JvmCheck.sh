@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 16:11:59
+ # @LastEditTime: 2022-09-22 21:00:04
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -52,10 +52,10 @@ function GetJvmVersion() {
 function GetJvmName() {
   if [ "${1}" == "Server" ]; then
     # Hotspot
-    return 1
+    return 1;
   elif [ "${1}" == "OpenJ9" ]; then
     # OpenJ9
-    return 2
+    return 2;
   fi
 }
 
@@ -133,11 +133,14 @@ function GameVersionFind() {
 function helpMenu() {
   GetI18nText Help_module_Introduction "Check which JVM should be used to start the specified task, if there is no suitable JVM try to help"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  GetI18nText Help_module_usage "Usage: ${0} -a <build|run> -v <version> [-h[mini]]\n" ${0}
-  GetI18nText Help_module_content "  -a,\t--action\tAction waiting to be executed, allowed values: build,run\n  -v,\t--version\ttarget game version, defaults to \"latest\"\n  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_usage "Usage: ${0} -a <build|run> -v <version> [-p <Path>] [-h[mini]]\n" ${0}
+  GetI18nText Help_module_content "  -a,\t--action\tAction waiting to be executed, allowed values: build,run\
+\n  -v,\t--version\ttarget game version, defaults to \"latest\"\
+\n  -p,\t--path\t\tDetect what JVM is the specified Java, 1: HotSpot 2: OpenJ9\
+\n  -h,\t--help\t\tGet this help menu"
 }
 
-ARGS=`getopt -o a:v:h:: -l action:,version:,help:: -- "$@"`
+ARGS=`getopt -o a:v:p:h:: -l action:,version:,path:,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 50;
 fi
@@ -158,6 +161,12 @@ do
     -v|--version)
       VERSION="$2";
       shift 2
+      ;;
+    -p|--path)
+      JvmName=`"${2}" -version 2>&1`
+      JvmName=${JvmName%% VM*}; JvmName=${JvmName##* };
+      GetJvmName "${JvmName}"
+      exit $?
       ;;
     -h|--help)
       helpMenu "$2";

@@ -2,7 +2,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 23:00:31
+ # @LastEditTime: 2022-09-22 20:07:39
  # @Description: 
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -74,7 +74,7 @@ source $InstallPath/tools/Base.sh
 if [ -e "$InstallPath/module/$1.sh" ]; then
   module=$1
   shift
-  exec -a "${module}" "${InstallPath}/module/${module}.sh" $@
+  exec -a "${module}" "${InstallPath}/module/${module}.sh" "$@"
   exit $?
 else
   GetI18nText Error_Missing_parameters "You haven't entered any parameters\n" > /dev/stderr;

@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 09:35:23
+ # @LastEditTime: 2022-09-22 21:53:22
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -13,14 +13,19 @@ source $InstallPath/tools/Base.sh
 cd $WorkDir
 
 # List of projects supported for installation
-AllowDownloadItems=(
-  "vanilla"
-  "mohist"
-  "paper"
-  "purpur"
-  "cat"
-  "tuinity"
-  "authlib-injector"
+declare -A AllowDownloadItems=(
+  ['vanilla']='download'
+  ['mohist']='download'
+  ['paper']='download'
+  ['purpur']='download'
+  ['cat']='download'
+  ['tuinity']='download'
+  ['authlib-injector']='download'
+)
+
+declare -A AllowBuildItems=(
+  ['spigot']='build'
+  ['craftbukkit']='build'
 )
 
 #* show this help menu
@@ -29,7 +34,7 @@ function helpMenu() {
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
   GetI18nText Help_module_usage "Usage: minecraftctl install -i <item:vanilla [-f]> [-v <version>] [-c] [-h [mini]] [-ai]"
   GetI18nText Help_module_content "  -a,\t--authlib-injector\n\t\t\tAdditional installation of \e[33;48mauthlib-injector\e[0m when installing the specified server\
-\n  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t vanilla, mohist, purpur, paper, spigot, bukkit, authlib-injector\
+\n  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t vanilla, mohist, purpur, paper, spigot, craftbukkit, authlib-injector\
 \n  \t\t\t \e[33;48mvanilla\e[0m: Vanilla minecraft server, install forge with the \e[1;32m-f\e[0m parameter\
 \n  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank\
 \n  -c,\t--config\tAutomatically create configuration files\
@@ -89,25 +94,18 @@ do
   esac
 done
 
-if [[ -z "${ITEM}" || -z "${AllowDownloadItems[$ITEM]}" ]]; then GetI18nText Error_Missing_parameters_item "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
+# 要求ITEM存在, 并且ITEM存在于AllowDownloadItems或者AllowBuildItems中
+# 如果ITEM没有, 或者AllowDownloadItems与AllowBuildItems中都没有, 则报错
+if [[ -z "${ITEM}" || -z ${AllowDownloadItems[$ITEM]} && -z ${AllowBuildItems[$ITEM]} ]]; then GetI18nText Error_Missing_parameters_item "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
+
+# 检查ITEM是否在AllowDownloadItems中
+# 如果不在, 就说明是需要自己构建的项目
+if [ -z "${AllowDownloadItems[$ITEM]}" ]; then GetI18nText Error_Not_Supported_item "This entry needs to be built, but the build tool also needs to be tested\n" > /dev/stderr; helpMenu > /dev/stderr; exit 127; fi
 
 # 当版本为latest时,尝试获取最新版本号
 if [[ "${VERSION}" == "latest" ]]; then
   VERSION=`curl -s "https://papermc.io/api/v2/projects/paper"`;VERSION=${VERSION##*,\"};VERSION=${VERSION%%\"*}
 fi
-
-# 检查ITEM是否在AllowDownloadItems中
-ITEMCheck=false
-for Item in ${AllowDownloadItems[@]}
-do
-  if [ "${Item}" == "${ITEM}" ]; then
-    ITEMCheck=true
-    break
-  fi
-done
-if [ $ITEMCheck == false ]; then GetI18nText Error_Not_Supported_item "The item is not supported, please set a valid value for item\n" > /dev/stderr; helpMenu > /dev/stderr; exit 127; fi
-
-unset ITEMCheck
 
 # 根据指定目标下载对应的项目
 DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i "${ITEM}" -v "${VERSION}"`
