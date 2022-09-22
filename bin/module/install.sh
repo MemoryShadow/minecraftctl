@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 22:59:19
+ # @LastEditTime: 2022-09-22 09:35:23
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -27,11 +27,12 @@ AllowDownloadItems=(
 function helpMenu() {
   GetI18nText Help_module_Introduction "Auto install minecraft server on linux"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  GetI18nText Help_module_usage "Usage: minecraftctl install -i <item:vanilla [-f]> [-v <version>] [-h [mini]] [-ai]"
+  GetI18nText Help_module_usage "Usage: minecraftctl install -i <item:vanilla [-f]> [-v <version>] [-c] [-h [mini]] [-ai]"
   GetI18nText Help_module_content "  -a,\t--authlib-injector\n\t\t\tAdditional installation of \e[33;48mauthlib-injector\e[0m when installing the specified server\
 \n  -i,\t--item\t\tThe entry to be retrieved, the allowed values are as follows:\n\t\t\t vanilla, mohist, purpur, paper, spigot, bukkit, authlib-injector\
 \n  \t\t\t \e[33;48mvanilla\e[0m: Vanilla minecraft server, install forge with the \e[1;32m-f\e[0m parameter\
 \n  -v,\t--version\tThe version of the game to retrieve, defaults to the latest if left blank\
+\n  -c,\t--config\tAutomatically create configuration files\
 \n  -h,\t--help\t\tGet this help menu"
   return 0;
 }
@@ -145,7 +146,7 @@ fi
 
 # 生成配置文件信息
 if [ ${CONFIG} == true ]; then
-  echo -e "Generating configuration file..."
+  GetI18nText Info_GeneratingConfigurationFile "Generating configuration file..."
   if [ -z ${JvmPath} ]; then 
       JvmPath=`bash ${InstallPath}/tools/JvmCheck.sh -a run -v ${VERSION}`
   fi

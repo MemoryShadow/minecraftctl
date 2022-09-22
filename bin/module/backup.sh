@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-19 19:16:01
+ # @LastEditTime: 2022-09-22 09:57:13
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -60,7 +60,7 @@ function Backup() {
 
     date
 
-    echo "备份完成，正在归档(归档期间可以放后台自己跑)..."
+    GetI18nText Info_BackupFinish_archiveing "The backup is complete, archiving (you can put it in the background to run by yourself during archiving)..."
     # 移出备份存档
     if [ -e "Backup/Backup.tar.xz" ]; then
       mv "Backup/Backup.tar.xz" ./
@@ -80,11 +80,11 @@ function Backup() {
     # 移回备份存档
     mv Backup*.tar.xz Backup/ 2>/dev/null
   else
-    echo "没有找到Backup文件夹, 如果你希望备份, 需要创建此文件夹, 如果你希望备份配置文件, 你需要创建Backup/Config文件夹."; > /dev/stderr
+    GetI18nText Info_NotFoundBackupDir "Backup folder not found, if you want to backup, you need to create this folder, if you want to backup configuration files, you need to create Backup/Config folder."; > /dev/stderr
   fi
 
   date
-  echo 完成操作.
+  GetI18nText Info_CompleteOperation "Complete the operation."
 }
 
 #* show this help menu
@@ -127,8 +127,9 @@ do
 done
 
 date
-echo 即将开始备份服务器
+Info_AboutStartBacking=`GetI18nText Info_AboutStartBacking "About to start backing up the server"`
+echo "${Info_AboutStartBacking}"
 mkdir -p "Backup/Config"
-minecraftctl say '即将开始备份服务器'
+minecraftctl say '${Info_AboutStartBacking}'
 cmd2server 'save-all flush'
 Backup

@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:55:37
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 23:06:35
+ # @LastEditTime: 2022-09-22 09:48:19
  # @Description: 编辑文件
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -33,9 +33,10 @@ function EditConfig() {
     local filePath=""
     case $1 in
     cfg | conf | config)
-      # 编辑配置文件, 检测已有的文件(当前文件夹文件->全局文件)
-      if [ -e "$WorkDir/minecraftctl.conf" ]; then
-        filePath="$WorkDir/minecraftctl.conf"
+      # 编辑配置文件, 检测已有的文件(当前文件夹文件->游戏目录中的文件->全局文件)
+      # 其中, 游戏目录有可能与当前文件夹文件重复, 会在Base中被初始化
+      if [ -e "${GamePath}/minecraftctl.conf" ]; then
+        filePath="${GamePath}/minecraftctl.conf"
       else
         filePath="/etc/minecraftctl/config"
       fi
@@ -64,8 +65,10 @@ function EditServerConfigFile(){
     ['config']=1
   )
   for dir in ${!SearchOrder[@]}; do
-    # 先列出目录下的配置文件
-    local completions=`find "${GamePath}/$dir/" -maxdepth ${SearchOrder[$dir]} -regextype posix-extended -regex ".*\.(json|conf|yml|txt|properties)$" -exec basename {} \;`;
+    # 检查此目录是否存在, 不存在就跳过
+    if [ ! -d "${GamePath}/${dir}" ]; then continue; fi
+    # 列出目录下的配置文件
+    local completions=`find "${GamePath}/${dir}/" -maxdepth ${SearchOrder[${dir}]} -regextype posix-extended -regex ".*\.(json|conf|yml|txt|properties)$" -exec basename {} \;`;
     # 匹配文件名
     local COMPREPLY=(`compgen -W "$completions" "${1:-config}"`);
     if [ ! -z ${COMPREPLY} ]; then
