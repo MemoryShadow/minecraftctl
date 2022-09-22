@@ -1,5 +1,6 @@
 Help_module_Introduction:在 Linux 上自动安装Minecraft服务端
-Help_module_usage:用法: minecraftctl install -i <item:vanilla [-f]> [-v <version>] [-h [mini]] [-ai]\n
-Help_module_content:  -a,\t--authlib-injector\n\t\t\t安装指定服务器时额外安装\e[33;48mauthlib-injector\e[0m\n  -i,\t--item\t\t要检索的条目，允许的值如下:\n\t\t\t vanilla, mohist, purpur, paper, spigot, bukkit, authlib-injector\n  \t\t\t \e[33;48mvanilla\e[0m: 原版的 Minecraft 服务器，附加 \e[1;32m-f\e[0m 参数安装 forge\n  -v,\t--version\t要检索的游戏版本，如果留空则默认为最新版本\n  -h,\t--help\t\t获取此帮助菜单
+Help_module_usage:用法: minecraftctl install -i <item:vanilla [-f]> [-v <version>] [-c] [-h [mini]] [-ai]\n
+Help_module_content:  -a,\t--authlib-injector\n\t\t\t安装指定服务器时额外安装\e[33;48mauthlib-injector\e[0m\n  -i,\t--item\t\t要检索的条目，允许的值如下:\n\t\t\t vanilla, mohist, purpur, paper, spigot, bukkit, authlib-injector\n  \t\t\t \e[33;48mvanilla\e[0m: 原版的 Minecraft 服务器，附加 \e[1;32m-f\e[0m 参数安装 forge\n  -v,\t--version\t要检索的游戏版本，如果留空则默认为最新版本\n  -c,\t--config\t自动创建配置文件\n  -h,\t--help\t\t获取此帮助菜单
 Error_Missing_parameters_item:参数不存在或条目未知，请传入要执行的条目\n
 Error_Not_Supported_item:不支持该条目，请为参数item设置一个有效值
+Info_GeneratingConfigurationFile:正在生成配置文件...
