@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 22:59:11
+ # @LastEditTime: 2022-09-23 17:26:38
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -113,9 +113,9 @@ if [ -z "${OUTPUT}" ]; then OUTPUT=${URL##*/}; fi
 
 if [ -e "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
   if [ ! -z ${MD5} ] ; then
-    md5sum ${OUTPUT} | grep ${MD1} > /dev/null
+    md5sum ${OUTPUT} | grep -q ${MD1}
   elif [ ! -z ${SHA1} ] ; then
-    sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
+    sha1sum ${OUTPUT} | grep -q ${SHA1}
   fi
   if [ $? == 0 ]; then GetI18nText Info_NoNeedDownloadFiles "The file ${OUTPUT} already exists and the hash value is correct, no need to download\n" ${OUTPUT}; exit 0; fi
 fi
@@ -174,11 +174,11 @@ Thanks ${MirrorProject}
 # Verify the hash value of the downloaded file
 if [ ! -z ${MD5}${SHA1}${SHA256} ] ; then
   if [ ! -z ${MD5} ] ; then
-    md5sum ${OUTPUT} | grep ${MD1} > /dev/null
+    md5sum ${OUTPUT} | grep -q ${MD1}
   elif [ ! -z ${SHA1} ] ; then
-    sha1sum ${OUTPUT} | grep ${SHA1} > /dev/null
+    sha1sum ${OUTPUT} | grep -q ${SHA1}
   elif [ ! -z ${SHA256} ] ; then
-    sha256sum ${OUTPUT} | grep ${SHA256} > /dev/null
+    sha256sum ${OUTPUT} | grep -q ${SHA256}
   fi
   if [ $? -ne 0 ]; then
     GetI18nText Info_HashCheckFailed "Hash check failed, script has exited";exit 3;

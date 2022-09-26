@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:55:37
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 09:48:19
+ # @LastEditTime: 2022-09-23 17:34:13
  # @Description: 编辑文件
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -15,7 +15,7 @@ cd $WorkDir
 # 在编辑器中打开指定的文件
 function openEditer() {
   # 检测当前是否在VSCode中打开
-  whereis code | grep :\ / >/dev/null
+  whereis code | grep -q :\ /
   if [ $? -eq 0 ]; then
     code $1
   else

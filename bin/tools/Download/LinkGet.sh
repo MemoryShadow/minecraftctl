@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-20 00:18:09
+ # @LastEditTime: 2022-09-23 17:35:41
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -19,7 +19,7 @@ function paper(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   else
     # Check if the version exists
-    curl -s "https://papermc.io/api/v2/projects/paper" | grep -w "${version}" > /dev/null
+    curl -s "https://papermc.io/api/v2/projects/paper" | grep -qw "${version}"
   fi
   # (0)
   if [ $? != 0 ]; then return 2;fi
@@ -41,7 +41,7 @@ function purpur(){
     version=`curl -s "https://api.purpurmc.org/v2/purpur"`;version=${version##*,\"};version=${version%%\"*}
   else
     # Check if the version exists
-    curl -s "https://api.purpurmc.org/v2/purpur" | grep -w "$1" > /dev/null
+    curl -s "https://api.purpurmc.org/v2/purpur" | grep -qw "$1"
   fi
   # (0)
   if [ $? != 0 ]; then return 2;fi
@@ -80,7 +80,7 @@ function forge(){
     version=`curl -s "https://bmclapi2.bangbang93.com/forge/last"`;version=${version#*mcversion\":\"};version=${version%%\"*}
   else
     # Check if the version exists
-    curl -s "https://bmclapi2.bangbang93.com/forge/minecraft" | grep -w "${version}" > /dev/null
+    curl -s "https://bmclapi2.bangbang93.com/forge/minecraft" | grep -qw "${version}"
   fi
   # (0)
   if [ $? != 0 ]; then return 2;fi
@@ -143,7 +143,7 @@ function spigot(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/spigot/`
-  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
   if [ "$?" == "1" ]; then 
     return 2;
   else
@@ -162,7 +162,7 @@ function bukkit(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/bukkit/`
-  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
   if [ "$?" == "1" ]; then 
     return 2;
   else
@@ -181,7 +181,7 @@ function tuinity(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/tuinity/`
-  echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" > /dev/null
+  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
   if [ "$?" == "1" ]; then 
     return 2;
   else

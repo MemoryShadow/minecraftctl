@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-19 19:55:14
+ # @LastEditTime: 2022-09-23 17:34:29
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -85,12 +85,12 @@ do
     PlayerMessage="${str#*> }"
     echo "[Debug@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
     # 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
-    echo "$PlayerMessage" | grep -e '^!!qq' > /dev/null
+    echo "$PlayerMessage" | grep -qe '^!!qq'
     if [ $? -eq 0 ]; then
       echo -e "\e[1;35m玩家 \e[1;34m${PlayerName} \e[1;35m试图向QQ群发送: \e[1;32m${PlayerMessage#*\!\!qq }\e[0m"
     fi
   fi
   # 在这里无条件正常回显终端内容
   echo "$line";
-done<&0;    #从标准输入读取数据
+done <&0;    #从标准输入读取数据
 exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）

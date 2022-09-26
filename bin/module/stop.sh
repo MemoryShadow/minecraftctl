@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:28:36
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 19:16:08
+ # @LastEditTime: 2022-09-25 14:25:08
  # @Description: 停止服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -79,4 +79,4 @@ do
   fi
 done
 unset WaitTimes ESE
-GetI18nText Info_ServerTerminated "${ScreenName} has terminated" ${ScreenName}
+GetI18nText Info_ServerTerminated "${ScreenName} has terminated" "${ScreenName}"

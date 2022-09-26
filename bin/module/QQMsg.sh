@@ -3,10 +3,12 @@
  # @Date: 2022-07-24 12:33:29
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-19 21:51:21
+ # @LastEditTime: 2022-09-23 17:38:53
  # @Description: 获取QQ群的消息
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+# TODO 新增-q参数另其保持静默
 
 source $InstallPath/tools/Base.sh
 
