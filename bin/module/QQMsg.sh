@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:33:29
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-23 17:38:53
+ # @LastEditTime: 2022-09-26 16:23:16
  # @Description: 获取QQ群的消息
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -57,8 +57,8 @@ function AnalysisConfiguration() {
       if [ $i==$1 ]; then
         # 若是找到匹配，就调用服务器管理工具
         local ToServerMsg=`GetI18nText Info_RequestTheGroup "${2} is requested in the group" ${2}`
-        echo $0 $1 ${ToServerMsg}
-        $0 $1 ${ToServerMsg}
+        echo minecraftctl $1 "${ToServerMsg}"
+        minecraftctl $1 "${ToServerMsg}"
         return 0
       fi
     done
@@ -69,7 +69,7 @@ function AnalysisConfiguration() {
     for i in "${cmd_list_arr[@]}"; do
       if [ $i==$1 ]; then
         # 若是找到匹配，就调用服务器管理工具
-        %0 say $1 $2
+        minecraftctl say -m $1 -u $2
         return 0
       fi
     done
