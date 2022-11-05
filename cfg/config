@@ -1,5 +1,9 @@
 # 游戏文件夹路径
-export GamePath="/home/${USER}/Minecraft"
+if [ "${USER}" == "root" ]; then
+  GamePath="/var/MinecraftServer/"
+else
+  GamePath="${HOME}/Minecraft"
+fi
 # 会话名(若在修改时任有服务端在运行，会导致残留进程)
 export ScreenName='Minecraft[1.18.2] Java'
 # 启动时内存(MB)
