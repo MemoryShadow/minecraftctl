@@ -30,21 +30,18 @@ jobs:
 
   #     # 由于此处没有Tag, 所以Tag从配置文件中读取
       - name: Init
-        id: init
         run: |
           sudo apt-get update && sudo apt-get install -y tree
           source build/info
           git log --pretty=format:"%s" -1>CHANGELOG.md
-          cat CHANGELOG.md
-          # echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
-          # echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
           echo -e "\nVersion: ${Version}"
           tag=${Version}
           echo "GITHUB_REF: ${GITHUB_REF}"
+          mkdir packages
           bash build/master.sh
 
   #     # 构建deb包 
-      - name: Build-deb
+      - name: Build deb
         run: |
             source build/info
             tag=${Version}
@@ -67,7 +64,7 @@ jobs:
               docker exec -t ubuntuInstance chmod 644 -R ${work_path}/etc/minecraftctl/*
               docker exec -t ubuntuInstance chmod 755 ${work_path}/etc/minecraftctl ${work_path}/etc/minecraftctl/theme ${work_path}/usr/sbin/minecraftctl
               docker exec -t ubuntuInstance chmod 755 -R ${work_path}/opt/minecraftctl ${work_path}/DEBIAN
-              docker exec -t ubuntuInstance dpkg -b ${work_path} ${pwd_path}/minecraftctl_${tag//v/}_${Arch}.deb
+              docker exec -t ubuntuInstance dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${tag//v/}_${Arch}.deb
             done
             ls -lab
             docker kill -s KILL ubuntuInstance
@@ -94,6 +91,12 @@ jobs:
   #         docker kill -s KILL centos7Instance
   #         docker rm centos7Instance
 
+      # 上传包以在多个作业中共享
+      - name: Upload package
+        uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: packages/
       # Releases(这个字段是用于发布的字段)
       # - name: Releases
       #   if: startsWith(github.ref, 'refs/tags/')
@@ -110,6 +113,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download package
+        uses: actions/download-artifact@v3
+        with:
+          name: package
+          path: package/
+
       - uses: actions/checkout@v3
       - name: Run-Test
         run: |
