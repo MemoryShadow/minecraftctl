@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-03 09:31:30
+ # @LastEditTime: 2022-11-05 21:50:44
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -34,17 +34,18 @@ declare -A I18n_Cache=()
 #*预处理i18n文件, 避免频繁读盘
 # 语言不为default并且在本地存在的情况下才预加载
 if [[ "${Language}" != "default" && -e "/etc/minecraftctl/i18n/${Language}.lang" ]]; then
-  # 先去读公共i18n文件
-  while read -r line || [[ -n ${line} ]]; do
-    I18n_Cache[${line%:*}]=${line#*:}
-  done <"/etc/minecraftctl/i18n/${Language}.lang"
   # 检查是否是在引导文件中发起的请求
   echo "$0" | grep -qe "/minecraftctl$"
-  # 如果不是在官方文件里, 就检查查询来源以匹配多语言文件(不存在对应语言的文件就放弃查找, 因为此时主文件应该是已经加载过了)
-  if [[ $? != 0 && -e "/etc/minecraftctl/i18n/$Language${0/$InstallPath/}.lang" ]]; then 
+  # 如果不是在引导文件里, 就检查查询来源以匹配多语言文件(不存在对应语言的文件就放弃查找, 因为此时主文件应该是已经加载过了)
+  if [[ $? != 0 && -e "/etc/minecraftctl/i18n/${Language}/${0/$InstallPath/}.lang" ]]; then 
+    while read -r line || [[ -n ${line} ]]; do
+      I18n_Cache[${line%%:*}]=${line#*:}
+    done <"/etc/minecraftctl/i18n/${Language}${0/$InstallPath/}.lang"
+  else
+    # 先去读公共i18n文件
     while read -r line || [[ -n ${line} ]]; do
       I18n_Cache[${line%:*}]=${line#*:}
-    done <"/etc/minecraftctl/i18n/$Language${0/$InstallPath/}.lang"
+    done <"/etc/minecraftctl/i18n/${Language}.lang"
   fi
 fi
 

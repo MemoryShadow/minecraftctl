@@ -31,11 +31,8 @@ jobs:
   #     # 由于此处没有Tag, 所以Tag从配置文件中读取
       - name: Init
         run: |
-          sudo apt-get update && sudo apt-get install -y tree
           source build/info
           git log --pretty=format:"%s" -1>CHANGELOG.md
-          echo -e "\nVersion: ${Version}"
-          tag=${Version}
           echo "GITHUB_REF: ${GITHUB_REF}"
           mkdir packages
           bash build/master.sh
@@ -45,7 +42,6 @@ jobs:
         run: |
             source build/info
             tag=${Version}
-            tree
             echo "tag: ${tag}"
             echo ${{ steps.init.outputs.TAG }}
             echo ${{ steps.init.outputs.VERSION }}
@@ -120,8 +116,19 @@ jobs:
           name: packages
           path: packages/
 
-      - name: Run-Test
-        run: ls -lab packages
+      - name: Init
+        run: |
+          source build/info
+          ls -lab packages
+          dpkg -i packages/minecraftctl_${Version}_amd64.deb
+          minecraftctl help
+
+      - name: Init
+        run: |
+          minecraftctl install -h
+          mkdir -p MCServer; cd MCServer
+          minecraftctl install -i mohist -c -v 1.16.5
+
 
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
