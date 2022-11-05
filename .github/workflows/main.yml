@@ -37,7 +37,7 @@ jobs:
           cat CHANGELOG.md
           # echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
           # echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
-          echo "Version: ${Version}"
+          echo -e "\nVersion: ${Version}"
           tag=${Version}
           echo "GITHUB_REF: ${GITHUB_REF}"
           bash build/master.sh
@@ -45,21 +45,28 @@ jobs:
   #     # 构建deb包 
       - name: Build-deb
         run: |
-            ls -lab
+            source build/info
+            tag=${Version}
+            ls -lab build
             echo ${{ steps.init.outputs.TAG }}
             echo ${{ steps.init.outputs.VERSION }}
-            work_path=`pwd`
-            #tag=${GITHUB_REF/refs\/tags\//}
-            echo ${tag}
-            docker run -itd -v ${work_path}:${work_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
-            docker exec -t ubuntuInstance mkdir -p ${work_path}/deb/usr/sbin ${work_path}/deb/{opt,etc}
-            docker exec -t ubuntuInstance cp -r ${work_path}/bin ${work_path}/deb/opt/minecraftctl
-            docker exec -t ubuntuInstance cp -r ${work_path}/bin/minecraftctl ${work_path}/deb/usr/sbin/
-            docker exec -t ubuntuInstance cp -r ${work_path}/cfg ${work_path}/deb/etc/minecraftctl
-            docker exec -t ubuntuInstance chmod 644 -R ${work_path}/deb/etc/minecraftctl/*
-            docker exec -t ubuntuInstance chmod 755 ${work_path}/deb/etc/minecraftctl ${work_path}/deb/etc/minecraftctl/theme ${work_path}/deb/usr/sbin/minecraftctl
-            docker exec -t ubuntuInstance chmod 755 -R ${work_path}/deb/opt/minecraftctl ${work_path}/deb/DEBIAN
-            docker exec -t ubuntuInstance dpkg -b ${work_path}/deb ${work_path}/minecraftctl_${tag//v/}_x86_64.deb
+            pwd_path=`pwd`
+            Architecture_T=(${Architecture//,/ })
+            for Arch in ${Architecture_T[@]}; do
+              work_path="${pwd_path}/build/deb/${Arch}"
+              #tag=${GITHUB_REF/refs\/tags\//}
+              echo ${tag}
+              docker run -itd -v ${work_path}:${work_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
+              docker exec -t ubuntuInstance mkdir -p ${work_path}/usr/sbin ${work_path}/{opt,etc}
+              docker exec -t ubuntuInstance cp -r ${work_path}/bin ${work_path}/opt/minecraftctl
+              docker exec -t ubuntuInstance cp -r ${work_path}/bin/minecraftctl ${work_path}/usr/sbin/
+              docker exec -t ubuntuInstance cp -r ${work_path}/cfg ${work_path}/etc/minecraftctl
+              docker exec -t ubuntuInstance chmod 644 -R ${work_path}/etc/minecraftctl/*
+              docker exec -t ubuntuInstance chmod 755 ${work_path}/etc/minecraftctl ${work_path}/etc/minecraftctl/theme ${work_path}/usr/sbin/minecraftctl
+              docker exec -t ubuntuInstance chmod 755 -R ${work_path}/opt/minecraftctl ${work_path}/DEBIAN
+              docker exec -t ubuntuInstance dpkg -b ${work_path} ${work_path}/minecraftctl_${tag//v/}_${Arch}.deb
+            done
+            ls -lab
             docker kill -s KILL ubuntuInstance
             docker rm ubuntuInstance
 
@@ -84,17 +91,17 @@ jobs:
   #         docker kill -s KILL centos7Instance
   #         docker rm centos7Instance
 
-  #     # Releases(这个字段是用于发布的字段)
-  #     # - name: Releases
-  #     #   if: startsWith(github.ref, 'refs/tags/')
-  #     #   uses: softprops/action-gh-release@v1 
-  #     #   with:
-  #     #     body_path: CHANGELOG.md
-  #     #     files: |
-  #     #       minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
-  #     #       minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
-  #     #   env:
-  #     #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      # Releases(这个字段是用于发布的字段)
+      # - name: Releases
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   uses: softprops/action-gh-release@v1 
+      #   with:
+      #     body_path: CHANGELOG.md
+      #     files: |
+      #       minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
+      #       minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
