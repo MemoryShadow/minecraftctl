@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 09:22:27
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 16:31:45
+ # @LastEditTime: 2022-11-05 17:44:41
  # @Description: 通用安装与卸载(请以root身份运行)
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -32,10 +32,8 @@ elif [ "$1" == "update" ]; then
   rm -rf /opt/minecraftctl
   # backup config file
   bash "${MePath}/prerm"
-  # remove autocomplete file
-  rm -rf /etc/profile.d/minecraftctl.sh
   # install minecraftctl software
-  cp -r "${MePath}/../bin /opt/minecraftctl"
+  cp -r "${MePath}/../bin" "/opt/minecraftctl"
   # update config file
   bash "${MePath}/postinst"
   echo "Update complete."
