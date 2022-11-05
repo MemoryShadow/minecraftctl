@@ -1,6 +1,0 @@
-#!/bin/bash
-# 升级前保留并处理配置文件
-if [ -e /etc/minecraftctl/config ]; then
-  mv /etc/minecraftctl/config /etc/minecraftctl/config.bak
-  sed -i "s/\\\$/\\\\\$/g" /etc/minecraftctl/config.bak
-fi

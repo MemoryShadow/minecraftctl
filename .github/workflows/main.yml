@@ -151,7 +151,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Setup run environment
-        run: sudo apt-get install -y sudo bash screen vim aria2 curl wget tar zip unzip
+        run: sudo apt-get install -y sudo bash aria2 curl tar zip unzip
 
       - name: Install old-minecraftctl
         run: |

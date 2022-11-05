@@ -3,7 +3,7 @@
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 20:41:42
+ # @LastEditTime: 2022-11-05 23:51:15
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -70,7 +70,7 @@ fi
 work_dir=`pwd`
 cd /tmp/buildtools/
 if [ ! -e BuildTools.jar ] ; then
-  wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+  minecraftctl download --url=https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 fi;
 
 DownloadPara=`${InstallPath}/tools/Download/LinkGet.sh -i vanilla -v $VERSION`
