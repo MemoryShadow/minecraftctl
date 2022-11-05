@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-26 14:56:13
+ # @LastEditTime: 2022-11-03 09:31:30
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -39,7 +39,7 @@ if [[ "${Language}" != "default" && -e "/etc/minecraftctl/i18n/${Language}.lang"
     I18n_Cache[${line%:*}]=${line#*:}
   done <"/etc/minecraftctl/i18n/${Language}.lang"
   # 检查是否是在引导文件中发起的请求
-  echo "$0" | grep -qe "\/minecraftctl$"
+  echo "$0" | grep -qe "/minecraftctl$"
   # 如果不是在官方文件里, 就检查查询来源以匹配多语言文件(不存在对应语言的文件就放弃查找, 因为此时主文件应该是已经加载过了)
   if [[ $? != 0 && -e "/etc/minecraftctl/i18n/$Language${0/$InstallPath/}.lang" ]]; then 
     while read -r line || [[ -n ${line} ]]; do
@@ -47,6 +47,7 @@ if [[ "${Language}" != "default" && -e "/etc/minecraftctl/i18n/${Language}.lang"
     done <"/etc/minecraftctl/i18n/$Language${0/$InstallPath/}.lang"
   fi
 fi
+
 
 # 通过echo返回一个字符串, 通过返回值返回是否成功
 # 参数1(必须): 请求的字段编号

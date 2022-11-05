@@ -112,38 +112,12 @@ sudo rpm -i minecraftctl*.rpm
 
 ```bash
 #!/bin/bash
-# install minecraftctl
+# Clone the repository from Github
 git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git /usr/local/src/minecraftctl
-mkdir /etc/minecraftctl
-cp -r /usr/local/src/minecraftctl/cfg/* /etc/minecraftctl/
-cp -r /usr/local/src/minecraftctl/bin /opt/minecraftctl
-chmod -R 644 /etc/minecraftctl/* /etc/minecraftctl/theme/*
-chmod 755 /etc/minecraftctl /etc/minecraftctl/theme 
-chmod 755 -R /opt/minecraftctl
-# make `sudo` available
-ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
-# register autocomplete
-cat<<EOF>>~/.bashrc
-
-# minecraftctl autocomplete
-_minecraftctl() {
-  COMPREPLY=()
-  local word="\${COMP_WORDS[COMP_CWORD]}"
-  local completions=\$(find /opt/minecraftctl/module/ -name "*.sh" -exec basename {} \; | grep -oe "^[a-zA-Z]*")
-  COMPREPLY=( \$(compgen -W "\$completions" -- "\$word") )
-}
-
-complete -f -F _minecraftctl minecraftctl
-
-EOF
-```
-
-```bash
-#!/bin/bash
+# install minecraftctl
+sudo /usr/local/src/minecraftctl/build/Universal.sh install
 # uninstall minecraftctl software(remove the source code directory, installation directory, and the symbolic link)
-rm -rf /usr/local/bin/minecraftctl /opt/minecraftctl /usr/sbin/minecraftctl
-# remove config file
-rm -rf /etc/minecraftctl
+sudo /usr/local/src/minecraftctl/build/Universal.sh uninstall
 ```
 
 ## 使用说明
@@ -185,20 +159,21 @@ systemctl enable crond
 此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制
 minecraftctl <功能名称> [可能的参数]
 
-        restart 重启服务器
-        backup  备份服务器(如果已经存在实例，就会进行紧急备份)
-        start   启动服务器
-        QQMsg   服务器接收QQ消息
-        stop [理由]
-                关闭服务器
-        join    此功能用于连接后台
-        edit [cfg|ser|op|wh|sp]
-                编辑文档功能
-        view    打开一个多会话的页面，使得后台终端不再处于独占模式(beta)
-        --h help
-                此功能用于获取帮助文档
-        say <要发送的消息> [要模拟的ID] 
-                向服务器发送消息
+  backup  	备份服务器存档（如果服务器正在运行，则进行紧急备份）
+  download
+		分析传入的 URL 并尝试使用找到的最合适的下载方法
+  edit  	编辑 minecraftctl 和 minecraft 相关文件
+  help  	获取这个帮助菜单
+  install  	在 Linux 上自动安装Minecraft服务端
+  join  	连接服务器后台控制台
+  listen  	听取传入的信息并采取适当的行动
+  QQMsg  	获取QQ群消息
+  restart  	重启 Minecraft 服务端
+  say  		向游戏内发送消息
+  start  	启动 Minecraft 服务端
+  stop  	停止 Minecraft 服务端
+  view  	[测试中]打开一个视图，可以查看服务器的状态的同时操作终端
+[hostname@username ~]$
 ```
 
 ## 相关仓库

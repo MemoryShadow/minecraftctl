@@ -1,0 +1,16 @@
+#!/bin/bash
+export PackageType='deb,rpm'
+export Version='1.2.0'
+export Package='minecraftctl'
+export Section='admin'
+export Priority='extra'
+export Essential='no'
+export Architecture='amd64,i386'
+export Depends='sudo,bash,screen,vim,aria2,curl,wget,tar,zip,unzip'
+export Suggests='whiptail|dialog'
+export InstalledSize=512
+export Maintainer="MemoryShadow"
+export MaintainerEmail="memoryshadow@outlook.com"
+export Homepage="https://github.com/MemoryShadow/minecraftctl"
+export Description="Minecraft Server control script"
+export License="GPLv3.0"
