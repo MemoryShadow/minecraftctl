@@ -19,45 +19,48 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  # build:
+  build:
   #   # The type of runner that the job will run on
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
   #   # Steps represent a sequence of tasks that will be executed as part of the job
-  #   steps:
+    steps:
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #     - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
   #     # 由于此处没有Tag, 所以Tag从配置文件中读取
-  #     - name: Init
-  #       id: init
-  #       run: |
-  #         git log --pretty=format:"%s" -1>CHANGELOG.md
-  #         echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
-  #         echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+      - name: Init
+        id: init
+        run: |
+          source build/info
+          git log --pretty=format:"%s" -1>CHANGELOG.md
+          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+          echo ${Version}
+          tag=${Version}
+          echo ${GITHUB_REF}
+          bash build/master.sh
 
   #     # 构建deb包 
-  #     - name: Build-deb
-  #       if: startsWith(github.ref, 'refs/tags/')
-  #       run: |
-  #           ls -lab
-  #           # echo ${{ steps.init.outputs.TAG }}
-  #           # echo ${{ steps.init.outputs.VERSION }}
-  #           work_path=`pwd`
-  #           tag=`grep Version deb/DEBIAN/control | sed 's/Version: //g'`
-  #           #tag=${GITHUB_REF/refs\/tags\//}
-  #           echo ${tag}
-  #           docker run -itd -v ${work_path}:${work_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
-  #           docker exec -t ubuntuInstance mkdir -p ${work_path}/deb/usr/sbin ${work_path}/deb/{opt,etc}
-  #           docker exec -t ubuntuInstance cp -r ${work_path}/bin ${work_path}/deb/opt/minecraftctl
-  #           docker exec -t ubuntuInstance cp -r ${work_path}/bin/minecraftctl ${work_path}/deb/usr/sbin/
-  #           docker exec -t ubuntuInstance cp -r ${work_path}/cfg ${work_path}/deb/etc/minecraftctl
-  #           docker exec -t ubuntuInstance chmod 644 -R ${work_path}/deb/etc/minecraftctl/*
-  #           docker exec -t ubuntuInstance chmod 755 ${work_path}/deb/etc/minecraftctl ${work_path}/deb/etc/minecraftctl/theme ${work_path}/deb/usr/sbin/minecraftctl
-  #           docker exec -t ubuntuInstance chmod 755 -R ${work_path}/deb/opt/minecraftctl ${work_path}/deb/DEBIAN
-  #           docker exec -t ubuntuInstance dpkg -b ${work_path}/deb ${work_path}/minecraftctl_${tag//v/}_x86_64.deb
-  #           docker kill -s KILL ubuntuInstance
-  #           docker rm ubuntuInstance
+      - name: Build-deb
+        run: |
+            ls -lab
+            echo ${{ steps.init.outputs.TAG }}
+            echo ${{ steps.init.outputs.VERSION }}
+            work_path=`pwd`
+            #tag=${GITHUB_REF/refs\/tags\//}
+            echo ${tag}
+            docker run -itd -v ${work_path}:${work_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
+            docker exec -t ubuntuInstance mkdir -p ${work_path}/deb/usr/sbin ${work_path}/deb/{opt,etc}
+            docker exec -t ubuntuInstance cp -r ${work_path}/bin ${work_path}/deb/opt/minecraftctl
+            docker exec -t ubuntuInstance cp -r ${work_path}/bin/minecraftctl ${work_path}/deb/usr/sbin/
+            docker exec -t ubuntuInstance cp -r ${work_path}/cfg ${work_path}/deb/etc/minecraftctl
+            docker exec -t ubuntuInstance chmod 644 -R ${work_path}/deb/etc/minecraftctl/*
+            docker exec -t ubuntuInstance chmod 755 ${work_path}/deb/etc/minecraftctl ${work_path}/deb/etc/minecraftctl/theme ${work_path}/deb/usr/sbin/minecraftctl
+            docker exec -t ubuntuInstance chmod 755 -R ${work_path}/deb/opt/minecraftctl ${work_path}/deb/DEBIAN
+            docker exec -t ubuntuInstance dpkg -b ${work_path}/deb ${work_path}/minecraftctl_${tag//v/}_x86_64.deb
+            docker kill -s KILL ubuntuInstance
+            docker rm ubuntuInstance
 
   #     # 构建rpm包
   #     - name: Build-rpm
