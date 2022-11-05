@@ -120,15 +120,15 @@ jobs:
         run: |
           source build/info
           ls -lab packages
-          dpkg -i packages/minecraftctl_${Version}_amd64.deb
+          sudo dpkg -i packages/minecraftctl_${Version}_amd64.deb
           minecraftctl help
 
-      - name: Init
+      # 说实话这个开销怕是会有点高, 不过先开着看
+      - name: Download Minecraft Server
         run: |
           minecraftctl install -h
           mkdir -p MCServer; cd MCServer
           minecraftctl install -i mohist -c -v 1.16.5
-
 
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
