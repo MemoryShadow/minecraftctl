@@ -27,8 +27,8 @@ EOF
 
 done
 
-for Arch in ${Architecture[@]}; do
-  mkdir -p ${MePath}/rpm/${Arch}
+for Arch in ${Architecture_T[@]}; do
+  mkdir -p ${MePath}/rpm/${Arch}/SPECS
     cat<<EOF>"${MePath}/rpm/${Arch}/SPECS/minecraftctl.spec"
  #
  # spec file for package ${Package}

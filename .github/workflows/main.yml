@@ -34,11 +34,12 @@ jobs:
         run: |
           source build/info
           git log --pretty=format:"%s" -1>CHANGELOG.md
-          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
-          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
-          echo ${Version}
+          cat CHANGELOG.md
+          # echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+          # echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+          echo "Version: ${Version}"
           tag=${Version}
-          echo ${GITHUB_REF}
+          echo "GITHUB_REF: ${GITHUB_REF}"
           bash build/master.sh
 
   #     # 构建deb包 
