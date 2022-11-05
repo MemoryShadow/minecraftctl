@@ -88,11 +88,19 @@ jobs:
   #         docker rm centos7Instance
 
       # 上传包以在多个作业中共享
-      - name: Upload package
-        uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3
+        name: upload amd64.deb
         with:
-          name: packages
-          path: packages/
+          name: amd64.deb
+          path: packages/minecraftctl_*_amd64.deb
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v3
+        name: upload i386.deb
+        with:
+          name: i386.deb
+          path: packages/minecraftctl_*i386.deb
+          if-no-files-found: error
       # Releases(这个字段是用于发布的字段)
       # - name: Releases
       #   if: startsWith(github.ref, 'refs/tags/')
@@ -113,7 +121,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: packages
+          name: amd64.deb
           path: packages/
 
       - name: Init
@@ -123,13 +131,19 @@ jobs:
           sudo dpkg -i packages/minecraftctl_${Version}_amd64.deb
           minecraftctl help
 
-      # 说实话这个开销怕是会有点高, 不过先开着看
       - name: Download Minecraft Server
         run: |
           minecraftctl install -h
           mkdir -p MCServer; cd MCServer
           minecraftctl install -i mohist -c -v 1.16.5
 
+  # cleanup:
+  #   runs-on: ubuntu-latest
+  #   needs: Run-Test
+  #   steps:
+  #     - uses: geekyeggo/delete-artifact@v2
+  #       with:
+  #         name: packages
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
 
@@ -137,7 +151,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Setup run environment
-        run: sudo apt-get update && sudo apt-get install -y sudo bash screen vim aria2 curl wget tar zip unzip
+        run: sudo apt-get install -y sudo bash screen vim aria2 curl wget tar zip unzip
 
       - name: Install old-minecraftctl
         run: |
