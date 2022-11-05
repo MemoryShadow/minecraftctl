@@ -125,9 +125,7 @@ jobs:
 
       - uses: actions/checkout@v3
       - name: Run-Test
-        run: |
-          sudo apt-get update && sudo apt-get install -y tree
-          tree
+        run: ls -lab packages
 
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
