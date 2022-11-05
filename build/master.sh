@@ -16,7 +16,7 @@ Section: ${Section}
 Priority: ${Priority}
 Essential: ${Essential}
 Source: ${Package}
-Architecture: ${Architecture}
+Architecture: ${Arch}
 Depends: ${Depends}
 Suggests: ${Suggests}
 Installed-Size: ${InstalledSize}
