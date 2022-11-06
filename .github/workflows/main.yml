@@ -35,7 +35,7 @@ jobs:
           git log --pretty=format:"%s" -1>CHANGELOG.md
           echo "GITHUB_REF: ${GITHUB_REF}"
           mkdir packages
-          bash build/master.sh
+          bash build/prepare.sh
 
   #     # 构建deb包 
       - name: Build deb
@@ -47,24 +47,18 @@ jobs:
             echo ${{ steps.init.outputs.VERSION }}
             pwd_path=`pwd`
             echo "pwd_path: ${pwd_path}"
-            docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
+            # docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --net="host" docker.io/ubuntu:latest /bin/bash
             Architecture_T=(${Architecture//,/ })
             for Arch in ${Architecture_T[@]}; do
               work_path="${pwd_path}/build/deb/${Arch}"
               #tag=${GITHUB_REF/refs\/tags\//}
               echo "work_path: ${work_path}"
-              docker exec -t ubuntuInstance mkdir -p ${work_path}/usr/sbin ${work_path}/{opt,etc}
-              docker exec -t ubuntuInstance cp -r ${pwd_path}/bin ${work_path}/opt/minecraftctl
-              docker exec -t ubuntuInstance cp -r ${pwd_path}/bin/minecraftctl ${work_path}/usr/sbin/
-              docker exec -t ubuntuInstance cp -r ${pwd_path}/cfg ${work_path}/etc/minecraftctl
-              docker exec -t ubuntuInstance chmod 644 -R ${work_path}/etc/minecraftctl/*
-              docker exec -t ubuntuInstance chmod 755 ${work_path}/etc/minecraftctl ${work_path}/etc/minecraftctl/theme ${work_path}/usr/sbin/minecraftctl
-              docker exec -t ubuntuInstance chmod 755 -R ${work_path}/opt/minecraftctl ${work_path}/DEBIAN
-              docker exec -t ubuntuInstance dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${tag//v/}_${Arch}.deb
+              dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${tag//v/}_${Arch}.deb
+              # docker exec -t ubuntuInstance dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${tag//v/}_${Arch}.deb
             done
             ls -lab
-            docker kill -s KILL ubuntuInstance
-            docker rm ubuntuInstance
+            # docker kill -s KILL ubuntuInstance
+            # docker rm ubuntuInstance
 
   #     # 构建rpm包
   #     - name: Build-rpm

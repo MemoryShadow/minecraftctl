@@ -46,18 +46,11 @@
 ```bash
 # 克隆仓库
 git clone https://github.com/MemoryShadow/minecraftctl
-# 进入仓库目录
-cd minecraftctl/deb
-# 创建目录
-mkdir -p ./usr/sbin
-# 将文件内容拷贝至固定目录
-cp -r ../bin ./opt/minecraftctl
-cp ../bin/minecraftctl ./usr/sbin/
-cp -r ../cfg ./etc/minecraftctl
-# 调整权限
-chmod 644 -R ./etc/minecraftctl/*
-chmod 755 ./etc/minecraftctl ./etc/minecraftctl/theme ./usr/sbin/minecraftctl
-chmod 755 -R ./opt/minecraftctl DEBIAN
+# 获取当前构架
+arch=`dpkg --print-architecture`
+# 生成配置包
+minecraftctl/build/prepare.sh
+cd "minecraftctl/build/deb/${Arch}"
 # 打包成为deb
 dpkg -b . ../minecraftctl_1.2.0_amd64.deb
 ```

@@ -1,11 +1,20 @@
 #!/bin/bash
+###
+ # @Date: 2022-11-03 08:53:17
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2022-11-06 11:41:04
+ # @Description: 做构建前的准备, 自动生成构建信息, 将文件复制到构建目录
+ # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
+### 
 # 读取配置信息
 MePath=`dirname $0`
+pwd_path="${MePath}/.."
 source ${MePath}/info
 #*生成配置文件目录与信息
 # 创建目录
 Architecture_T=(${Architecture//,/ })
 for Arch in ${Architecture_T[@]}; do
+  work_path="${pwd_path}/build/deb/${Arch}"
   mkdir -p ${MePath}/deb/${Arch}/DEBIAN
   cp -r ${MePath}/postinst  ${MePath}/deb/${Arch}/DEBIAN/
   cp -r ${MePath}/prerm  ${MePath}/deb/${Arch}/DEBIAN/
@@ -24,6 +33,14 @@ Maintainer: ${Maintainer}[${MaintainerEmail}]
 Homepage: ${Homepage}
 Description: ${Description}
 EOF
+
+mkdir -p ${work_path}/usr/sbin ${work_path}/{opt,etc}
+cp -r ${pwd_path}/bin ${work_path}/opt/minecraftctl
+cp -r ${pwd_path}/bin/minecraftctl ${work_path}/usr/sbin/
+cp -r ${pwd_path}/cfg ${work_path}/etc/minecraftctl
+chmod 644 -R ${work_path}/etc/minecraftctl/*
+chmod 755 ${work_path}/etc/minecraftctl ${work_path}/etc/minecraftctl/theme ${work_path}/usr/sbin/minecraftctl
+chmod 755 -R ${work_path}/opt/minecraftctl ${work_path}/DEBIAN
 
 done
 
