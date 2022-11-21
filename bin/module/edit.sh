@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:55:37
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-23 17:34:13
+ # @LastEditTime: 2022-11-21 21:21:02
  # @Description: 编辑文件
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -82,8 +82,10 @@ function EditServerConfigFile(){
 function helpMenu() {
   GetI18nText Help_module_Introduction "Edit minecraftctl and minecraft related files"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  GetI18nText Help_module_usage "Usage: minecraftctl edit [-m ModuleName] -[s serverfile] [-h[mini]]\n"
-  GetI18nText Help_module_content "  -m,\t--module\t\tSpecify the module name to edit\n  -s,\t--server\t\tSpecifies the server filename to edit, The search order is: server root directory, config"
+  GetI18nText Help_module_usage "Usage: minecraftctl edit [conf] [-m ModuleName] [-s serverfile] [-h[mini]]\n"
+  GetI18nText Help_module_content "  -m,\t--module\tSpecify the module name to edit\n\
+  -s,\t--server\tSpecifies the server filename to edit, The search order is: server root directory, config\n\
+  conf\tcfg, config\tEdit the configuration file in the following order:\n\t\t\t  minecraftctl.conf in the current directory -> minecraftctl.conf in ${GamePath} -> Global configuration file"
   return 0;
 }
 
