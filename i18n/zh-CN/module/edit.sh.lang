@@ -1,3 +1,3 @@
 Help_module_Introduction:编辑 minecraftctl 和 minecraft 相关文件
-Help_module_usage:用法: minecraftctl edit [-m 模块名称] -[s 服务器文件] [-h[mini]]\n
-Help_module_content:  -m,\t--module\t\t指定要编辑的模块名称\n  -s,\t--server\t\t指定要编辑的服务端文件名, 查找顺序是: 服务端根目录, config
+Help_module_usage:用法: minecraftctl edit [conf] [-m 模块名称] [-s 服务器文件] [-h[mini]]\n
+Help_module_content:  -m,\t--module\t指定要编辑的模块名称\n  -s,\t--server\t指定要编辑的服务端文件名, 查找顺序是: 服务端根目录, config\n  conf\tcfg, config\t编辑配置文件,查找的顺序如下:\n\t\t\t  当前目录下的minecraftctl.conf -> ${GamePath}下的minecraftctl.conf -> Global configuration file
