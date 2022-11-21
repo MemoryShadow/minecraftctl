@@ -134,8 +134,8 @@ systemctl enable crond
 # --------------------------------------------------------
 # 每天凌晨的00:10和12:00热备份一次服务器(将会短暂的冻结服务器)
 # 启动此计划后,可以将bukkit.yml(如果您是bukkit系服务端)中的autosave字段设为0，可有效避免储存计划的大量IO导致的崩服
-10 0 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
-0 12 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
+10 0 * * * source /etc/profile;/usr/sbin/minecraftctl backup
+0 12 * * * source /etc/profile;/usr/sbin/minecraftctl backup
 # 每隔15秒写入一次,并要求不发送邮件,避免邮件过多
 */1 * * * * source /etc/profile;sleep 0;/usr/sbin/minecraftctl QQMsg &>/dev/null
 */1 * * * * source /etc/profile;sleep 15;/usr/sbin/minecraftctl QQMsg &>/dev/null
