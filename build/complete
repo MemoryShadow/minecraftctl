@@ -1,0 +1,8 @@
+# minecraftctl autocomplete
+_minecraftctl() {
+  COMPREPLY=()
+  local word="${COMP_WORDS[COMP_CWORD]}"
+  local completions=$(find /opt/minecraftctl/module/ -name "*.sh" -exec basename {} \; | grep -oe "^[a-zA-Z]*")
+  COMPREPLY=( $(compgen -W "$completions" -- "$word") )
+}
+complete -f -F _minecraftctl minecraftctl

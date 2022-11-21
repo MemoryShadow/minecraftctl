@@ -4,3 +4,7 @@ if [ -e /etc/minecraftctl/config ]; then
   cp /etc/minecraftctl/config /etc/minecraftctl/config.bak
   sed -i "s/\\\$/\\\\\$/g" /etc/minecraftctl/config.bak
 fi
+# 如果/usr/sbin/minecraftctl不存在就创建软链
+if [ ! -e /usr/sbin/minecraftctl ]; then
+  ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
+fi

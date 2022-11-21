@@ -20,6 +20,7 @@ Version:	1.2.0
 Release:	1%{?dist}
 Summary:	Minecraft Server control script
 
+
 License:	GPLv3.0
 URL:		https://github.com/MemoryShadow/minecraftctl
 

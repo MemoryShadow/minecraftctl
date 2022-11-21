@@ -1,12 +1,12 @@
+#!/bin/bash
 ###
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 22:51:27
+ # @LastEditTime: 2022-11-21 00:44:43
  # @Description: 
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
-#!/bin/bash
 
 function DLLangFile(){
   # 获取翻译文件列表

@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ -e /opt/minecraftctl ]; then
+  rm -rf /opt/minecraftctl
+fi
+if [ -e /etc/minecraftctl ]; then
+  rm -rf /etc/minecraftctl
+fi
