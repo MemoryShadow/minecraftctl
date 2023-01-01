@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 17:26:58
+ # @LastEditTime: 2023-01-01 17:37:22
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -67,8 +67,8 @@ function Backup() {
     fi
     mv Backup/Backup*.tar.xz ./ 2>/dev/null
     # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
-    if [ ! -z ${BACKUPNAME} ]; then
-      BACKUPNAME="-$BACKUPNAME"
+    if [ ! -z ${BACKUPNAME// /_} ]; then
+      BACKUPNAME="-${BACKUPNAME// /_}"
     fi
     if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
       tar -Jcf "Backup${BACKUPNAME}.tar.xz" Backup/*
