@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 15:20:37
+ # @LastEditTime: 2023-01-01 17:26:58
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -92,7 +92,7 @@ function helpMenu() {
   GetI18nText Help_module_Introduction "Backup the server archive (if the server is running, an emergency backup is made)"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
   GetI18nText Help_module_usage "Usage: minecraftctl backup [-n BackupName] [-h[mini]]\n"
-  GetI18nText Help_module_content "  -n,\t--backupname\tthe name of the backup file\n  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_content "  -n,\t--backupname\tthe name of the backup\n  -h,\t--help\t\tGet this help menu"
   return 0;
 }
 
