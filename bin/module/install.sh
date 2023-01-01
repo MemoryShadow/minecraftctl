@@ -119,7 +119,7 @@ minecraftctl download $DLPara
 
 # 对vanilla做特殊处理，当ITEM为vanilla时，才会自动为此版本安装forge
 if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then 
-  mv server.jar minecraft_server.$VERSION.jar
+  mv vanilla-$VERSION.jar minecraft_server.$VERSION.jar
   mkdir -p ./libraries/net/minecraft/server/$VERSION/
   ln minecraft_server.$VERSION.jar ./libraries/net/minecraft/server/$VERSION/server-$VERSION.jar
   DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i forge -v ${VERSION}`
