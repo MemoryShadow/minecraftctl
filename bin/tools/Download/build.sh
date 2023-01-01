@@ -3,7 +3,7 @@
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 23:51:15
+ # @LastEditTime: 2023-01-01 14:14:37
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -63,24 +63,51 @@ if [ "$VERSION" == "latest" ]; then
   VERSION=`curl -s "https://papermc.io/api/v2/projects/paper"`;VERSION=${VERSION##*,\"};VERSION=${VERSION%%\"*}
 fi
 
-# rm -rf /tmp/buildtools [Debug]
 if [ ! -d /tmp/buildtools ]; then
   mkdir -p /tmp/buildtools/work
 fi
 work_dir=`pwd`
 cd /tmp/buildtools/
 if [ ! -e BuildTools.jar ] ; then
-  minecraftctl download --url=https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
-fi;
+  minecraftctl download --url="https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+fi
 
-DownloadPara=`${InstallPath}/tools/Download/LinkGet.sh -i vanilla -v $VERSION`
-minecraftctl download $DownloadPara -o "work/minecraft_server.$VERSION.jar"
+# 依照此文章进行提前下载: https://www.mcbbs.net/thread-1285303-1-1.html
+# 需要预下载的资源如下: server.jar=>minecraft_server.$VERSION.jar, Maven-3.6.0(并修改<mirrors>字段), builddata.git, bukkit.git, craftbukkit.git, spigot.git
+
+if [ ! -d work ]; then mkdir -p work; fi
+if [ ! -e "work/minecraft_server.$VERSION.jar" ] ; then
+  DownloadPara=`${InstallPath}/tools/Download/LinkGet.sh -i vanilla -v $VERSION`
+  minecraftctl download $DownloadPara -o "work/minecraft_server.$VERSION.jar"
+fi
+
+if [ ! -d "apache-maven-3.6.0" ]; then 
+  minecraftctl download --url="https://static.spigotmc.org/maven/apache-maven-3.6.0-bin.zip"
+  unzip apache-maven-3.6.0-bin.zip; rm apache-maven-3.6.0-bin.zip;
+fi
+# 修改mirrors字段
+grep 'aliyun' apache-maven-3.6.0/conf/settings.xml
+if [ "$?" == "1" ]; then
+  sed -i 's/<mirrors>/<mirrors>\
+    <mirror>\
+      <id>nexus\-aliyun<\/id>\
+      <name>Nexus aliyun<\/name>\
+      <url>http:\/\/maven.aliyun.com\/nexus\/content\/groups\/public\/<\/url>\
+      <mirrorOf>central<\/mirrorOf>\
+    <\/mirror>/' apache-maven-3.6.0/conf/settings.xml
+fi
+if [ ! -d BuildData ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/builddata.git BuildData; fi;
+if [ ! -d Bukkit ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/bukkit.git Bukkit; fi;
+if [ ! -d CraftBukkit ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git CraftBukkit; fi;
+if [ ! -d Spigot ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/spigot.git Spigot; fi;
+
 # 检测java版本
 JvmPath=`${InstallPath}/tools/JvmCheck.sh -a build -v $VERSION`
-# 构建(构建要求必须由完全符合的jvm版本运行,不允许"勉强")
+# 构建(构建要求必须由完全符合的jvm版本运行,不允许"勉强". 以免因为版本不符出现偏差)
 if [ $? == 0 ]; then
-  $JvmPath -jar BuildTools.jar -rev $VERSION
-  mv /tmp/buildtools/spigot-$VERSION.jar $work_dir/
+  $JvmPath -jar BuildTools.jar -rev $VERSION --compile ${COMPILE}
+  mv /tmp/buildtools/${COMPILE}-$VERSION.jar $work_dir/
+  exit 0
 else
   exit 1
 fi;

@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 21:00:04
+ # @LastEditTime: 2023-01-01 14:24:26
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -22,8 +22,9 @@ declare -A TaskConfig_default=(
   ['Critical']="1.18.2,1.17,1.0.0"
   ['latest']="1.19"
   ['1.0.0']=8
-  ['1.17']=17
+  ['1.17']=16
   ['1.18.2']=18
+  ['1.19.2']=19
 )
 
 declare -A TaskConfig_build=(

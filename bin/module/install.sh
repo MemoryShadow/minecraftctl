@@ -100,7 +100,11 @@ if [[ -z "${ITEM}" || -z ${AllowDownloadItems[$ITEM]} && -z ${AllowBuildItems[$I
 
 # 检查ITEM是否在AllowDownloadItems中
 # 如果不在, 就说明是需要自己构建的项目
-if [ -z "${AllowDownloadItems[$ITEM]}" ]; then GetI18nText Error_Not_Supported_item "This entry needs to be built, but the build tool also needs to be tested\n" > /dev/stderr; helpMenu > /dev/stderr; exit 127; fi
+if [ -z "${AllowDownloadItems[$ITEM]}" ]; then 
+  # 调用构建工具
+  ${InstallPath}/tools/Download/build.sh -v ${VERSION} -c ${ITEM}
+  exit $?
+fi
 
 # 当版本为latest时,尝试获取最新版本号
 if [[ "${VERSION}" == "latest" ]]; then
