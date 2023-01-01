@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 21:45:43
+ # @LastEditTime: 2023-01-01 14:53:03
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -109,6 +109,8 @@ fi
 
 # 根据指定目标下载对应的项目
 DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i "${ITEM}" -v "${VERSION}"`
+MainJAR="${ITEM}-${VERSION}"
+ServerCore="${ITEM}"
 echo $DLPara
 
 if [ ${ITEM} != "authlib-injector" ]; then
@@ -133,6 +135,9 @@ if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then
   unset DLPara
   # 回过头来检查一次日志，如果有下载错误的苦就使用加速进行下载修补，
   rm forge-$VERSION.jar forge-$VERSION.jar.log
+  # 更新入口JAR的名字
+  MainJAR=`ls forge-$VERSION-*.jar`; MainJAR=${MainJAR%.*};
+  ServerCore="forge"
 fi
 
 # 安装authlib-injector
@@ -151,8 +156,8 @@ if [ ${CONFIG} == true ]; then
   cat<<EOF>minecraftctl.conf
 export ScreenName='Minecraft[${VERSION}] Java'
 export JvmPath='${JvmPath}'
-export MainJAR='${ITEM}-${VERSION}'
-export ServerCore='${ITEM}'
+export MainJAR='${MainJAR}'
+export ServerCore='${ServerCore}'
 EOF
   if [ ${AUTHLIBINJECTOR} == true ]; then 
     AIVer=`ls authlib-injector*`;AIVer=${AIVer##*-};AIVer=${AIVer%.*};
