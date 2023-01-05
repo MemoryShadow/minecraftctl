@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 17:37:22
+ # @LastEditTime: 2023-01-05 18:37:27
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -130,6 +130,9 @@ date
 Info_AboutStartBacking=`GetI18nText Info_AboutStartBacking "About to start backing up the server"`
 echo "${Info_AboutStartBacking}"
 mkdir -p "Backup/Config"
-minecraftctl say -m "${Info_AboutStartBacking}"
-cmd2server 'save-all flush'
+ExistServerExample
+if [ $? -eq 0 ]; then
+  minecraftctl say -m "${Info_AboutStartBacking}"
+  cmd2server 'save-all flush'
+fi
 Backup
