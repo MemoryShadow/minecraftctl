@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:28:36
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-25 14:25:08
+ # @LastEditTime: 2023-01-07 12:32:07
  # @Description: 停止服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -53,7 +53,7 @@ if [ $? -ne 0 ]; then
 fi
 # 向服务器中发出提示
 if [ "$1" != "" ]; then
-  ToServerMsg=`GetI18nText Info_Server_Close_Prompt_Reason "The server is about to shut down due to ${2}, please be prepared" ${2}`
+  ToServerMsg=`GetI18nText Info_Server_Close_Prompt_Reason "The server is about to shut down due to %s, please be prepared" ${1}`
 else
   ToServerMsg=`GetI18nText Info_Server_Close_Prompt "The server will be shut down soon, please be prepared."`
 fi
