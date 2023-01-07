@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-07 15:32:33
+ # @LastEditTime: 2023-01-07 15:43:53
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -18,7 +18,7 @@ function InitServerInfo() {
   BackupDir="Backup"
   # 配置文件备份目录
   BackupConfigDir="$BackupDir/Config"
-  if [ -z "$BACKUPNAME" ]; then
+  if [[ -z "$BACKUPNAME" || "$BACKUPNAME" == "(def)" ]]; then
     # 备份名称
     BackupName="(def)"
     # 备份文件名
@@ -190,16 +190,27 @@ function BackupList() {
   return 0;
 }
 
+# 删除选中的服务器备份
+function Remove() {
+  if [ -e "${BackupFileName}" ]; then
+    rm -f "${BackupFileName}"
+    BackupList
+    return 0;
+  else
+    return 1;
+  fi
+}
+
 #* show this help menu
 function helpMenu() {
   GetI18nText Help_module_Introduction "Back up or restore server archives"
   if [[ ! -z $1 && "$1" == "mini" ]]; then return 0; fi
-  GetI18nText Help_module_usage "Usage: minecraftctl backup [-n BackupName] [-h[mini]|r|l]\n"
-  GetI18nText Help_module_content "  -n,\t--backupname\tthe name of the backup\n  -r,\t--recover\tChange mode to restore archive mode (service process will be restarted)\n  -l,\t--list\t\tList the backups that can be restored\n  -h,\t--help\t\tGet this help menu"
+  GetI18nText Help_module_usage "Usage: minecraftctl backup [-n BackupName] [-h[mini]|r|l] [--rm]\n"
+  GetI18nText Help_module_content "  -n,\t--backupname\tthe name of the backup\n  -r,\t--recover\tChange mode to restore archive mode (service process will be restarted)\n  -l,\t--list\t\tList the backups that can be restored\n  \t--rm\t\tDeletes the specified server backup\n  -h,\t--help\t\tGet this help menu"
   return 0;
 }
 
-ARGS=`getopt -o n:lrh:: -l name:,list,recover,help:: -- "$@"`
+ARGS=`getopt -o n:lrh:: -l name:,rm,list,recover,help:: -- "$@"`
 if [ $? != 0 ]; then
   helpMenu > /dev/stderr;exit 1;
 fi
@@ -224,6 +235,10 @@ do
       ;;
     -r|--recover)
       MODE="Recover"
+      shift
+      ;;
+    --rm)
+      MODE="Remove"
       shift
       ;;
     --)
