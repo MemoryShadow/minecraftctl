@@ -1,7 +1,12 @@
-Help_module_Introduction:备份服务器存档（如果服务器正在运行，则进行紧急备份）
-Help_module_usage:用法: minecraftctl backup [-n 备份文件名称] [-h[mini]]\n
-Help_module_content:  -n,\t--backupname\t备份文件的名称\n  -h,\t--help\t\t获取此帮助菜单
-Info_BackupFinish_archiveing:备份完成，正在归档(归档期间可以放后台自己跑)...
+Help_module_Introduction:备份或恢复服务器存档
+Help_module_usage:用法: minecraftctl backup [-n 备份名称] [-h[mini]|r|l] [--rm]\n
+Help_module_content:  -n,\t--backupname\t指定备份的名称\n  -r,\t--recover\t转变模式为恢复存档模式(会重启服务进程)\n  -l,\t--list\t\t列出可恢复的备份列表\n  \t--rm\t\t删除指定的服务器备份\n  -h,\t--help\t\t获取此帮助菜单
+Info_BackupFinish_archiveing:备份完成，正在归档...
 Info_NotFoundBackupDir:没有找到Backup文件夹, 如果你希望备份, 需要创建此文件夹, 如果你希望备份配置文件, 你需要创建Backup/Config文件夹.
+Info_NotFoundBackupFileORDir:没有找到Backup文件夹或没有找到对应的备份, 请输入正确的名称, 名称中存在空格请用双引号包裹.
 Info_CompleteOperation:完成操作
 Info_AboutStartBacking:即将开始备份服务器
+Info_AboutStartRecover:即将开始恢复备份
+Info_unArchiveing:正在解压之前的归档文件...
+Info_RecoverDataing:正在恢复数据...
+Info_BackupListTitle:名字\t创建/修改时间\t文件大小
