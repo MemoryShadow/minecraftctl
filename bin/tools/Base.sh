@@ -3,10 +3,12 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 21:50:44
+ # @LastEditTime: 2023-01-10 00:49:34
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+export TIME_STYLE='+%Y-%m-%d %H:%M:%S'
 
 if [ -e ${GamePath}/minecraftctl.conf ]; then
   source ${GamePath}/minecraftctl.conf

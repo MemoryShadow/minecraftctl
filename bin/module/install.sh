@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 14:53:03
+ # @LastEditTime: 2023-01-09 00:17:32
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -157,6 +157,9 @@ if [ ${CONFIG} == true ]; then
 export ScreenName='Minecraft[${VERSION}] Java'
 export JvmPath='${JvmPath}'
 export MainJAR='${MainJAR}'
+export StartCache='${StartCache}'
+export MaxCache='${MaxCache}'
+export UserExtraParameters="-XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=8 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=true -Daikars.new.flags=true"
 export ServerCore='${ServerCore}'
 EOF
   if [ ${AUTHLIBINJECTOR} == true ]; then 
