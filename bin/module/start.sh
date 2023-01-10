@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:30:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-22 21:04:00
+ # @LastEditTime: 2023-01-08 22:53:02
  # @Description: 启动服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -55,9 +55,9 @@ else
   if [ $? == 2 ]; then 
     ExtraParameters="${ExtraParameters:+ }-Xtune:virtualized -XX:+AggressiveOpts -XX:+UseCompressedOops "
   fi
-  cmd=${cmd:-"${JvmPath:-java}"}" -server ${ExtraParameters}-Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen;"
+  cmd=${cmd:-"${JvmPath:-java}"}" -server ${UserExtraParameters:+${UserExtraParameters} }${ExtraParameters}-Xss512K -Xmx${MaxCache}M -Xms${StartCache}M -jar ${MainJAR}.jar nogui | minecraftctl listen; exit 0;"
   # 创建一个对应名称的会话
   screen -dmS "$ScreenName"
-  cmd2server "$cmd"
+  cmd2server "${cmd}"
   GetI18nText Info_CommandSubmitted "${ScreenName} has submitted the startup command" "${ScreenName}"
 fi
