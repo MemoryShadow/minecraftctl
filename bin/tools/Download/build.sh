@@ -3,7 +3,7 @@
  # @Date: 2022-07-04 09:47:51
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 14:14:37
+ # @LastEditTime: 2023-01-11 16:03:07
  # @Description: Quickly build spigot or craftbukkit server and move to current working directory
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -67,6 +67,7 @@ if [ ! -d /tmp/buildtools ]; then
   mkdir -p /tmp/buildtools/work
 fi
 work_dir=`pwd`
+# 切换到BuildTool目录去进行处理
 cd /tmp/buildtools/
 if [ ! -e BuildTools.jar ] ; then
   minecraftctl download --url="https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
@@ -86,7 +87,7 @@ if [ ! -d "apache-maven-3.6.0" ]; then
   unzip apache-maven-3.6.0-bin.zip; rm apache-maven-3.6.0-bin.zip;
 fi
 # 修改mirrors字段
-grep 'aliyun' apache-maven-3.6.0/conf/settings.xml
+grep -q 'aliyun' apache-maven-3.6.0/conf/settings.xml
 if [ "$?" == "1" ]; then
   sed -i 's/<mirrors>/<mirrors>\
     <mirror>\
@@ -100,7 +101,18 @@ if [ ! -d BuildData ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/
 if [ ! -d Bukkit ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/bukkit.git Bukkit; fi;
 if [ ! -d CraftBukkit ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git CraftBukkit; fi;
 if [ ! -d Spigot ]; then git clone https://hub.spigotmc.org/stash/scm/spigot/spigot.git Spigot; fi;
-
+# 预处理混淆映射表
+# 从BMCL预先获取混淆映射表地址
+minecraftctl download --url=https://bmclapi2.bangbang93.com/version/$VERSION/json -o $VERSION.json
+VerJson=`cat "$VERSION.json"`; rm -rf "$VERSION.json"
+VerJson=${VerJson#*server_mappings\": \{}; VerJson=${VerJson%%\}*};VerJson=(${VerJson//,/ })
+# Hash类型
+HashType=${VerJson[0]//\"/}; HashType=${HashType//:/};
+# Hash值
+HashValue=${VerJson[1]//\"/}
+# 混淆映射表URL
+MappingsURL=${VerJson[5]//\"/}
+minecraftctl download --url="${MappingsURL}" --${HashType} "${HashValue}" -o work/minecraft_server.$VERSION.txt
 # 检测java版本
 JvmPath=`${InstallPath}/tools/JvmCheck.sh -a build -v $VERSION`
 # 构建(构建要求必须由完全符合的jvm版本运行,不允许"勉强". 以免因为版本不符出现偏差)

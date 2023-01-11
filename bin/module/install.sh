@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-09 00:17:32
+ # @LastEditTime: 2023-01-10 12:12:39
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -13,7 +13,7 @@ source $InstallPath/tools/Base.sh
 cd $WorkDir
 
 # List of projects supported for installation
-declare -A AllowDownloadItems=(
+declare -A AllowInstallItems=(
   ['vanilla']='download'
   ['mohist']='download'
   ['paper']='download'
@@ -21,9 +21,6 @@ declare -A AllowDownloadItems=(
   ['cat']='download'
   ['tuinity']='download'
   ['authlib-injector']='download'
-)
-
-declare -A AllowBuildItems=(
   ['spigot']='build'
   ['craftbukkit']='build'
 )
@@ -94,34 +91,30 @@ do
   esac
 done
 
-# 要求ITEM存在, 并且ITEM存在于AllowDownloadItems或者AllowBuildItems中
-# 如果ITEM没有, 或者AllowDownloadItems与AllowBuildItems中都没有, 则报错
-if [[ -z "${ITEM}" || -z ${AllowDownloadItems[$ITEM]} && -z ${AllowBuildItems[$ITEM]} ]]; then GetI18nText Error_Missing_parameters_item "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
-
-# 检查ITEM是否在AllowDownloadItems中
-# 如果不在, 就说明是需要自己构建的项目
-if [ -z "${AllowDownloadItems[$ITEM]}" ]; then 
-  # 调用构建工具
-  ${InstallPath}/tools/Download/build.sh -v ${VERSION} -c ${ITEM}
-  exit $?
-fi
+# 如果ITEM没有, 或者AllowInstallItems没有, 则报错
+if [[ -z "${ITEM}" || -z ${AllowInstallItems[$ITEM]} ]]; then GetI18nText Error_Missing_parameters_item "The parameter does not exist or the item is unknown, please pass in the item to be executed\n" > /dev/stderr; helpMenu > /dev/stderr; exit 1; fi;
 
 # 当版本为latest时,尝试获取最新版本号
 if [[ "${VERSION}" == "latest" ]]; then
   VERSION=`curl -s "https://papermc.io/api/v2/projects/paper"`;VERSION=${VERSION##*,\"};VERSION=${VERSION%%\"*}
 fi
 
-# 根据指定目标下载对应的项目
-DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i "${ITEM}" -v "${VERSION}"`
-MainJAR="${ITEM}-${VERSION}"
-ServerCore="${ITEM}"
-echo $DLPara
-
-if [ ${ITEM} != "authlib-injector" ]; then
-  # 如果不是指定安装authlib-injector, 就自定义输出文件名
-  DLPara="$DLPara --output=${ITEM}-${VERSION}.jar"
+# 检查ITEM是否在AllowDownloadItems中
+# 如果不在, 就说明是需要自己构建的项目
+if [ "${AllowInstallItems[$ITEM]}" == "build" ]; then 
+  # 调用构建工具
+  ${InstallPath}/tools/Download/build.sh -v ${VERSION} -c ${ITEM}
+elif [ "${AllowInstallItems[$ITEM]}" == "download" ]; then 
+  # 根据指定目标下载对应的项目
+  DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i "${ITEM}" -v "${VERSION}"`
+  MainJAR="${ITEM}-${VERSION}"
+  ServerCore="${ITEM}"
+  if [ ${ITEM} != "authlib-injector" ]; then
+    # 如果不是指定安装authlib-injector, 就自定义输出文件名
+    DLPara="$DLPara --output=${ITEM}-${VERSION}.jar"
+  fi
+  minecraftctl download $DLPara
 fi
-minecraftctl download $DLPara
 
 # 对vanilla做特殊处理，当ITEM为vanilla时，才会自动为此版本安装forge
 if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then 

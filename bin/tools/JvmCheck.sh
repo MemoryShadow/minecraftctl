@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-01 14:24:26
+ # @LastEditTime: 2023-01-11 16:00:33
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -19,12 +19,13 @@ declare -A TaskConfig=(
 
 declare -A TaskConfig_default=(
   ['JvmName']=0
-  ['Critical']="1.18.2,1.17,1.0.0"
+  ['Critical']="1.19.2,1.18.2,1.18.1,1.17,1.0.0"
   ['latest']="1.19"
-  ['1.0.0']=8
-  ['1.17']=16
-  ['1.18.2']=18
-  ['1.19.2']=19
+  ['1.0.0']='8'
+  ['1.17']='16,17'
+  ['1.18.1']='17'
+  ['1.18.2']='17,18'
+  ['1.19.2']='17,19'
 )
 
 declare -A TaskConfig_build=(
@@ -216,6 +217,8 @@ JvmList=`find /usr/lib/jvm/ | grep -e "/java$"`
 JvmList=(${JvmList// /})
 # 取得合适的游戏版本
 SelectGameVersion=`GameVersionFind "${ThisTaskConfig[Critical]}" $VERSION`
+# 接受的版本列表
+AllowJvmVerList="${ThisTaskConfig[${SelectGameVersion}]}" > /dev/stderr
 # 获取Jvm版本信息并写入AvailableJvmList中，等待后续的判断
 for Jvm in "${JvmList[@]}"
 do
@@ -223,11 +226,11 @@ do
   JvmInfo=`JvmCheck $Jvm`
   JvmInfo=(${JvmInfo/,/ })
   # 将符合版本条件的Jvm信息保存到AvailableJvmList中(复用)
-  if [ "${JvmInfo[1]}" == "${ThisTaskConfig[${SelectGameVersion}]}" ]; then
+  grep -wq "${JvmInfo[1]}" <<< "${AllowJvmVerList//,/ }"
+  if [ "$?" == "0" ]; then
     AvailableJvmList[${#AvailableJvmList[@]}]="${JvmInfo[0]},${Jvm}"
   fi
 done
-
 if [ ${#AvailableJvmList[@]} == 0 ]; then GetI18nText Info_NoSuitableJavaFound "No suitable Java found, please try to install the Java ${ThisTaskConfig[${SelectGameVersion}]}\n" ${ThisTaskConfig[${SelectGameVersion}]} > /dev/stderr; exit 3; fi
 
 # 判断是否有合适的JVM实现，如果没有，就返回次一级的并返回1
