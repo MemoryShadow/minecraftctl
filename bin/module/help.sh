@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 15:05:22
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-26 14:57:02
+ # @LastEditTime: 2023-01-17 20:15:53
  # @Description: 获取当前软件的帮助菜单
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -14,7 +14,6 @@ source $InstallPath/tools/Base.sh
 function _helpMenu() {
   if [[ ! -z $1 && "$1" == "mini" ]]; then GetI18nText Help_minecraftctl_mini "Get this help menu"; return 0; fi
   GetI18nText Help_minecraftctl "This script is used to control the Minecraft server in the simplest possible way"
-  # echo -e "此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制"
   GetI18nText Help_usage "minecraftctl <module name> [module parameters]\n"
   local ModuleList=`ls ${InstallPath}/module/`
   ModuleList=(${ModuleList// /})

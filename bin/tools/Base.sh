@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-10 00:49:34
+ # @LastEditTime: 2023-01-17 20:18:35
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -37,7 +37,7 @@ declare -A I18n_Cache=()
 # 语言不为default并且在本地存在的情况下才预加载
 if [[ "${Language}" != "default" && -e "/etc/minecraftctl/i18n/${Language}.lang" ]]; then
   # 检查是否是在引导文件中发起的请求
-  echo "$0" | grep -qe "/minecraftctl$"
+  grep -qe "/minecraftctl$" <<< "$0"
   # 如果不是在引导文件里, 就检查查询来源以匹配多语言文件(不存在对应语言的文件就放弃查找, 因为此时主文件应该是已经加载过了)
   if [[ $? != 0 && -e "/etc/minecraftctl/i18n/${Language}/${0/$InstallPath/}.lang" ]]; then 
     while read -r line || [[ -n ${line} ]]; do
@@ -58,7 +58,7 @@ fi
 # 参数3(可选): 需要被格式化输出的内容, 参数会被直接提交给printf进行处理
 function GetI18nText() {
   if [ -z "${I18n_Cache[$1]}" ]; then
-    echo -e "$2";
+    printf "$2\n"; "$@"
     return 1;
   else
     Text=$1
@@ -85,7 +85,7 @@ function GetServerCoreVersion() {
 
 # 检查是否有服务器实例已经存在,如果存在则返回0，否则返回其他值
 function ExistServerExample() {
-  screen -ls | grep -q "${ScreenName//[/\\[}"
+  grep -q "${ScreenName//[/\\[}" < <(screen -ls)
 }
 
 # 向服务器发送命令

@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-10 03:36:03
+ # @LastEditTime: 2023-01-17 20:15:06
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -13,36 +13,60 @@ source $InstallPath/tools/Base.sh
 BACKUPNAME=''
 MODE='Backup'
 
-# 生成归档文件
-#?$1|必须: 指定需要归档的目录
-#?$2|必须: 指定输出文件的文件名
-function ArchiveBackup() {
-    # 如果存在同名归档文件就删除
-    if [ -e "${2}" ]; then
-      rm -rf "${2}";
+# 将提交的文件路径进行翻译, 将备份路径与实际服务器存档路径相互转换(注意, 这不适用于目录本身)
+#?$1|必须: 指定需要翻译的文件路径, 如果它是以${BackupDir}开头的, 会被认为是要从备份目录恢复到服务器目录
+# return:
+#   0: 完成任务
+#   1: 需要指定$1
+function TranslatePath() {
+  # 首先检查$1是否存在或者是否为空
+  if [[ -z "$1" ]]; then return 1; fi
+  # 处理两种方向的翻译
+  if [[ "$1" =~ ^${BackupDir} ]]; then
+    #*将备份文件路径转换为服务器文件路径
+    # 进行替换操作
+    local TargetFile=`sed "s/^${BackupDir}\///" <<< "${1}"`
+    # 预处理LevelEnd, 将/替换为\/, 这样才能在sed中使用
+    local Temp=${LevelEnd//\//\\/}
+    # 替换前缀路径
+    TargetFile=`sed "s/^${BackupLevelName}\/DIM1/${Temp}/" <<< "${TargetFile}"`
+    Temp=${LevelNether//\//\\/}
+    TargetFile=`sed "s/^${BackupLevelName}\/DIM-1/${Temp}/" <<< "${TargetFile}"`
+    # 将UnOfficial路径信息删除, 因为这个目录是备份文件独有的, 其目录结构与服务器目录结构相同
+    TargetFile=`sed "s/^UnOfficial\/\|Config\///" <<< "${TargetFile}"`
+    # 对全局配置特殊处理
+    TargetFile=`sed "s/^config$/\/etc\/minecraftctl\/config/" <<< "${TargetFile}"`
+  else
+    #*将服务器文件路径转换为备份文件路径
+    # 初始化目标路径
+    local TargetFile=${1}
+    # 预处理LevelEnd, 将/替换为\/, 这样才能在sed中使用
+    local Temp=${LevelEnd//\//\\/}
+    # 替换前缀路径
+    TargetFile=`sed "s/^${Temp}/${BackupLevelName}\/DIM1/" <<< "${TargetFile}"`
+    Temp=${LevelNether//\//\\/}
+    TargetFile=`sed "s/^${Temp}/${BackupLevelName}\/DIM-1/" <<< "${TargetFile}"`
+    # 增加UnOfficial路径信息, 这个时候还没被替换的只有额外的元数据了
+    TargetFile=`sed "s/^world_nether\|world_the_end/UnOfficial\/${TargetFile%%\/*}/" <<< "${TargetFile}"`
+    # 特殊的全局配置加入到Config目录下
+    TargetFile=`sed "s/^\/etc\/minecraftctl\///" <<< "${TargetFile}"`
+
+    # 到这里所有路径都被删除的数据肯定就是服务器配置数据了
+    if [ `dirname ${TargetFile}` == '.' ]; then 
+      TargetFile="Config/${TargetFile}"
     fi
-    # 移出备份存档
-    mv Backup/Backup*.tar.xz ./ 2>/dev/null
-    GetHashList "${1}/${BackupLevelName}" 'sha1'
-    GetHashList "${1}/${BackupLevelName}" 'md5'
-    mv sha1.csv "${1}/Hash/"
-    mv md5.csv "${1}/Hash/"
-    # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
-    if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
-      tar -Jcf "${2}" ${1}/*
-    else
-      XZ_OPT="-${BackupCompressLevel}T ${BackupThread}" tar -cJf "${2}" ${1}/* 
-    fi
-    # 删除多余的备份文件
-    rm -rf ${1}/world* ${1}/Config/* ${1}/Hash/*
-    # 移回备份存档
-    mv Backup*.tar.xz "${1}/" 2>/dev/null
+    # 进行统一替换操作
+    TargetFile="${BackupDir}/${TargetFile}"
+  fi
+  unset Temp
+  echo "${TargetFile}"
+  return 0;
 }
 
-# 获取指定文件或文件夹的指定Hash列表csv版本
-#?$1|必须: 指定的目标, 可以为文件夹或者压缩文件, 当为文件夹时会生成此文件夹的hash列表, 当为压缩文件时会提取Hash目录下的内容
+# 打印指定文件或文件夹的指定Hash列表
+#?$1|必须: 指定的目标, 可以为目录或者压缩文件, 当为文件夹时会生成此文件夹的hash列表, 当为压缩文件时会提取Hash目录下的内容
 #?$2|必须: 指定的hash类型, 允许的值为: sha1, sha224, sha256, sha384, sha512, md5
-#?$3|可选: $1为目录时生效, 指定的文件输出目录
+#?$3|可选: $1为目录时生效, 指定一个的目录列表以限制生成的范围, 以逗号分隔, 例如: world,UnOfficial
 # return: 
 #   0: 完成任务
 #   1: $1指定的文件或目录不存在
@@ -53,28 +77,109 @@ function GetHashList(){
   # 当前实例中的Hash类型
   local HashType=''
   # 初始化检测
-  echo "${AllowHashTypes[@]}" | grep -qw "$2"
+  grep -qw "$2" <<< "${AllowHashTypes[@]}"
   if [ "$?" == "0" ]; then HashType="$2"; fi
 
   # 确认目标文件是存在的
   if [ -e "$1" ]; then
     # 如果是文件就提取这个文件
     if [ -f "$1" ]; then
-      tar -C . -xf "$1" "${BackupDir}/Hash/${HashType}.csv" 2>/dev/null
+      mkdir -p /tmp/minecraftctl/backup
+      tar -C /tmp/minecraftctl/backup -xf "$1" "${BackupDir}/Hash/${HashType}.csv" 2>/dev/null
       # 压缩包中找不到此文件
       if [ "$?" == "2" ]; then return 2; fi
+      cat "/tmp/minecraftctl/backup/${BackupDir}/Hash/${HashType}.csv"
+      rm -rf /tmp/minecraftctl/backup
     fi
     # 如果是目录就生成
     if [ -d "$1" ]; then
-      # 计算被备份文件的hsa1信息
-      mkdir -p "${3:-./}"
-      find $1/* -name "*" -type f -exec ${HashType}sum {} \; | sed 's/  /,/' > ${3:+$3/}${HashType}.csv
+      # 计算被备份文件的hash信息
+      # find Backup -iregex "^Backup\/\(world\|UnOfficial\).*" -type f
+      find ${1} -iregex "^${1}\/${3:+\(${3//,/\\|}\)}.*" -type f -exec ${HashType}sum {} \; | sed 's/  /,/'
     fi
     return 0;
   else
     # 指定的文件或目录不存在
     return 1;
   fi
+}
+
+# 清理NewDirStruct产生的文件与目录
+function CleanDirStruct() {
+  # 删除临时的备份文件
+  rm -rf "${BackupDir}/world" ${BackupDir}/Config/* ${BackupDir}/Hash/* "${BackupDir}/UnOfficial"
+}
+
+# 按照InitServerInfo计算后的配置, 将存档以新的格式组织起来, 以便后续的操作
+function NewDirStruct() {
+  # 这里自动创建目录替代运维人员手动了
+  mkdir -p ${BackupDir}/{Config,Hash}
+  # 清理备份缓存
+  CleanDirStruct
+  # 解释: 这里使用cp而不是ln是因为有可能备份时文件正在被修改, 导致Hash不一致.
+  #      至于cp带来的额外IO, 其实在Linux中并不存在, 这里利用了Linux下的一个小技巧:
+  #      在Linux中, cp并不会真正的复制文件, 而是创建一个文件链接指向此时的文件i节点, 直到被拷贝到 文件被修改, 才会分配空间
+  #      所以这里其实也是ln, 只是ln的是文件的i节点, 不会再随着文件的变化而变化, 由于Linux下缓存机制的存在, 文件甚至大概率不会落地就被删除了
+  if [ "${OfficialCore}" == "false" ]; then
+    mkdir -p "${BackupDir}/UnOfficial"
+    # 当第三方核心下界存档存在时
+    if [ -d "${LevelNether/\/DIM-1/}" ]; then
+      # 创建第三方核心目录
+      mkdir -p `TranslatePath "${LevelNether/\/DIM-1/}"`
+      find ${LevelNether/\/DIM-1/} -maxdepth 1 -type f -exec cp {} `TranslatePath "${LevelNether/\/DIM-1/}"` \;
+    fi
+    if [ -d "${LevelEnd/\/DIM1/}" ]; then
+      mkdir -p `TranslatePath "${LevelEnd/\/DIM1/}"`
+      find ${LevelEnd/\/DIM1/} -maxdepth 1 -type f -exec cp {} `TranslatePath "${LevelEnd/\/DIM1/}"` \;
+    fi
+  fi
+  cp -r "${LevelName}" "$BackupDir/${BackupLevelName}"
+  # 备份各个维度的内容
+  if [ ! -d "${BackupLevelNether}" ]; then
+    cp -r "${LevelNether}" "${BackupLevelNether}";
+  fi
+  if [ ! -d "${BackupLevelEnd}" ]; then
+    cp -r "${LevelEnd}" "${BackupLevelEnd}";
+  fi
+
+  # 备份配置文件
+  if [ -d "${BackupConfigDir}" ]; then
+    for item in 'server.properties' 'ops.json' '/etc/minecraftctl/config' 'minecraftctl.conf'; do
+      cp -lf "${item}" `TranslatePath "${item}"`
+    done
+  fi
+  # 迁移跑图区块
+  #if [ -d "Backup/mcaFile" ]; then
+  # 如果文件夹存在，就开始迁移
+  # 迁移主世界区块文件
+  #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
+  #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
+  #fi
+  return 0;
+}
+
+# 为备份目录生成归档文件
+#?$1|必须: 指定需要归档的目录
+#?$2|必须: 指定输出文件的文件名
+function ArchiveBackup() {
+    # 如果存在同名归档文件就删除
+    if [ -e "${2}" ]; then
+      rm -rf "${2}";
+    fi
+    # 移出备份存档
+    mv Backup/Backup*.tar.xz ./ 2>/dev/null
+    GetHashList "${1}" 'sha1' "${BackupLevelName},UnOfficial" > "${1}/Hash/sha1.csv"
+    GetHashList "${1}" 'md5' "${BackupLevelName},UnOfficial" > "${1}/Hash/md5.csv"
+    # 将备份好的文件进行压缩(默认使用稳妥的1线程和6的压缩比率)
+    if [[ ${BackupThread} == 1 ]] && [[ ${BackupCompressLevel} == 6 ]]; then 
+      tar -Jcf "${2}" ${1}/*
+    else
+      XZ_OPT="-${BackupCompressLevel}T ${BackupThread}" tar -cJf "${2}" ${1}/* 
+    fi
+    # 移回备份存档
+    mv Backup*.tar.xz "${1}/" 2>/dev/null
+    CleanDirStruct
+    return 0;
 }
 
 function InitServerInfo() {
@@ -103,9 +208,12 @@ function InitServerInfo() {
   # 检查核心
   GetServerCoreVersion
   if [ "$?" == "2" ]; then
-    LevelNether="${LevelName}_nether"
-    LevelEnd="${LevelName}_the_end"
+    OfficialCore=false
+    LevelNether="${LevelName}_nether/DIM-1"
+    LevelEnd="${LevelName}_the_end/DIM1"
   elif [ "$?" == "1" ]; then
+    # 是否为官方模式
+    OfficialCore=true
     # 存档中下界存档位置
     LevelNether="${LevelName}/DIM-1"
     # 存档中末地存档位置
@@ -117,8 +225,6 @@ function InitServerInfo() {
 function Backup() {
   local Info_AboutStartBacking=`GetI18nText Info_AboutStartBacking "About to start backing up the server"`
   echo "${Info_AboutStartBacking}"
-  # 这里自动创建目录替代运维人员手动了
-  mkdir -p ${BackupDir}/{Config,Hash}
   ExistServerExample
   if [ $? -eq 0 ]; then
     minecraftctl say -m "${Info_AboutStartBacking}"
@@ -126,36 +232,8 @@ function Backup() {
   fi
 
   if [ -d "$BackupDir" ]; then
-      # 如果备份数据存在,就将其删除
-    if [ -d "$BackupDir/${BackupLevelName}" ]; then
-      rm -rf "$BackupDir/${BackupLevelName}";
-    fi
-    # 备份各个维度的内容
-    cp -r "${LevelName}" "$BackupDir/${BackupLevelName}"
-    if [ ! -d "${BackupLevelNether}" ]; then
-      cp -r "${LevelNether}" "${BackupLevelNether}";
-    fi
-    if [ ! -d "${BackupLevelEnd}" ]; then
-      cp -r "${LevelEnd}" "${BackupLevelEnd}";
-    fi
-
-    # 备份配置文件
-    if [ -d "${BackupConfigDir}" ]; then
-      cp -lf "server.properties" "${BackupConfigDir}/server.properties"
-      cp -lf "ops.json" "${BackupConfigDir}/ops.json"
-      cp -lf "/etc/minecraftctl/config" "${BackupConfigDir}/config"
-      cp -lf "minecraftctl.conf" "${BackupConfigDir}/minecraftctl.conf"
-    fi
-    # 迁移跑图区块
-    #if [ -d "Backup/mcaFile" ]; then
-    # 如果文件夹存在，就开始迁移
-    # 迁移主世界区块文件
-    #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
-    #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
-    #fi
-
+    NewDirStruct
     date
-
     GetI18nText Info_BackupFinish_archiveing "The backup is complete, archiving (you can put it in the background to run by yourself during archiving)..."
     ArchiveBackup "${BackupDir}" "${BackupFileName}"
   else
@@ -184,34 +262,50 @@ function Recover() {
     fi
     # 在这里检测目标存档是否存在hash(sha1)表, 存在就使用更加轻量的算法进行回档
     GetI18nText Info_CheckArchiveFile "Check archive file..."
-    GetHashList "${BackupFileName}" 'sha1'
+    GetHashList "${BackupFileName}" 'sha1' >  "sha1_.csv"
     if [ "$?" == "0" ]; then
       # 存在sha1文件, 才为服务器现有存档生成sha1表
-      GetHashList "${LevelName}" 'sha1' "./"
-      mv -f "./sha1.csv" "${BackupHashDir}/sha1_.csv";
-      sed -i 's/,Backup\//,/' "${BackupHashDir}/sha1.csv"
+      # 生成现有存档的sha1表
+      NewDirStruct
+      # 生成Hash
+      GetHashList "${BackupDir}" 'sha1' "${BackupLevelName},UnOfficial" > "sha1.csv"
+      CleanDirStruct
+      # 把hash表移动到备份目录进行计算
+      mv -f sha1*.csv "${BackupHashDir}/";
+      # exit 0;
       # 这里使用diff命令进行比较, 并且使用awk进行处理
       local flag=false
       local RecoverList=''
-      # 开始比较存档差异
+      # 开始比较存档差异(为生成补丁包做好准备)
       GetI18nText Info_StartComparingArchiveDifferences "Start comparing archive differences"
-      while read line
-      do
-        flag=true
+      while read line; do
+        # 操作标签
         local Option="${line%\|*}"
-        local TargetFile="${line#*\|}"
-        # 检查文件是针对于谁加的
+        # 备份目的地(这个路径从hash表中拿到)
+        local BackupTargetFile="${line#*\|}"
+        # 官方模式下跳过UnOfficial文件夹
+        if [[ "${OfficialCore}" == "true"  && "${BackupTargetFile}" =~ ^${BackupDir}"/UnOfficial"* ]]; then
+          continue
+        fi
+        flag=true
+        # 等待备份的文件(这里将hash表翻译为服务器中的路径)
+        local TargetFile=`TranslatePath "${BackupTargetFile}"`
+        # 在这里对文件操作进行区分
         if [ "${Option}" == "-" ];then
-          mkdir -p `dirname "${BackupDir}/${TargetFile}"`
-          mv -f "${TargetFile}" "${BackupDir}/${TargetFile}"
+          #*当为删除操作时, 将文件移动到备份目录准备生成补丁包
+          # 提前在备份路径创建好文件夹
+          mkdir -p `dirname "${BackupTargetFile}"`
+          # 从服务器存档提取文件到备份目录
+          mv -f "${TargetFile}" "${BackupTargetFile}"
         fi
         if [ "${Option}" == "+" ];then
-          RecoverList="${RecoverList} ${BackupDir}/${TargetFile}"
+          #*当为添加操作时, 将文件路径写入数组, 准备后续从备份包中提取文件
+          RecoverList="${RecoverList} ${BackupTargetFile}"
         fi
-      done < <(diff -u ""${BackupHashDir}/sha1_.csv"" "${BackupHashDir}/sha1.csv" | awk -F, 'NR>3{sub(/[0-9a-f]*$/, "", $1);if($1 != " ") print $1"|"$2}')
+      done < <(diff -u "${BackupHashDir}/sha1.csv" "${BackupHashDir}/sha1_.csv" | awk -F, 'NR>2{sub(/[0-9a-f]*$/, "", $1);if($1 == "+" || $1 == "-") print $1"|"$2}')
       # 提前删除哈希表缓存避免干扰差异包打包(这里的顺序就是"来源=>目的地"")
-      rm -f "${BackupHashDir}/sha1.csv" "${BackupHashDir}/sha1_.csv"
-      # 这里是检测diff状态, 如果未进入while, 就说明文件相同, 直接弹出即可
+      rm -f "${BackupHashDir}/sha1_.csv" "${BackupHashDir}/sha1.csv"
+      # 这里检测diff状态, 如果从未进入过while, 就说明文件相同, 直接弹出即可
       if [ "${flag}" == "false" ]; then 
         GetI18nText Info_NoNeedRecover "No need to recover, the backup is the same as the current server."
         return 0;
@@ -221,37 +315,46 @@ function Recover() {
       ArchiveBackup "${BackupDir}" "${BackupDir}/Backup-revert.tar.xz"
       # 从配置中解压指定的文件
       tar -C . -xf "${BackupFileName}" ${RecoverList}
+      # hash此时已经用不上了, 可以删掉了
       rm -f "${BackupHashDir}/*"
     else
-      # 删除当前服务器的存档(这里提前删除是避免空间不足)
+      # (完整模式)删除当前服务器的存档(这里提前删除是避免空间不足)
       if [ -d "${LevelName}" ]; then rm -rf "${LevelName}"; fi
-      if [ -d "${LevelNether}" ]; then rm -rf "${LevelNether}"; fi
-      if [ -d "${LevelEnd}" ]; then rm -rf "${LevelEnd}"; fi
+      if [ -d "${BackupLevelName}_nether" ]; then rm -rf "${BackupLevelName}_nether"; fi
+      if [ -d "${BackupLevelName}_the_end" ]; then rm -rf "${BackupLevelName}_the_end"; fi
       GetI18nText Info_unArchiveing "Decompressing the archive..."
       # 解压对应的文件
-      tar -C . -xf "${BackupFileName}" "${BackupDir}/${BackupLevelName}"
+      tar -C . -xf "${BackupFileName}"
+      # 如果有地狱和末地, 将他们移动到UnOfficial目录下, 以兼容旧版本备份程序
+      if [ -d "${BackupDir}/${BackupLevelName}_nether" ]; then
+        mkdir -p "${BackupDir}/UnOfficial"
+        mv -f "${BackupDir}/${BackupLevelName}_nether" "${BackupDir}/UnOfficial/"
+        # 将游戏数据移动到官方目录以支持相互转换
+        if [ -d "${BackupDir}/${BackupLevelName}_nether/DIM-1" ]; then
+          mv -f "${BackupDir}/${BackupLevelName}_nether/DIM-1" "${BackupDir}/${BackupLevelName}/"
+        fi
+      fi
+      if [ -d "${BackupDir}/${BackupLevelName}_the_end" ]; then
+        mkdir -p "${BackupDir}/UnOfficial"
+        mv -f "${BackupDir}/${BackupLevelName}_the_end" "${BackupDir}/UnOfficial/"
+        # 将游戏数据移动到官方目录以支持相互转换
+        if [ -d "${BackupDir}/${BackupLevelName}_the_end/DIM1" ]; then
+          mv -f "${BackupDir}/${BackupLevelName}_the_end/DIM1" "${BackupDir}/${BackupLevelName}/"
+        fi
+      fi
     fi
     date
     # 恢复数据
     GetI18nText Info_RecoverDataing "Recovering data..."
-    if [ ! -d "${BackupDir}/${BackupLevelName}" ]; then mv "${BackupDir}/${BackupLevelName}" "${LevelName}"; fi
-    if [ ! -d "${LevelNether}" ]; then mv "${BackupLevelNether}" "${LevelNether}"; fi
-    if [ ! -d "${LevelEnd}" ]; then mv "${BackupLevelEnd}" "${LevelEnd}"; fi
-    # 还原配置文件
-    if [ -d "${BackupConfigDir}" ]; then
-      if [ -e "${BackupConfigDir}/server.properties" ]; then
-        mv -f "${BackupConfigDir}/server.properties" "server.properties"
-      fi
-      if [ -e "${BackupConfigDir}/ops.json" ]; then
-        mv -f "${BackupConfigDir}/ops.json" "ops.json"
-      fi
-      if [ -e "${BackupConfigDir}/config" ]; then
-        mv -f "${BackupConfigDir}/config" "/etc/minecraftctl/config";
-      fi
-      if [ -e "${BackupConfigDir}/minecraftctl.conf" ]; then
-        mv -f "${BackupConfigDir}/minecraftctl.conf" "minecraftctl.conf"
-      fi
-    fi
+    # 到这里的时候, Backup中已经存放了所有需要恢复的文件, 现在只要把文件复制回去就好了
+    while read Target
+    do
+      DirTarget=`TranslatePath "${Target}"`
+      mkdir -p `dirname "${DirTarget}"`
+      mv -f "${Target}" "${DirTarget}"
+    done < <(GetHashList "${BackupDir}" 'sha1' "${BackupLevelName},UnOfficial" | awk -F, '{print $2}')
+    CleanDirStruct
+    return 0
     # 迁移跑图区块
     #if [ -d "Backup/mcaFile" ]; then
     # 如果文件夹存在，就开始迁移
@@ -259,7 +362,6 @@ function Recover() {
     #if [ ! -d "Backup/mcaFile/master" ]; then mkdir ./Backup/mcaFile/master/ fi;
     #find ./world/region/ -size 12288c -exec mv -f {} ./Backup/mcaFile/master/ \;
     #fi
-    date
   else
     if [ -d "${BackupDir}" ]; then echo "${BackupDir}: YES"; else echo "${BackupDir}: NO"; fi
     if [ -f "${BackupFileName}" ]; then echo "${BackupFileName}: YES"; else echo "${BackupFileName}: NO"; fi

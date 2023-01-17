@@ -3,12 +3,12 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-23 17:34:29
+ # @LastEditTime: 2023-01-17 20:16:45
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 #*在工作切片结束时检查是否已经超时(WorkSecond),如果超时就休眠指定的秒数,如果达成WorkPart超过WorkExceedSecond指定的秒数就不进入休眠直接进入下一轮(因为这意味着几乎没有额外性能损耗)
-# TODO 优化1: 消息按分的片整体发送, 避免频繁echo带来的高额IO开销
+# TODO 优化1: 消息按分的片整体发送, 避免频繁echo带来的高额IO开销(主要是锁竞争)
 # TODO 优化2: 额外的解析功能按异步进行处理，避免堵塞
 
 source $InstallPath/tools/Base.sh
@@ -72,20 +72,20 @@ do
   fi
   # 在这里处理额外的显示
   # 去除颜色信息, 方便后续解析信息
-  line_str=`echo "$line" | sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' | sed 's/[[:cntrl:]]//g'`
+  line_str=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' | sed 's/[[:cntrl:]]//g' <<< "$line"`
   # 检查是否为玩家说话，如果是，就做处理(这里只匹配是为了不损坏原始消息)
-  echo "$line_str" | grep -P '^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <[0-9a-zA-Z ]*> .*$'
+  grep -P '^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <[0-9a-zA-Z ]*> .*$' <<< "$line_str"
   if [ $? -eq 0 ]; then
     echo "[Debug@Listen] 是一条玩家消息" > /dev/stderr
     # 删去无用的信息
-    str=`echo "$line_str" | sed -E 's/^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <//'`
+    str=`sed -E 's/^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <//' <<< "$line_str"`
     # 取出玩家名和玩家说的话
     echo "[Debug@Listen] 取出玩家名和玩家说的话: $str" > /dev/stderr
     PlayerName="${str%%\>*}"
     PlayerMessage="${str#*> }"
     echo "[Debug@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
     # 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
-    echo "$PlayerMessage" | grep -qe '^!!qq'
+    grep -qe '^!!qq' <<< "$PlayerMessage"
     if [ $? -eq 0 ]; then
       echo -e "\e[1;35m玩家 \e[1;34m${PlayerName} \e[1;35m试图向QQ群发送: \e[1;32m${PlayerMessage#*\!\!qq }\e[0m"
     fi
