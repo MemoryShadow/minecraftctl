@@ -33,7 +33,7 @@
 此脚本用于帮助运维人员减少重复的操作，帮助他们更加轻松的工作
 
 [![GitHub](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE "查看协议")
-[![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/AutoReleases.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/AutoReleases.yml)
+[![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/AutoReleases.yml)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 [![GitHub release (latest by date)](https://img.shields.io/github/downloads/MemoryShadow/minecraftctl/latest/total)](https://github.com/MemoryShadow/minecraftctl/releases/latest)
 
@@ -41,45 +41,37 @@
 
 ### deb
 
+> 注意, 此条目自[此提交](https://github.com/MemoryShadow/minecraftctl/tree/866f1a3ca19c6b68545fbd4561686a61a69a365d "点击前往")起开始由github workflows实时构建, 您可以直接前往[Actions](https://github.com/MemoryShadow/minecraftctl/actions "点击前往")页面下载
+
 ```bash
 # 克隆仓库
-git clone https://github.com/MemoryShadow/minecraftctl
-# 进入仓库目录
-cd minecraftctl/deb
-# 创建目录
-mkdir -p ./usr/sbin
-# 将文件内容拷贝至固定目录
-cp -r ../bin ./opt/minecraftctl
-cp ../bin/minecraftctl ./usr/sbin/
-cp -r ../cfg ./etc/minecraftctl
-# 调整权限
-chmod 644 -R ./etc/minecraftctl/*
-chmod 755 ./etc/minecraftctl ./etc/minecraftctl/theme ./usr/sbin/minecraftctl
-chmod 755 -R ./opt/minecraftctl DEBIAN
+git clone https://github.com/MemoryShadow/minecraftctl --depth 1
+# 获取当前构架
+arch=`dpkg --print-architecture`
+# 生成配置包
+minecraftctl/build/prepare.sh
+cd "minecraftctl/build/deb/${Arch}"
 # 打包成为deb
-dpkg -b . ../minecraftctl_1.2.0_amd64.deb
+dpkg -b . ../minecraftctl_${Arch}.deb
 ```
 
 ### rpm
 
-> 目前此条目可能存在问题，如果失败请尝试使用[Linux通用安装](#linux通用安装)
+> 注意, 此条目自[此提交](https://github.com/MemoryShadow/minecraftctl/commit/c8101fbc944b33d2348ec06468efcf1a7b0f5a72 "点击前往")起开始由github workflows实时构建, 您可以直接前往[Actions](https://github.com/MemoryShadow/minecraftctl/actions "点击前往")页面下载
 
 ```bash
 # 克隆仓库
-git clone https://github.com/MemoryShadow/minecraftctl
+git clone https://github.com/MemoryShadow/minecraftctl --depth 1
 # 安装打包工具
 yum install rpmdevtools
 # 初始化工作目录
-mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-# 也可以使用下面这句,会出现一次报错,实际上已经初始化好了
-# rpmbuild minecraftctl.spec
-cd minecraftctl
-# 将资源拷贝到用户目录下
-cp -r ./bin ~/rpmbuild/
-cp -r ./cfg ~/rpmbuild/
-cp ./rpm/SPECS/minecraftctl.spec ~/rpmbuild/SPECS/
+minecraftctl/build/prepare.sh
+cp -r minecraftctl/build/rpm ~/rpmbuild
+rpmdev-setuptree
+arch=`arch`
 # 运行构建
-rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/minecraftctl.spec
+rpmbuild -bb --target ${Arch} ~/rpmbuild/SPECS/minecraftctl.spec
+# 文件在~/rpmbuild/RPMS目录下
 ```
 
 ## 安装
@@ -104,7 +96,7 @@ sudo rpm -i minecraftctl*.rpm
 
 ### Linux通用安装
 
-`注意: 使用此方案将会导致您失去包管理器的管理，但您能以最快的速度体验到最新的支持(相当于alpha版本)`
+`注意: 使用此方案将会导致您无法使用包管理器管理此程序，但您能以最快的速度体验到最新的支持(相当于alpha版本)`
 
 `注意: 使用通用安装时请保持root身份`
 
@@ -112,24 +104,12 @@ sudo rpm -i minecraftctl*.rpm
 
 ```bash
 #!/bin/bash
-# install minecraftctl
+# Clone the repository from Github
 git clone --depth 1 -b master https://github.com/MemoryShadow/minecraftctl.git /usr/local/src/minecraftctl
-mkdir /etc/minecraftctl
-cp -r /usr/local/src/minecraftctl/cfg/* /etc/minecraftctl/
-cp -r /usr/local/src/minecraftctl/bin /opt/minecraftctl
-chmod -R 644 /etc/minecraftctl/* /etc/minecraftctl/theme/*
-chmod 755 /etc/minecraftctl /etc/minecraftctl/theme 
-chmod 755 -R /opt/minecraftctl
-# make `sudo` available
-ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
-```
-
-```bash
-#!/bin/bash
+# install minecraftctl
+sudo /usr/local/src/minecraftctl/build/Universal.sh install
 # uninstall minecraftctl software(remove the source code directory, installation directory, and the symbolic link)
-rm -rf /usr/local/bin/minecraftctl /opt/minecraftctl /usr/sbin/minecraftctl
-# remove config file
-rm -rf /etc/minecraftctl
+sudo /usr/local/src/minecraftctl/build/Universal.sh uninstall
 ```
 
 ## 使用说明
@@ -154,13 +134,13 @@ systemctl enable crond
 # --------------------------------------------------------
 # 每天凌晨的00:10和12:00热备份一次服务器(将会短暂的冻结服务器)
 # 启动此计划后,可以将bukkit.yml(如果您是bukkit系服务端)中的autosave字段设为0，可有效避免储存计划的大量IO导致的崩服
-10 0 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
-0 12 * * * /bin/sh /etc/profile;/usr/sbin/minecraftctl backup
+10 0 * * * source /etc/profile;/usr/sbin/minecraftctl backup
+0 12 * * * source /etc/profile;/usr/sbin/minecraftctl backup
 # 每隔15秒写入一次,并要求不发送邮件,避免邮件过多
-*/1 * * * * /bin/sh /etc/profile;sleep 0;/usr/sbin/minecraftctl QQMsg >/dev/null 2>/dev/null
-*/1 * * * * /bin/sh /etc/profile;sleep 15;/usr/sbin/minecraftctl QQMsg >/dev/null 2>/dev/null
-*/1 * * * * /bin/sh /etc/profile;sleep 30;/usr/sbin/minecraftctl QQMsg >/dev/null 2>/dev/null
-*/1 * * * * /bin/sh /etc/profile;sleep 45;/usr/sbin/minecraftctl QQMsg >/dev/null 2>/dev/null
+*/1 * * * * source /etc/profile;sleep 0;/usr/sbin/minecraftctl QQMsg &>/dev/null
+*/1 * * * * source /etc/profile;sleep 15;/usr/sbin/minecraftctl QQMsg &>/dev/null
+*/1 * * * * source /etc/profile;sleep 30;/usr/sbin/minecraftctl QQMsg &>/dev/null
+*/1 * * * * source /etc/profile;sleep 45;/usr/sbin/minecraftctl QQMsg &>/dev/null
 # --------------------------------------------------------
 ```
 
@@ -171,20 +151,21 @@ systemctl enable crond
 此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制
 minecraftctl <功能名称> [可能的参数]
 
-        restart 重启服务器
-        backup  备份服务器(如果已经存在实例，就会进行紧急备份)
-        start   启动服务器
-        QQMsg   服务器接收QQ消息
-        stop [理由]
-                关闭服务器
-        join    此功能用于连接后台
-        edit [cfg|ser|op|wh|sp]
-                编辑文档功能
-        view    打开一个多会话的页面，使得后台终端不再处于独占模式(beta)
-        --h help
-                此功能用于获取帮助文档
-        say <要发送的消息> [要模拟的ID] 
-                向服务器发送消息
+  backup  	备份服务器存档（如果服务器正在运行，则进行紧急备份）
+  download
+		分析传入的 URL 并尝试使用找到的最合适的下载方法
+  edit  	编辑 minecraftctl 和 minecraft 相关文件
+  help  	获取这个帮助菜单
+  install  	在 Linux 上自动安装Minecraft服务端
+  join  	连接服务器后台控制台
+  listen  	听取传入的信息并采取适当的行动
+  QQMsg  	获取QQ群消息
+  restart  	重启 Minecraft 服务端
+  say  		向游戏内发送消息
+  start  	启动 Minecraft 服务端
+  stop  	停止 Minecraft 服务端
+  view  	[测试中]打开一个视图，可以查看服务器的状态的同时操作终端
+[hostname@username ~]$
 ```
 
 ## 相关仓库
