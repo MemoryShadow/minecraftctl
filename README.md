@@ -32,8 +32,9 @@
 
 此脚本用于帮助运维人员减少重复的操作，帮助他们更加轻松的工作
 
-[![GitHub](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE "查看协议")
-[![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/AutoReleases.yml)
+[![GitHub](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE)
+[![language support](https://img.shields.io/badge/language%20support-i18n-success)](https://github.com/MemoryShadow/minecraftctl/tree/i18n)
+[![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 [![GitHub release (latest by date)](https://img.shields.io/github/downloads/MemoryShadow/minecraftctl/latest/total)](https://github.com/MemoryShadow/minecraftctl/releases/latest)
 
@@ -114,7 +115,9 @@ sudo /usr/local/src/minecraftctl/build/Universal.sh uninstall
 
 ## 使用说明
 
-后端代码正在逐渐剥离中，请先暂时联系我注册
+QQ机器人相关后端代码正在逐渐剥离中，请先暂时联系我注册相关信息
+
+您也可以自己实现WebAPI
 
 ### 安装后的部署
 
@@ -151,7 +154,7 @@ systemctl enable crond
 此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制
 minecraftctl <功能名称> [可能的参数]
 
-  backup  	备份服务器存档（如果服务器正在运行，则进行紧急备份）
+  backup	备份或恢复服务器存档
   download
 		分析传入的 URL 并尝试使用找到的最合适的下载方法
   edit  	编辑 minecraftctl 和 minecraft 相关文件
