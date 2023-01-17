@@ -15,7 +15,7 @@ cd $WorkDir
 # 在编辑器中打开指定的文件
 function openEditer() {
   # 检测当前是否在VSCode中打开
-  whereis code | grep -q :\ /
+  grep -q :\ / < <(whereis code)
   if [ $? -eq 0 ]; then
     code $1
   else

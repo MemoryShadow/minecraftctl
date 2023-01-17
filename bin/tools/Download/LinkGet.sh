@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-23 17:35:41
+ # @LastEditTime: 2023-01-17 20:13:48
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -88,7 +88,7 @@ function forge(){
   local build=`curl -s "https://bmclapi2.bangbang93.com/forge/minecraft/${version}"`;
   
   # 将build号作为基准点，查找该条配置
-  local buildID=`echo "${build}" | grep -oP '"build":[0-9]*?,'`
+  local buildID=`grep -oP '"build":[0-9]*?,' <<< "${build}"`
   buildID=(${buildID//,/ })
   # 收集每一行的信息，由于是无序列表，只能逐个查找, 速度比较慢
   local MaxBuildID=0
@@ -101,7 +101,7 @@ function forge(){
   done
   buildID=${MaxBuildID}
   ## 通过buildID查找文件hash
-  local FileHash=`echo "$build" | grep -oP "\"build\":${buildID}.*?\"jar.*?hash\":\"[0-9a-z]*"`; FileHash=${FileHash##*\"}
+  local FileHash=`grep -oP "\"build\":${buildID}.*?\"jar.*?hash\":\"[0-9a-z]*" <<< "$build"`; FileHash=${FileHash##*\"}
   # echo download link
   local URL=`curl -s "https://bmclapi2.bangbang93.com/forge/download/${buildID}"`
   echo "--url=https://files.minecraftforge.net/${URL#*\/} --sha1=${FileHash}"
@@ -143,12 +143,12 @@ function spigot(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/spigot/`
-  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
+  grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"
   if [ "$?" == "1" ]; then 
     return 2;
   else
-    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
-    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    VerInfo=`grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"`
+    local FileName=`grep -oP "file[\"|:]*[0-9a-z-.]*" <<< "$VerInfo"`
     echo "--url=https://serverjars.com/api/fetchJar/spigot/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
     return 0;
   fi
@@ -162,12 +162,12 @@ function bukkit(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/bukkit/`
-  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
+  grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"
   if [ "$?" == "1" ]; then 
     return 2;
   else
-    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
-    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    VerInfo=`grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"`
+    local FileName=`grep -oP "file[\"|:]*[0-9a-z-.]*" <<< "$VerInfo"`
     echo "--url=https://serverjars.com/api/fetchJar/bukkit/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
     return 0;
   fi
@@ -181,12 +181,12 @@ function tuinity(){
     version=`curl -s "https://papermc.io/api/v2/projects/paper"`;version=${version##*,\"};version=${version%%\"*}
   fi
   local VerInfo=`curl -s https://serverjars.com/api/fetchAll/tuinity/`
-  echo $VerInfo | grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*"
+  grep -qoP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"
   if [ "$?" == "1" ]; then 
     return 2;
   else
-    VerInfo=`echo $VerInfo | grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*"`
-    local FileName=`echo "$VerInfo" | grep -oP "file[\"|:]*[0-9a-z-.]*"`
+    VerInfo=`grep -oP "version\":\"$version.*?md5\":\"[0-9a-z]*" <<< "$VerInfo"`
+    local FileName=`grep -oP "file[\"|:]*[0-9a-z-.]*" <<< "$VerInfo"`
     echo "--url=https://serverjars.com/api/fetchJar/tuinity/$version --output=${FileName##*\"} --md5=${VerInfo##*\"}"
     return 0;
   fi
@@ -204,7 +204,7 @@ function cat(){
     return 2;
   else
     local VerInfo=`curl -s https://api.github.com/repos/Luohuayu/CatServer/releases | grep -oP "browser_download_url[\": ]*https://[a-zA-Z0-9/\-.]*"`
-    VerInfo=`echo ${VerInfo// /} | grep -oP "https.*?.jar"`
+    VerInfo=`grep -oP "https.*?.jar" <<< "${VerInfo// /}"`
     VerInfo=(${VerInfo})
     URL="${VerInfo[${versionList[$1]}]}"
     URL=${URL%\",*};URL=${URL%\",*};echo "--url=${URL##*:\"}";

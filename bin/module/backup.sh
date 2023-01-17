@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 18:53:55
+ # @LastEditTime: 2023-01-17 20:15:06
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -36,8 +36,6 @@ function TranslatePath() {
     TargetFile=`sed "s/^UnOfficial\/\|Config\///" <<< "${TargetFile}"`
     # 对全局配置特殊处理
     TargetFile=`sed "s/^config$/\/etc\/minecraftctl\/config/" <<< "${TargetFile}"`
-    unset Temp
-    echo "${TargetFile}"
   else
     #*将服务器文件路径转换为备份文件路径
     # 初始化目标路径
@@ -59,9 +57,9 @@ function TranslatePath() {
     fi
     # 进行统一替换操作
     TargetFile="${BackupDir}/${TargetFile}"
-    unset Temp
-    echo "${TargetFile}"
   fi
+  unset Temp
+  echo "${TargetFile}"
   return 0;
 }
 
@@ -79,7 +77,7 @@ function GetHashList(){
   # 当前实例中的Hash类型
   local HashType=''
   # 初始化检测
-  echo "${AllowHashTypes[@]}" | grep -qw "$2"
+  grep -qw "$2" <<< "${AllowHashTypes[@]}"
   if [ "$?" == "0" ]; then HashType="$2"; fi
 
   # 确认目标文件是存在的
