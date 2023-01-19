@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 20:16:45
+ # @LastEditTime: 2023-01-19 14:40:15
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -72,7 +72,7 @@ do
   fi
   # 在这里处理额外的显示
   # 去除颜色信息, 方便后续解析信息
-  line_str=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' | sed 's/[[:cntrl:]]//g' <<< "$line"`
+  line_str=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${line}" | sed 's/[[:cntrl:]]//g'`
   # 检查是否为玩家说话，如果是，就做处理(这里只匹配是为了不损坏原始消息)
   grep -P '^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <[0-9a-zA-Z ]*> .*$' <<< "$line_str"
   if [ $? -eq 0 ]; then
