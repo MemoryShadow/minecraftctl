@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-21 19:27:30
+ # @LastEditTime: 2023-01-22 23:38:35
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -49,7 +49,7 @@ function Thanks() {
       GetI18nText Thanks_module_BMCLAPI "This high-speed download is partially accelerated by the BMCL project to provide some accelerated support"
     ;;
     GITHUB)
-      GetI18nText Thanks_module_GITHUB "This high-speed download is partially accelerated by 91chi.fun, ghproxy.com, fastgit.org to provide partial acceleration support"
+      GetI18nText Thanks_module_GITHUB "This high-speed download is partially accelerated by ghproxy.com, Cloudflare Workers, fastgit.org to provide partial acceleration support"
     ;;
   esac
   echo "==============================================================================="
@@ -133,12 +133,14 @@ declare -A AllowDownloadMirror=(
 
 # Github mirror list
 GITHUB_def=(
-  "https://hub.fastgit.xyz"
   "https://ghproxy.com/https://github.com"
+  "https://github.rc1844.workers.dev"
+  "https://download.fastgit.org"
 )
 GITHUB_raw=(
   "https://raw.staticdn.net"
   "https://raw.githubusercontents.com"
+  "https://raw.fastgit.org"
   "https://ghproxy.com/https://raw.githubusercontent.com"
 )
 
