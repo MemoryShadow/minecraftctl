@@ -2,7 +2,7 @@ Help_module_Introduction:分析传入的 URL 并尝试使用找到的最合适�
 Help_module_usage:用法: minecraftctl download -u <URL> [-o <输出文件>] [--md5|sha1|sha256=<哈希值>] [-h[mini]]\n
 Help_module_content:  -u,\t--url\t\t等待下载的文件的 URL\n  -o,\t--output\t输出文件的名称\n  -h,\t--help\t\t获取此帮助菜单\n  \t--md5|sha1|sha256\n\t\t\t指定文件下载完成后如何验证哈希值。\n\t\t\t如果有多个标志，则只有最靠近此列表左侧的标志才会生效。
 Thanks_module_BMCLAPI:本次高速下载由BMCL项目加速提供部分加速支持
-Thanks_module_GITHUB:本次高速下载由91chi.fun、ghproxy.com、fastgit.org加速，提供部分加速支持
+Thanks_module_GITHUB:本次高速下载由ghproxy.com、Cloudflare Workers、fastgit.org加速，提供部分加速支持
 Error_Missing_parameters_version:参数不存在，请传入要查询的版本号\n
 Info_NoNeedDownloadFiles:文件 %s 已存在且哈希值正确，无需下载\n
 Info_HashCheckFailed:哈希检查失败，脚本已退出
