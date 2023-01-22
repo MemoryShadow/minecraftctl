@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 08:53:17
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-21 20:16:52
+ # @LastEditTime: 2023-01-22 21:20:57
  # @Description: 做构建前的准备, 自动生成构建信息, 将文件复制到构建目录
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ###
@@ -137,6 +137,7 @@ fi
 %attr(0755, root, root) /opt/minecraftctl/*
 %attr(0644, root, root) %{_sysconfdir}/minecraftctl/*
 %attr(0755, root, root) %{_sysconfdir}/minecraftctl/theme
+%attr(0644, root, root) %{_sysconfdir}/minecraftctl/theme/*
 %attr(0644, root, root) %{_sysconfdir}/profile.d/*
 /usr/sbin/minecraftctl
 

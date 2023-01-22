@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 20:18:35
+ # @LastEditTime: 2023-01-22 23:08:30
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -89,9 +89,20 @@ function ExistServerExample() {
 }
 
 # 向服务器发送命令
+#?参数1: 要发送的命令
+#?参数2: 要发送到的窗口终端(默认值为0)
 function cmd2server() {
   if [ "$1" != "" ]; then
-    screen -x -S "$ScreenName" -p 0 -X stuff "$1\n"
+  # 分批推送, 按照长度分批
+  local BatchNum=499
+  local CmdLen=`awk '{print length($0)}' <<< "${1}"`
+  local CmdBatchNum=$[CmdLen/BatchNum]
+  for((batch=0; batch <= CmdBatchNum; batch++)); do
+    local CmdBatch=`awk "{print substr(\\\$0,${batch}*${BatchNum}+1,(${batch}+1)*${BatchNum})}" <<< "${1}"`
+    screen -x -S "$ScreenName" -p ${2:-0} -X stuff "${CmdBatch}"
+  done
+  unset batch
+  screen -x -S "$ScreenName" -p ${2:-0} -X stuff "\n"
   fi
   return 0
 }
