@@ -152,7 +152,7 @@ jobs:
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
           echo Apt update...
-          docker exec -t ubuntuInstance bash -c "apt-get update>/dev/null; apt-get install -y -q sudo wget openjdk-8-jre-headless>/dev/null; \
+          docker exec -t ubuntuInstance bash -c "apt-get update>/dev/null; apt-get install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null; \
             wget https://adoptopenjdk.jfrog.io/artifactory/deb/pool/main/a/adoptopenjdk-8-openj9-jre/adoptopenjdk-8-openj9-jre_8u292-b10.openj9-0.26.0-3_amd64.deb -o adoptopenjdk-8-openj9-jre.deb; \
             sudo apt install -y ./adoptopenjdk-8-openj9-jre.deb
             rm adoptopenjdk-8-openj9-jre.deb; \
