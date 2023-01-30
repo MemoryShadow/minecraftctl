@@ -216,13 +216,5 @@ jobs:
           minecraftctl install -i vanilla -c -v 1.16.5;
           ls -labh; cat minecraftctl.conf;
 
-      - name: Build Minecraft Server
-        run: |
-          minecraftctl install -h;
-          mkdir -p ~/B_MCServer;
-          cd ~/B_MCServer;
-          minecraftctl install -i spigot -c -v 1.16.5;
-          ls -labh; cat minecraftctl.conf;
-
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
