@@ -159,7 +159,7 @@ jobs:
             apt-get update > /dev/null; \
             apt-get install -y adoptopenjdk-8-openj9-jre openjdk-8-jre-headless > /dev/null; \
             echo minecraftctl installing...; \
-            sudo apt install -y ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb; \
+            sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb; \
             echo minecraftctl installed...;\
             sudo minecraftctl help;"
 
