@@ -152,7 +152,7 @@ jobs:
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
           echo Apt update...
-          docker exec -t ubuntuInstance bash -c "apt-get update>/dev/null; apt-get install -y sudo gnupg>/dev/null; \
+          docker exec -t ubuntuInstance bash -c "env; apt-get update>/dev/null; apt-get install -y sudo gnupg>/dev/null; \
             apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 8AC3B29174885C03; \
             echo 'deb http://adoptopenjdk.jfrog.io/adoptopenjdk/deb focal main' > /etc/apt/sources.list.d/adoptopenjdk.list; \
             apt-get install -y ca-certificates --reinstall > /dev/null; \
