@@ -1,6 +1,6 @@
 ---
 name: 故障反馈 | Bug report
-about: 反馈你遇到的故障| Create a report to help us improve
+about: 反馈你遇到的故障 | Create a report to help us improve
 title: "[BUG]"
 labels: bug
 assignees: MemoryShadow

@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 19:54:57
+ # @LastEditTime: 2023-01-30 14:36:58
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -213,7 +213,7 @@ if [ $VERSION == 'latest' ]; then VERSION=${ThisTaskConfig[latest]}; fi
 if [ ! -d '/usr/lib/jvm/' ]; then GetI18nText Info_NotFoundJVM "Unable to find JVM on the system, if you confirm that JVM is installed, use the ln command to link it to the directory /usr/lib/jvm/" > /dev/stderr; exit 127; fi
 
 # 检查本机java信息
-JvmList=`grep -e "/java$" < <(find /usr/lib/jvm/)`
+JvmList=`find /usr/lib/jvm/ -iregex ".*/bin/java$"`
 JvmList=(${JvmList// /})
 # 取得合适的游戏版本
 SelectGameVersion=`GameVersionFind "${ThisTaskConfig[Critical]}" $VERSION`
