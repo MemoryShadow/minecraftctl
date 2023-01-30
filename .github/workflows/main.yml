@@ -179,13 +179,13 @@ jobs:
       - name: Setup run environment
         run: |
           source build/info
-          sudo apt-get install -y ${Depends//,/ }
+          sudo apt install -y ${Depends//,/ }
           export TZ=Asia/Shanghai;
           export DEBIAN_FRONTEND=noninteractive;
-          apt-get update>/dev/null;
-          apt-get install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null;
+          sudo apt update>/dev/null;
+          sudo apt install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null;
           curl -s https://adoptopenjdk.jfrog.io/artifactory/deb/pool/main/a/adoptopenjdk-8-openj9-jre/adoptopenjdk-8-openj9-jre_8u292-b10.openj9-0.26.0-3_amd64.deb -o ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
-          sudo apt install -y ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
+          sudo sudo apt install -y ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
           rm ~/adoptopenjdk-8-openj9-jre.deb;
 
       - name: Install old-minecraftctl
