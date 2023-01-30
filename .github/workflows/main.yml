@@ -164,8 +164,8 @@ jobs:
       - name: DEB Download Minecraft Server
         run: |
           docker exec -t ubuntuInstance bash -c "minecraftctl install -h; \
-            mkdir -p ${pwd_path}/MCServer; \
-            cd ${pwd_path}/MCServer; minecraftctl install -i vanilla -c -v 1.16.5;"
+            mkdir -p ${pwd_path}/D_MCServer; \
+            cd ${pwd_path}/D_MCServer; minecraftctl install -i vanilla -c -v 1.16.5; ls -labh; cat minecraftctl.conf;"
 
       - name: RPM Init
         run: |
@@ -187,8 +187,7 @@ jobs:
         run: |
           docker exec -t centos7Instance bash -c "minecraftctl install -h; \
             mkdir -p ${pwd_path}/MCServer; \
-            cd ${pwd_path}/MCServer; minecraftctl install -i vanilla -c -v 1.16.5; \
-            ls -lab"
+            cd ${pwd_path}/MCServer; minecraftctl install -i vanilla -c -v 1.16.5; ls -labh; cat minecraftctl.conf;"
 
   Linux-Universal-Installation:
     runs-on: ubuntu-latest
