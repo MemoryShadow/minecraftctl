@@ -211,16 +211,16 @@ jobs:
       - name: Download Minecraft Server
         run: |
           minecraftctl install -h;
-          mkdir -p ${pwd_path}/D_MCServer;
-          cd ${pwd_path}/D_MCServer;
+          mkdir -p ~/D_MCServer;
+          cd ~/D_MCServer;
           minecraftctl install -i vanilla -c -v 1.16.5;
           ls -labh; cat minecraftctl.conf;
 
       - name: Build Minecraft Server
         run: |
           minecraftctl install -h;
-          mkdir -p ${pwd_path}/B_MCServer;
-          cd ${pwd_path}/B_MCServer;
+          mkdir -p ~/B_MCServer;
+          cd ~/B_MCServer;
           minecraftctl install -i spigot -c -v 1.16.5;
           ls -labh; cat minecraftctl.conf;
 
