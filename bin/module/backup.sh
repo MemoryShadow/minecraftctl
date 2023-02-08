@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 20:15:06
+ # @LastEditTime: 2023-02-09 00:06:53
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -249,7 +249,6 @@ function Backup() {
 function Recover() {
   # 记录记录是否需要重新拉起服务
   local RestartServer=false
-
   # 检查备份目录与备份的存档文件是否存在
   if [[ -d "${BackupDir}" && -e "${BackupFileName}" ]]; then
     local Info_AboutStartRecover=`GetI18nText Info_AboutStartRecover "The backup is about to be restored"`
@@ -261,9 +260,15 @@ function Recover() {
       minecraftctl stop "${Info_AboutStartRecover}"
     fi
     # 在这里检测目标存档是否存在hash(sha1)表, 存在就使用更加轻量的算法进行回档
-    GetI18nText Info_CheckArchiveFile "Check archive file..."
-    GetHashList "${BackupFileName}" 'sha1' >  "sha1_.csv"
-    if [ "$?" == "0" ]; then
+    # TODO 在这里检查是否存在${LevelName}文件夹, 如果不存在也认为是完全模式[1](需要修改显示文本->检查恢复环境)
+    local RecoverMode="0"
+    GetI18nText Info_CheckRecEnving "Checking the recovery environment..."
+    if [ ! -d ${LevelName} ]; then RecoverMode="1"; fi;
+    if [ "${RecoverMode}" != "1" ]; then
+      GetHashList "${BackupFileName}" 'sha1' >  "sha1_.csv"
+      RecoverMode="$?"
+    fi
+    if [ "${RecoverMode}" == "0" ]; then
       # 存在sha1文件, 才为服务器现有存档生成sha1表
       # 生成现有存档的sha1表
       NewDirStruct
@@ -272,7 +277,6 @@ function Recover() {
       CleanDirStruct
       # 把hash表移动到备份目录进行计算
       mv -f sha1*.csv "${BackupHashDir}/";
-      # exit 0;
       # 这里使用diff命令进行比较, 并且使用awk进行处理
       local flag=false
       local RecoverList=''
