@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-02-09 00:06:53
+ # @LastEditTime: 2023-02-11 12:11:39
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -259,8 +259,7 @@ function Recover() {
       cmd2server 'save-all flush'
       minecraftctl stop "${Info_AboutStartRecover}"
     fi
-    # 在这里检测目标存档是否存在hash(sha1)表, 存在就使用更加轻量的算法进行回档
-    # TODO 在这里检查是否存在${LevelName}文件夹, 如果不存在也认为是完全模式[1](需要修改显示文本->检查恢复环境)
+    # 在这里检测原始路径是否存在${LevelName}文件夹且目标存档是否存在hash(sha1)表, 存在${LevelName}文件夹并且存在hash表就使用更加轻量的算法进行回档[0]
     local RecoverMode="0"
     GetI18nText Info_CheckRecEnving "Checking the recovery environment..."
     if [ ! -d ${LevelName} ]; then RecoverMode="1"; fi;
