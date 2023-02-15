@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 08:53:17
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-26 00:00:43
+ # @LastEditTime: 2023-02-16 00:24:26
  # @Description: 做构建前的准备, 自动生成构建信息, 将文件复制到构建目录
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ###
@@ -119,7 +119,7 @@ fi
 # Post-installation script                                                     #
 ################################################################################
 EOF
-cat "$pwd_path/build/postinst" | sed 's/#!\/bin\/bash/if [ "$1"=="2" ]; then/' >> "${MePath}/rpm/SPECS/minecraftctl.spec"
+cat "$pwd_path/build/postinst" | sed 's/#!\/bin\/bash/if [ "$1"=="1" ]; then/' >> "${MePath}/rpm/SPECS/minecraftctl.spec"
 cat<<EOF>>"${MePath}/rpm/SPECS/minecraftctl.spec"
 
 fi

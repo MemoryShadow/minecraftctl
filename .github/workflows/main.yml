@@ -155,7 +155,7 @@ jobs:
             echo minecraftctl installing...; \
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb; \
             echo minecraftctl installed...;\
-            sudo minecraftctl help;"
+            sudo minecraftctl help;cat /etc/minecraftctl/config;"
 
       - name: RPM Install
         run: |
@@ -168,7 +168,7 @@ jobs:
           echo yum update...
           docker exec -t centos7Instance bash -c "yum install -y http://mirror.math.princeton.edu/pub/epel/7/x86_64/Packages/a/aria2-1.34.0-5.el7.x86_64.rpm > /dev/null; \
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm; \
-            minecraftctl help;"
+            minecraftctl help;cat /etc/minecraftctl/config;"
 
   Linux-Universal-Installation-and-testing:
     runs-on: ubuntu-latest
