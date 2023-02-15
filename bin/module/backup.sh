@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-02-11 12:11:39
+ # @LastEditTime: 2023-02-15 23:39:47
  # @Description: 备份服务器
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -182,6 +182,7 @@ function ArchiveBackup() {
     return 0;
 }
 
+# 初始化本次实例的配置
 function InitServerInfo() {
   # 备份目录
   BackupDir="Backup"
@@ -225,13 +226,16 @@ function InitServerInfo() {
 function Backup() {
   local Info_AboutStartBacking=`GetI18nText Info_AboutStartBacking "About to start backing up the server"`
   echo "${Info_AboutStartBacking}"
+  # 检查服务器是否正在运行, 如果正在运行就向服务器内发送提示并写入脏页
   ExistServerExample
   if [ $? -eq 0 ]; then
     minecraftctl say -m "${Info_AboutStartBacking}"
     cmd2server 'save-all flush'
   fi
 
+  # 首先检查备份目录是否存在
   if [ -d "$BackupDir" ]; then
+    # 将服务器存档以新的目录结构放置在待备份目录中
     NewDirStruct
     date
     GetI18nText Info_BackupFinish_archiveing "The backup is complete, archiving (you can put it in the background to run by yourself during archiving)..."
