@@ -157,9 +157,9 @@ jobs:
             echo minecraftctl installed...;\
             sudo minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
-            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
-            apt remove -y minecraftctl | grep 'minecraftctl';\
-            mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
+            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak; ls ~\
+            apt remove -y minecraftctl | grep 'minecraftctl'; echo \$?\
+            mkdir /etc/minecraftctl; ls /etc; cp ~/config.bak /etc/minecraftctl/config;\
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl';\
             cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
 
@@ -177,7 +177,7 @@ jobs:
             minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
             sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
-            yum remove -y minecraftctl;\
+            yum remove -y minecraftctl | grep 'minecraftctl' | grep -v '\[#* *\]';\
             mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]';\
             cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
