@@ -157,11 +157,14 @@ jobs:
             echo minecraftctl installed...;\
             sudo minecraftctl help;\
             cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep 'GamePath="${HOME}/Minecraft"';\
-            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > /etc/minecraftctl/config.bak;\
+            cat /etc/minecraftctl/config | grep '^export GamePath="${HOME}/Minecraft"$';\
+            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
+            mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             apt remove -y minecraftctl;\
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb;\
-            cat /etc/minecraftctl/config; ls -lab /etc/minecraftctl/;"
+            cat /etc/minecraftctl/config;\
+            cat /etc/minecraftctl/config | grep '^export ScreenName="Test"$';\
+            ls -lab /etc/minecraftctl/;"
 
       - name: RPM Install and test
         run: |
@@ -176,11 +179,14 @@ jobs:
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm; \
             minecraftctl help;\
             cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep 'GamePath="${HOME}/Minecraft"';\
+            cat /etc/minecraftctl/config | grep '^export GamePath="${HOME}/Minecraft"$';\
+            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
             yum remove -y minecraftctl;\
-            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > /etc/minecraftctl/config.bak;\
+            mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm;\
-            cat /etc/minecraftctl/config; ls -lab /etc/minecraftctl/;"
+            cat /etc/minecraftctl/config;\
+            cat /etc/minecraftctl/config | grep '^export ScreenName="Test"$';\
+            ls -lab /etc/minecraftctl/;"
 
   Linux-Universal-Installation-and-testing:
     runs-on: ubuntu-latest
