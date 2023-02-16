@@ -177,7 +177,7 @@ jobs:
             minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
             sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
-            yum remove -y minecraftctl | grep 'minecraftctl' | grep -v '\[#* *\]';\
+            yum remove -y minecraftctl;\
             mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]';\
             cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
