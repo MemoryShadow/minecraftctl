@@ -151,17 +151,13 @@ jobs:
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
           echo Apt update...
+          # TODO 这里暂时先不测试升级后存档继承的问题. 因为目前只有一个版本
           docker exec -t ubuntuInstance bash -c "apt-get update &> /dev/null; apt-get install -y -q sudo wget tzdata>/dev/null; \
             echo minecraftctl installing...; \
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl'; \
             echo minecraftctl installed...;\
             sudo minecraftctl help;\
-            cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
-            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
-            apt purge -y minecraftctl | grep 'minecraftctl';\
-            mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
-            sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl';\
-            cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
+            cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';"
 
       - name: RPM Install and test
         run: |
