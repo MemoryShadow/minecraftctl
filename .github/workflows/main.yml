@@ -158,7 +158,7 @@ jobs:
             sudo minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
             sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak; ls ~\
-            apt remove -y minecraftctl | grep 'minecraftctl'; echo \$?\
+            apt remove -y minecraftctl; echo \$?\
             mkdir /etc/minecraftctl; ls /etc; cp ~/config.bak /etc/minecraftctl/config;\
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl';\
             cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
