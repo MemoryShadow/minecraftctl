@@ -156,15 +156,12 @@ jobs:
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl'; \
             echo minecraftctl installed...;\
             sudo minecraftctl help;\
-            cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep '^export GamePath="${HOME}\/Minecraft"$';\
-            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
+            cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
+            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
             apt remove -y minecraftctl | grep 'minecraftctl';\
             mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl';\
-            cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep '^export ScreenName="Test"$';\
-            ls -lab /etc/minecraftctl/;"
+            cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
 
       - name: RPM Install and test
         run: |
@@ -178,15 +175,12 @@ jobs:
           docker exec -t centos7Instance bash -c "yum install -y http://mirror.math.princeton.edu/pub/epel/7/x86_64/Packages/a/aria2-1.34.0-5.el7.x86_64.rpm > /dev/null; \
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]'; \
             minecraftctl help;\
-            cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep '^export GamePath="${HOME}/Minecraft"$';\
-            sed '$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
+            cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
+            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
             yum remove -y minecraftctl | grep 'minecraftctl' | grep -v '\[#* *\]';\
             mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
             yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]';\
-            cat /etc/minecraftctl/config;\
-            cat /etc/minecraftctl/config | grep '^export ScreenName="Test"$';\
-            ls -lab /etc/minecraftctl/;"
+            cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
 
   Linux-Universal-Installation-and-testing:
     runs-on: ubuntu-latest
