@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-19 14:40:15
+ # @LastEditTime: 2023-01-24 13:06:13
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -12,6 +12,8 @@
 # TODO 优化2: 额外的解析功能按异步进行处理，避免堵塞
 
 source $InstallPath/tools/Base.sh
+
+# 预先处理字符串, 将可能存在控制字符字符串转为纯文本
 
 #* show this help menu
 function helpMenu() {

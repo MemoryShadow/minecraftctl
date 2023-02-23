@@ -3,12 +3,14 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-21 00:44:43
- # @Description: 
+ # @LastEditTime: 2023-02-09 00:44:49
+ # @Description: minecraftctl引导文件, 负责对组件进行统一的引导和管理
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
 function DLLangFile(){
+  # 创建临时文件夹
+  mkdir -p '/tmp/minecraftctl/'
   # 获取翻译文件列表
   # 先检查本地有没有翻译列表, 没有就下载
   if [ ! -e "/etc/minecraftctl/i18n/lang.list" ]; then
@@ -37,22 +39,22 @@ function DLLangFile(){
   ModuleLanguageFilesIndex=(${ModuleLanguageFilesIndex// / });
   # 遍历数组, 生成下载列表
   for i in ${ModuleLanguageFilesIndex[@]}; do
-    echo -e "${DownloadBaseURL}/${i}\n dir=/etc/minecraftctl/i18n/${Language}\n out=${i}" >> "aria2c_dl.list";
+    echo -e "${DownloadBaseURL}/${i}\n dir=/etc/minecraftctl/i18n/${Language}\n out=${i}" >> "/tmp/minecraftctl/aria2c_dl.list";
   done
   # 下载文件
-  sudo aria2c -x 9 --input-file=aria2c_dl.list
+  sudo aria2c -x 9 --input-file=/tmp/minecraftctl/aria2c_dl.list
   if [ $? != 0 ]; then
     # 删除下载标志
     sudo rm -rf "/etc/minecraftctl/i18n/${Language}.lang.tmp";
     # 删除下载列表
-    rm -rf aria2c_dl.list;
+    rm -rf /tmp/minecraftctl/aria2c_dl.list;
     echo "Download failed!";
     exit 2;
   fi
   # 下载完成, 改变下载标志
   sudo mv "/etc/minecraftctl/i18n/${Language}.lang.tmp" "/etc/minecraftctl/i18n/${Language}.lang";
   # 删除下载列表
-  rm -rf "aria2c_dl.list";
+  rm -rf "/tmp/minecraftctl/aria2c_dl.list";
   echo "=========================================================================";
 }
 
@@ -69,11 +71,12 @@ if [[ ${Language} != "default" && ! -e "/etc/minecraftctl/i18n/${Language}.lang"
 
 export WorkDir=`pwd`
 
-source $InstallPath/tools/Base.sh
+source "${InstallPath}/tools/Base.sh"
 
 if [ -e "$InstallPath/module/$1.sh" ]; then
   module=$1
   shift
+  # 自动转发参数
   exec -a "${module}" "${InstallPath}/module/${module}.sh" "$@"
   exit $?
 else

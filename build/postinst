@@ -3,13 +3,12 @@
 
 # 加载等待升级的配置文件
 source /etc/minecraftctl/config
-# 如果配置文件存在，就加载旧的配置文件
+# 如果配置文件存在，执行升级操作, 加载旧的配置文件
 if [ -e /etc/minecraftctl/config.bak ]; then
   source /etc/minecraftctl/config.bak
   rm /etc/minecraftctl/config
-fi
-# 对旧的配置文件进行兼容性处理(映射)
-cat<<EOF>/etc/minecraftctl/config
+  # 对旧的配置文件进行兼容性处理(映射)
+  cat<<EOF>/etc/minecraftctl/config
 # 游戏文件夹路径
 export GamePath="${GamePath}"
 # 会话名(若在修改时任有服务端在运行，会导致残留进程)
@@ -59,6 +58,7 @@ export WorkExceedSecond=${WorkExceedSecond:-50}
 export WorkPart=${WorkPart:-1000}
 EOF
 
-if [ -e /etc/minecraftctl/config.bak ]; then
-  rm /etc/minecraftctl/config.bak
+  if [ -e /etc/minecraftctl/config.bak ]; then
+    rm /etc/minecraftctl/config.bak
+  fi
 fi
