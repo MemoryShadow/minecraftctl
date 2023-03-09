@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-24 13:06:13
+ # @LastEditTime: 2023-03-09 23:26:04
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -13,7 +13,21 @@
 
 source $InstallPath/tools/Base.sh
 
-# 预先处理字符串, 将可能存在控制字符字符串转为纯文本
+# 建立相互的关系
+
+declare -A EventTypes=(
+  ['INFO']='^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: '
+)
+
+
+declare -A EventINFO=(
+  ['msg']='<[0-9a-zA-Z ]*> .*$'
+  ['login']='[0-9a-zA-Z ]* joined the game$'
+  ['logout']='[0-9a-zA-Z ]* left the game$'
+  ['start']=' ?\([0-9]\.[0-9]*s\)[！!].*["“]/?help["”]'
+  ['stop']='(Stopping server)|(关闭服务器中)'
+)
+
 
 #* show this help menu
 function helpMenu() {
@@ -58,6 +72,14 @@ fi
 WorkPartIndex=${WorkPart}
 # 记录好任务开始时的时间戳
 Timestamp=$((`date '+%s'`))
+# 临时存储数组, 用于暂存每行的内容
+declare -A line_PlainText=(
+  ['original']=''
+  ['prefix']=''
+  ['content']=''
+  ['EventType']=''
+  ['EventTarget']=''
+)
 
 # 循环取读终端中的内容
 while read line
@@ -74,24 +96,30 @@ do
   fi
   # 在这里处理额外的显示
   # 去除颜色信息, 方便后续解析信息
-  line_str=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${line}" | sed 's/[[:cntrl:]]//g'`
-  # 检查是否为玩家说话，如果是，就做处理(这里只匹配是为了不损坏原始消息)
-  grep -P '^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <[0-9a-zA-Z ]*> .*$' <<< "$line_str"
-  if [ $? -eq 0 ]; then
-    echo "[Debug@Listen] 是一条玩家消息" > /dev/stderr
-    # 删去无用的信息
-    str=`sed -E 's/^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: <//' <<< "$line_str"`
-    # 取出玩家名和玩家说的话
-    echo "[Debug@Listen] 取出玩家名和玩家说的话: $str" > /dev/stderr
-    PlayerName="${str%%\>*}"
-    PlayerMessage="${str#*> }"
-    echo "[Debug@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
-    # 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
-    grep -qe '^!!qq' <<< "$PlayerMessage"
+  
+  line_PlainText['original']=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${line}" | sed 's/[[:cntrl:]]//g'`
+  for EventType in "${!EventTypes[@]}"; do
+    grep -qP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"
     if [ $? -eq 0 ]; then
-      echo -e "\e[1;35m玩家 \e[1;34m${PlayerName} \e[1;35m试图向QQ群发送: \e[1;32m${PlayerMessage#*\!\!qq }\e[0m"
+      line_PlainText[EventType]=$EventType
+      # 将Event映射到对应的事件源去作为当前事件供后续处理, EventXXXX->Event
+      temp=`declare -p Event$EventType`
+      eval "${temp/Event${EventType}=/Event=}"
+      unset temp
+
+      # 删去前缀信息
+      line_PlainText['prefix']=`grep -oP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"`
+      line_PlainText['content']=${line_PlainText[original]#*${line_PlainText[prefix]//\]/\\]}}
+      # 将此信息与Event对应的数组进行匹配以得到事件的转发源
+      for EventTarget in "${!Event[@]}"; do
+        grep -qP "${Event[$EventTarget]}" <<< "${line_PlainText[content]}"
+        if [ $? -eq 0 ]; then
+          # 将消息异步发送给对应的数据
+          "${InstallPath}/event/${EventType}/${EventTarget}" "${line_PlainText[content]}"
+        fi
+      done
     fi
-  fi
+  done
   # 在这里无条件正常回显终端内容
   echo "$line";
 done <&0;    #从标准输入读取数据
