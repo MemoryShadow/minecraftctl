@@ -1,0 +1,12 @@
+#!/bin/bash
+###
+ # @Date: 2023-03-09 21:21:33
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2023-03-09 23:35:37
+ # @Description: 响应玩家消息
+ # Copyright (c) 2023 by ${git_email}, All Rights Reserved.
+### 
+
+source $InstallPath/tools/Base.sh
+
+echo "${1%% *} 离开了服务器"

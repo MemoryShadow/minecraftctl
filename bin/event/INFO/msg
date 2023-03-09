@@ -1,0 +1,24 @@
+#!/bin/bash
+###
+ # @Date: 2023-03-09 21:21:33
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2023-03-09 23:33:02
+ # @Description: 响应玩家消息
+ # Copyright (c) 2023 by ${git_email}, All Rights Reserved.
+### 
+
+source $InstallPath/tools/Base.sh
+
+echo "[msg@Listen] 是一条玩家消息" > /dev/stderr
+# 删去无用的信息
+str=`sed -E 's/<//' <<< "$1"`
+# 取出玩家名和玩家说的话
+PlayerName="${str%%\>*}"
+PlayerMessage="${str#*> }"
+echo "[msg@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
+# TODO 将这里重新映射到command事件进行处理
+# 检查玩家消息是否以!!qq开头，如果是，就去掉该关键字并在后台留下一句话
+grep -qe '^!!qq' <<< "$PlayerMessage"
+if [ $? -eq 0 ]; then
+  echo -e "\e[1;35m玩家 \e[1;34m${PlayerName} \e[1;35m试图向QQ群发送: \e[1;32m${PlayerMessage#*\!\!qq }\e[0m"
+fi
