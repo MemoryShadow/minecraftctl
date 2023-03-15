@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-09 23:26:04
+ # @LastEditTime: 2023-03-11 12:46:30
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -109,6 +109,7 @@ do
 
       # 删去前缀信息
       line_PlainText['prefix']=`grep -oP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"`
+      # 取出主体内容
       line_PlainText['content']=${line_PlainText[original]#*${line_PlainText[prefix]//\]/\\]}}
       # 将此信息与Event对应的数组进行匹配以得到事件的转发源
       for EventTarget in "${!Event[@]}"; do
