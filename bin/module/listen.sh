@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-11 12:46:30
+ # @LastEditTime: 2023-03-15 22:15:46
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -116,7 +116,7 @@ do
         grep -qP "${Event[$EventTarget]}" <<< "${line_PlainText[content]}"
         if [ $? -eq 0 ]; then
           # 将消息异步发送给对应的数据
-          "${InstallPath}/event/${EventType}/${EventTarget}" "${line_PlainText[content]}"
+          source "${InstallPath}/event/${EventType}/${EventTarget}" "${line_PlainText[content]}"
         fi
       done
     fi

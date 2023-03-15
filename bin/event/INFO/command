@@ -1,0 +1,9 @@
+#!/bin/bash
+# 由于是虚拟事件, 不用加载
+# source $InstallPath/tools/Base.sh
+
+# 检查此文件是否存在
+if [ -e "${InstallPath}/command/${1%% *}" ]; then
+  # 调用命令
+  "${InstallPath}/command/${1%% *}" "${1#* }" "${2}"
+fi
