@@ -5,5 +5,5 @@
 # 检查此文件是否存在
 if [ -e "${InstallPath}/command/${1%% *}" ]; then
   # 调用命令
-  "${InstallPath}/command/${1%% *}" "${1#* }" "${2}"
+  env -i - InstallPath="${InstallPath}" "${InstallPath}/command/${1%% *}" "${1#* }" "${2}"
 fi

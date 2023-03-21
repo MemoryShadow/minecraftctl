@@ -3,30 +3,27 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-22 23:08:30
+ # @LastEditTime: 2023-03-21 13:42:04
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
 export TIME_STYLE='+%Y-%m-%d %H:%M:%S'
 
-if [ -e ${GamePath}/minecraftctl.conf ]; then
-  source ${GamePath}/minecraftctl.conf
-fi
+# 检查应该生效哪一个配置, 对应的优先级关系为: 当前工作目录(WorkDir), config中指定的工作目录(GamePath)
 
 # 加载局部配置覆盖全局配置, 当前目录中的minecraftctl.conf文件优先级最高
-if [ -e $WorkDir/minecraftctl.conf ]; then
-  source $WorkDir/minecraftctl.conf
-  # 当检测到当前工作目录为游戏目录时, 将游戏目录设置为当前工作目录
+if [ -e "${WorkDir}/minecraftctl.conf" ]; then
   GamePath=$WorkDir
-else
-  if [ -e ${GamePath}/minecraftctl.conf ]; then
-    source ${GamePath}/minecraftctl.conf
-  fi
-  # 如果工作目录没有配置,就前往配置中的目录
-  if [ ! -d ${GamePath} ]; then
-    mkdir -p ${GamePath}
-  fi
+fi
+# 如果工作目录没有被创建,就前往配置中的目录
+if [ ! -d "${GamePath}" ]; then
+  mkdir -p ${GamePath}
+fi
+if [ -e "${GamePath}/minecraftctl.conf" ]; then
+  cd "${GamePath}"
+  source minecraftctl.conf
+  cd "${WorkDir}"
 fi
 cd ${GamePath}
 

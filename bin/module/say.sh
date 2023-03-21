@@ -8,6 +8,8 @@
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
+# TODO 新增-o,--origin参数用于标记消息的来源位置
+
 source $InstallPath/tools/Base.sh
 
 #* show this help menu

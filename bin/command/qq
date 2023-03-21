@@ -1,2 +1,3 @@
 #!/bin/bash
+# source Base.sh
 echo -e "\e[1;35m玩家 \e[1;34m${2} \e[1;35m试图向QQ群发送: \e[1;32m${1#*\!\!qq }\e[0m"

@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-02-09 00:44:49
+ # @LastEditTime: 2023-03-21 13:13:34
  # @Description: minecraftctl引导文件, 负责对组件进行统一的引导和管理
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -15,7 +15,7 @@ function DLLangFile(){
   # 先检查本地有没有翻译列表, 没有就下载
   if [ ! -e "/etc/minecraftctl/i18n/lang.list" ]; then
     echo "Download and install language index files...";
-    sudo aria2c "https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/lang.list" -d "/etc/minecraftctl" -o "i18n/lang.list"
+    sudo aria2c "https://cdn.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/lang.list" -d "/etc/minecraftctl" -o "i18n/lang.list"
   fi
   # 检查请求的语言是否存在翻译文件
   grep -qwe "^${Language}$" /etc/minecraftctl/i18n/lang.list
@@ -31,10 +31,10 @@ function DLLangFile(){
     sudo rm -rf "/etc/minecraftctl/i18n/${Language}.lang.tmp" "/etc/minecraftctl/i18n/${Language}";
   fi
   # 设置下载基址
-  local DownloadBaseURL="https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/i18n/${Language}";
+  local DownloadBaseURL="https://cdn.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/i18n/${Language}";
   # 标志开始下载
   sudo aria2c -c "${DownloadBaseURL}.lang" -d "/etc/minecraftctl/i18n" -o "${Language}.lang.tmp";
-  local ModuleLanguageFilesIndex=`curl -s https://gcore.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/index`;
+  local ModuleLanguageFilesIndex=`curl -s https://cdn.jsdelivr.net/gh/memoryshadow/minecraftctl@i18n/index`;
   # 将列表转为数组
   ModuleLanguageFilesIndex=(${ModuleLanguageFilesIndex// / });
   # 遍历数组, 生成下载列表
@@ -71,12 +71,15 @@ if [[ ${Language} != "default" && ! -e "/etc/minecraftctl/i18n/${Language}.lang"
 
 export WorkDir=`pwd`
 
-source "${InstallPath}/tools/Base.sh"
+# 将tools加载到当前的环境变量路径中来
+cd "$InstallPath"
+source "tools/Base.sh"
+cd "$WorkDir"
 
 if [ -e "$InstallPath/module/$1.sh" ]; then
   module=$1
   shift
-  # 自动转发参数
+  # 使用exec吃掉自己并在自己这里打开新的脚本并自动转发参数(环境变量被保留)
   exec -a "${module}" "${InstallPath}/module/${module}.sh" "$@"
   exit $?
 else

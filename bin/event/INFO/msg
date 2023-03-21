@@ -2,12 +2,10 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-15 22:41:10
+ # @LastEditTime: 2023-03-21 12:37:08
  # @Description: 响应玩家消息
  # Copyright (c) 2023 by ${git_email}, All Rights Reserved.
 ### 
-
-source $InstallPath/tools/Base.sh
 
 echo "[msg@Listen] 是一条玩家消息" > /dev/stderr
 # 删去无用的信息
@@ -19,5 +17,5 @@ echo "[msg@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
 # 检测是否以!!开头, 如果是就去掉!!并检测对应的command事件是否存在, 如果存在就转发到command事件
 grep -qe '^!!' <<< "$PlayerMessage"
 if [ $? -eq 0 ]; then
-  source "${InstallPath}/event/${EventType}/command" "${PlayerMessage#*\!\!}" "${PlayerName}"
+  env "${InstallPath}/event/${EventType}/command" "${PlayerMessage#*\!\!}" "${PlayerName}"
 fi
