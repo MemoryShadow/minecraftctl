@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 09:22:27
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-11-05 17:44:41
+ # @LastEditTime: 2023-04-23 09:44:57
  # @Description: 通用安装与卸载(请以root身份运行)
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -41,7 +41,7 @@ elif [ "$1" == "install" ]; then
   echo "Installing..."
   # install minecraftctl
   mkdir /etc/minecraftctl
-  cp -r ${MePath}/../cfg/* /etc/minecraftctl/
+  cp -r ${MePath}/../etc/* /etc/minecraftctl/
   cp -r ${MePath}/../bin /opt/minecraftctl
   chmod -R 644 /etc/minecraftctl/* /etc/minecraftctl/theme/*
   chmod 755 /etc/minecraftctl /etc/minecraftctl/theme 

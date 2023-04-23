@@ -47,7 +47,7 @@ jobs:
             docker exec -t ubuntuInstance mkdir -p ${work_path}/deb/usr/sbin ${work_path}/deb/{opt,etc}
             docker exec -t ubuntuInstance cp -r ${work_path}/bin ${work_path}/deb/opt/minecraftctl
             docker exec -t ubuntuInstance cp -r ${work_path}/bin/minecraftctl ${work_path}/deb/usr/sbin/
-            docker exec -t ubuntuInstance cp -r ${work_path}/cfg ${work_path}/deb/etc/minecraftctl
+            docker exec -t ubuntuInstance cp -r ${work_path}/etc ${work_path}/deb/etc/minecraftctl
             docker exec -t ubuntuInstance chmod 644 -R ${work_path}/deb/etc/minecraftctl/*
             docker exec -t ubuntuInstance chmod 755 ${work_path}/deb/etc/minecraftctl ${work_path}/deb/etc/minecraftctl/theme ${work_path}/deb/usr/sbin/minecraftctl
             docker exec -t ubuntuInstance chmod 755 -R ${work_path}/deb/opt/minecraftctl ${work_path}/deb/DEBIAN
@@ -64,7 +64,7 @@ jobs:
           docker run -itd -v ${work_path}:${work_path} --name centos7Instance --net="host" docker.io/centos:7 /bin/bash
           docker exec -t centos7Instance mkdir -p /root/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
           docker exec -t centos7Instance cp -r ${work_path}/bin /root/rpmbuild/
-          docker exec -t centos7Instance cp -r ${work_path}/cfg /root/rpmbuild/
+          docker exec -t centos7Instance cp -r ${work_path}/etc /root/rpmbuild/
           docker exec -t centos7Instance cp ${work_path}/rpm/SPECS/minecraftctl.spec /root/rpmbuild/SPECS/
           echo install rpmdevtools ing...
           docker exec -t centos7Instance yum install -y rpmdevtools>/dev/null
