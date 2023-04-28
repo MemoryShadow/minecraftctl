@@ -2,8 +2,11 @@
 # 由于是虚拟事件, 不用加载
 # source $InstallPath/tools/Base.sh
 
-# 检查此文件是否存在
+# echo "command $1 $2" >&3
+# 检查此文件是否存在, 如果有这个命令就将控制权转交出去
 if [ -e "${InstallPath}/command/${1%% *}" ]; then
+  # 在转交之前记录当前进程信息
+  echo "$(date +%s),$$" >&3
   # 调用命令
-  env -i - InstallPath="${InstallPath}" "${InstallPath}/command/${1%% *}" "${1#* }" "${2}"
+  exec -a "${1%% *}" "${InstallPath}/command/${1%% *}" "${1#* }" "${2}" 1>&4 2>&5
 fi

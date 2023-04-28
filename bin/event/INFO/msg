@@ -2,20 +2,20 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-21 12:37:08
+ # @LastEditTime: 2023-04-29 00:21:40
  # @Description: 响应玩家消息
- # Copyright (c) 2023 by ${git_email}, All Rights Reserved.
+ # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
 
-echo "[msg@Listen] 是一条玩家消息" > /dev/stderr
+# echo "[msg@Listen] 是一条玩家消息" > /dev/stderr
 # 删去无用的信息
 str=`sed -E 's/<//' <<< "$1"`
 # 取出玩家名和玩家说的话
 PlayerName="${str%%\>*}"
 PlayerMessage="${str#*> }"
-echo "[msg@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
-# 检测是否以!!开头, 如果是就去掉!!并检测对应的command事件是否存在, 如果存在就转发到command事件
+# echo "[msg@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
+# 检测是否以!!开头, 如果是就去掉!!并检测对应的command事件是否存在, 如果存在就异步转发到command事件
 grep -qe '^!!' <<< "$PlayerMessage"
 if [ $? -eq 0 ]; then
-  env "${InstallPath}/event/${EventType}/command" "${PlayerMessage#*\!\!}" "${PlayerName}"
+  env "${InstallPath}/event/${EventType}/command" "${PlayerMessage#*\!\!}" "${PlayerName}" &
 fi

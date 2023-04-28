@@ -44,6 +44,6 @@ export SleepSecond=15
 # 配置工作时长(秒)
 export WorkSecond=15
 # 设置切片超时时间(秒), 如果完成切片的时间超过这个值就放弃刹车
-export WorkExceedSecond=50
+export WorkExceedSecond=80
 # 配置每个工作切片周期(行)
 export WorkPart=1000

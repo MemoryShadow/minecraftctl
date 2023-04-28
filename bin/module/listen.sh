@@ -3,15 +3,40 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-21 13:09:48
+ # @LastEditTime: 2023-04-29 01:11:07
  # @Description: 倾听传入的信息,并执行相应的操作
- # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
+ # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 #*在工作切片结束时检查是否已经超时(WorkSecond),如果超时就休眠指定的秒数,如果达成WorkPart超过WorkExceedSecond指定的秒数就不进入休眠直接进入下一轮(因为这意味着几乎没有额外性能损耗)
 # TODO 优化1: 消息按分的片整体发送, 避免频繁echo带来的高额IO开销(主要是锁竞争)
 # TODO 优化2: 额外的解析功能按异步进行处理，避免堵塞
 
 source $InstallPath/tools/Base.sh
+
+# 多线程组件交互通讯机制
+# 这其中, 3: 进程信息, 4: command事件标准输出信息(会显示到游戏内), 5: command事件错误输出信息(只会显示在控制台)
+function PIPE() {
+  local FIFO_Min=3
+  local FIFO_Sum=3
+  case "${1}" in
+  Init)
+    # 创建命名管道存放的位置
+    mkdir -p /tmp/minecraftctl/FIFO
+    # 在首次运行时创建若干个FIFO以进行通讯
+    for i in $(seq $FIFO_Min $[FIFO_Min + FIFO_Sum - 1]); do
+      [ -e "/tmp/minecraftctl/FIFO/${i}.fifo" ] || mkfifo "/tmp/minecraftctl/FIFO/${i}.fifo"
+      [[ `ls -l /proc/$$/fd | grep "${i}.fifo" | awk '{print $8}'` == ${i} ]] || eval "exec ${i}<> '/tmp/minecraftctl/FIFO/${i}.fifo'"
+    done
+    # ls -l /proc/$$/fd | grep ".fifo"
+    # echo -e "123\n456\n789">&4
+    ;;
+  Close)
+    for i in $(seq $FIFO_Min $[FIFO_Min + FIFO_Sum - 1]); do
+      [[ `ls -l /proc/$$/fd | grep "${i}.fifo" | awk '{print $8}'` == ${i} ]] && exec {i}<&-
+    done
+    ;;
+  esac
+}
 
 # 建立相互的关系
 
@@ -45,8 +70,7 @@ fi
 # Assign normalized command line arguments to positional arguments($1,$2,...)
 eval set -- "${ARGS}"
 
-while true
-do
+while true; do
   case "$1" in
     -h|--help)
       helpMenu "$2"
@@ -64,9 +88,11 @@ do
 done
 
 # 初始化工作
-if [ $# -gt 0 ];then
-    exec 0<$1;    #将文件绑定到标准输入（0-标准输入 1-标准输出 3-标准错误），默认第一个参数是输入的文件；
+if [ $# -gt 0 ]; then
+  exec 0<$1;    #将文件绑定到标准输入（0-标准输入 1-标准输出 3-标准错误），默认第一个参数是输入的文件；
 fi
+# 初始化线程池
+PIPE Init
 
 # 存储任务完成的数量
 WorkPartIndex=${WorkPart}
@@ -82,9 +108,8 @@ declare -A line_PlainText=(
 )
 
 # 循环取读终端中的内容
-while read line
-do
-  # 刹车机制
+while read line; do
+  # 刹车机制: 当在WorkSecond秒内终端输出了超过WorkExceedSecond条语句, 就暂停处理SleepSecond秒来避免恶意占用CPU.
   if [ ${WorkPartIndex} -gt ${WorkPart} ] && [ $((`date '+%s'`-$WorkSecond)) -gt ${Timestamp} ]; then
     if [ ${Timestamp} -gt $((`date '+%s'`-$WorkExceedSecond)) ]; then
       sleep ${SleepSecond}
@@ -123,5 +148,30 @@ do
   done
   # 在这里无条件正常回显终端内容
   echo "$line";
+  # TODO 启用此功能, 可以通过这些信息杀死超时的子进程
+  # 非堵塞读取一条子进程信息(3)并处理
+  # if read -u3 -t 0.01 subprocessInfo; then
+  #   echo "[subprocessInfo@Listen]: $subprocessInfo" > /dev/stderr
+  # fi
+  # 非堵塞读取来自命令的标准输出(4)并处理
+  while true; do
+    if read -u4 -t 0.01 commandOut; then
+      # 读到数据后在这里处理(显示在终端和服内)
+      echo "[commandOut@Listen]: $commandOut" > /dev/stderr
+      cmd2server "tellraw @a \"`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${commandOut}" | sed 's/[[:cntrl:]]//g'`\""
+    else break; # 内容已读完
+    fi
+  done
+  # 非堵塞读取来自命令的错误输出(5)并处理
+  while true; do
+    if read -u5 -t 0.01 commandErrOut; then
+      # 读到数据后在这里处理
+      echo "[commandErrOut@Listen]: $commandErrOut" > /dev/stderr
+    else break; # 内容已读完
+    fi
+  done
 done <&0;    #从标准输入读取数据
+
+# 初始化线程池
+PIPE Close
 exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）
