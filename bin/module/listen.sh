@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 17:45:28
+ # @LastEditTime: 2023-04-29 17:54:15
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -179,7 +179,6 @@ while read line; do
   done
   # 在这里无条件正常回显终端内容
   echo "$line";
-  # TODO 启用此功能, 可以通过这些信息杀死超时的子进程
   # 非堵塞读取一条子进程信息(3)并处理(因为一条语句最多出现一个子进程)
   if read -u3 -t 0.01 subprocessInfo; then
     Subprocess['Infos']="${Subprocess[Infos]:+${Subprocess[Infos]} }${subprocessInfo}";
