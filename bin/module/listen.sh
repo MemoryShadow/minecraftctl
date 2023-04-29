@@ -3,18 +3,49 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 01:11:07
+ # @LastEditTime: 2023-04-29 17:45:28
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 #*在工作切片结束时检查是否已经超时(WorkSecond),如果超时就休眠指定的秒数,如果达成WorkPart超过WorkExceedSecond指定的秒数就不进入休眠直接进入下一轮(因为这意味着几乎没有额外性能损耗)
 # TODO 优化1: 消息按分的片整体发送, 避免频繁echo带来的高额IO开销(主要是锁竞争)
-# TODO 优化2: 额外的解析功能按异步进行处理，避免堵塞
 
 source $InstallPath/tools/Base.sh
 
+# 子进程数据信息(保存在内存中)
+declare -A Subprocess=(
+  ['Infos']=''
+)
+
+# 处理子进程的自动事件, 将已结束的进程从记录中筛去, 将超时子进程杀死
+#?@param1: 子进程列表, 时间戳和PID由逗号分隔, 不同记录之间使用空格分割
+function SubprocessAuto() {
+  CommandMaxRun=${CommandMaxRun:-5}
+  local NowTime=`date +%s`
+  local SubprocessInfos=(${1// / })
+  local NextSubprocessInfos=''
+  # 遍历子进程列表
+  for SubprocessInfo in $1; do
+    SubprocessInfo=(${SubprocessInfo//,/ })
+    local SubprocessTime=$((NowTime-SubprocessInfo[0]))
+    local SubprocessPID=${SubprocessInfo[1]}
+    # 检查当前进程是否还存在, 如果存在就将其写入NextSubprocessInfos
+    if [ -d "/proc/${SubprocessPID}" ]; then
+      if [ $SubprocessTime -gt $CommandMaxRun ]; then
+        # 超时了就杀掉
+        kill ${SubprocessPID}
+      else
+        # 子进程还存在且没有超时, 就将其写入当前缓存信息
+        NextSubprocessInfos="${NextSubprocessInfos:+${NextSubprocessInfos} }${subprocessInfo}";
+      fi
+    fi
+  done
+  Subprocess['Infos']="${NextSubprocessInfos}"
+}
+
 # 多线程组件交互通讯机制
 # 这其中, 3: 进程信息, 4: command事件标准输出信息(会显示到游戏内), 5: command事件错误输出信息(只会显示在控制台)
+#?@param1: 要进行的操作, 允许的值为: Init, Close
 function PIPE() {
   local FIFO_Min=3
   local FIFO_Sum=3
@@ -149,10 +180,11 @@ while read line; do
   # 在这里无条件正常回显终端内容
   echo "$line";
   # TODO 启用此功能, 可以通过这些信息杀死超时的子进程
-  # 非堵塞读取一条子进程信息(3)并处理
-  # if read -u3 -t 0.01 subprocessInfo; then
-  #   echo "[subprocessInfo@Listen]: $subprocessInfo" > /dev/stderr
-  # fi
+  # 非堵塞读取一条子进程信息(3)并处理(因为一条语句最多出现一个子进程)
+  if read -u3 -t 0.01 subprocessInfo; then
+    Subprocess['Infos']="${Subprocess[Infos]:+${Subprocess[Infos]} }${subprocessInfo}";
+    SubprocessAuto "${Subprocess[Infos]}"
+  fi
   # 非堵塞读取来自命令的标准输出(4)并处理
   while true; do
     if read -u4 -t 0.01 commandOut; then
@@ -172,6 +204,7 @@ while read line; do
   done
 done <&0;    #从标准输入读取数据
 
+wait
 # 初始化线程池
 PIPE Close
 exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）

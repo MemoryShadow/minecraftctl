@@ -47,3 +47,5 @@ export WorkSecond=15
 export WorkExceedSecond=80
 # 配置每个工作切片周期(行)
 export WorkPart=1000
+# 限制每个命令的最大运行时间(秒)
+export CommandMaxRun=5
