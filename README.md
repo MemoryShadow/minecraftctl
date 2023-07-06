@@ -220,9 +220,13 @@ minecraftctl <功能名称> [可能的参数]
 - [aric2](https://github.com/aria2/aria2.git) — 一个支持多线程和多协议的下载程序
 - [whiptail](https://salsa.debian.org/mckinstry/newt/-/tree/debian/master) - 用于支持whiptail窗口，来实现部分区域的窗口化交互 [文档](https://linux.die.net/man/1/whiptail)
 
-## 维护者
+## 项目状态
 
-[@MemoryShadow](https://github.com/MemoryShadow)
+![ProjectStatus](https://repobeats.axiom.co/api/embed/8af05dfe07fe74bce4691e9cc3bb15e81747bfab.svg)
+
+## 贡献者
+
+[![Contributors](https://contrib.rocks/image?repo=MemoryShadow/minecraftctl)](https://github.com/MemoryShadow/minecraftctl/graphs/contributors)
 
 ### 如何贡献
 
