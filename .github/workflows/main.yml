@@ -237,6 +237,7 @@ jobs:
           #*新增start事件响应, 启动时拉起一个pyCraft实例
           sudo tee -a "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
+          echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
           # 拉起一个pyCraft实例
           cd ../pyCraft;
           screen -dmS "pyCraft"
@@ -250,6 +251,7 @@ jobs:
           #*新增login事件响应, 登陆时发送消息
           sudo tee -a "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
 
+          echo "发送消息触发插件" >> /tmp/E_CICheck.log
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
           EOF
@@ -259,6 +261,7 @@ jobs:
           #*新增logout事件响应, 退出登陆时关闭服务端
           sudo tee -a "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
 
+          echo "玩家退出时自动关闭服务端" >> /tmp/E_CICheck.log
           # 玩家退出时自动关闭服务端
           minecraftctl stop;
           EOF
@@ -269,7 +272,8 @@ jobs:
           sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
           cd ~/D_MCServer
-          echo "\${1#*\!\!ci }" > ~/D_MCServer/CICheck.log
+          echo "\${1#*\!\!ci }" > /tmp/CICheck.log
+          echo "退出登陆" >> /tmp/E_CICheck.log
           # 退出登陆
           screen -S "pyCraft" -X quit;
           EOF
@@ -283,18 +287,19 @@ jobs:
           sed -i 's/eula=false/eula=true/' eula.txt;
           while [ ! -f server.properties ]; do sleep 1; done;
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
-          minecraftctl start; minecraftctl join;
+          minecraftctl start;
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
-          while [ ! -f ~/D_MCServer/CICheck.log ]; do
+          while [ ! -f /tmp/CICheck.log ]; do
             sleep 1;
             WaitTimeS=$[ WaitTimeS + 1]
             if [ ${WaitTimeS} -gt 60 ]; then
               echo "等待超时" > /dev/stderr
+              cat /tmp/E_CICheck.log
               exit 1;
             fi
           done;
-          cat ~/D_MCServer/CICheck.log
+          cat /tmp/CICheck.log
 
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
