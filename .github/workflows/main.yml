@@ -244,6 +244,8 @@ jobs:
           # 上线
           screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n";
           EOF
+          echo "/opt/minecraftctl/event/INFO/start"
+          cat "/opt/minecraftctl/event/INFO/start"
 
           #*新增login事件响应, 登陆时发送消息
           sudo tee "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
@@ -251,6 +253,8 @@ jobs:
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
           EOF
+          echo "/opt/minecraftctl/event/INFO/login"
+          cat "/opt/minecraftctl/event/INFO/login"
 
           #*新增logout事件响应, 退出登陆时关闭服务端
           sudo tee "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
@@ -258,6 +262,9 @@ jobs:
           # 玩家退出时自动关闭服务端
           minecraftctl stop;
           EOF
+          echo "/opt/minecraftctl/event/INFO/logout"
+          cat "/opt/minecraftctl/event/INFO/logout"
+
           #*创建CI模块, 输出日志并关闭服务器
           sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
@@ -267,6 +274,8 @@ jobs:
           screen -S "pyCraft" -X quit;
           EOF
           sudo chmod +x "/opt/minecraftctl/command/ci"
+          echo "/opt/minecraftctl/command/ci"
+          cat "/opt/minecraftctl/command/ci"
 
           #*启动服务
           cd ~/D_MCServer; minecraftctl start;
