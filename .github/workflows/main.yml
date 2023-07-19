@@ -231,7 +231,7 @@ jobs:
       - name: Run Minecraft Server
         run: |
           # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
-          CheckID=`date +%s%N |md5sum | cut -c 1-10`
+          CheckID=`date +%s%N | md5sum | cut -c 1-10`
           ProjectDir=${PWD}
           # 创建一个start事件响应
           sudo tee "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
@@ -241,22 +241,28 @@ jobs:
           screen -dmS "pyCraft"
           chmod +x ./start.py
           # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n"
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n";
+          EOF
+          sudo tee "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
+
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
-          # 退出登陆
-          screen -S "pyCraft" -X quit
-          cd "${ProjectDir}"
           EOF
-          cat "/opt/minecraftctl/event/INFO/start"
-          # 设置
+          sudo tee "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
+
+          # 玩家退出时自动关闭服务端
+          minecraftctl stop;
+          EOF
+          # 创建CI模块, 输出日志并关闭服务器
           sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
           cd ~/D_MCServer
-          echo "\${1#*\!\!qq }" > CICheck.log
-          minecraftctl stop;
+          echo "\${1#*\!\!qq }" > ~/D_MCServer/CICheck.log
+          # 退出登陆
+          screen -S "pyCraft" -X quit;
           EOF
           sudo chmod +x "/opt/minecraftctl/command/ci"
+          # 启动服务
           cd ~/D_MCServer; minecraftctl start;
           while [ ! -f eula.txt ]; do sleep 1; done;
           sed -i 's/eula=false/eula=true/' eula.txt;
@@ -265,15 +271,15 @@ jobs:
           minecraftctl start;
           # 在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
-          while [ ! -f CICheck.log ]; do
+          while [ ! -f ~/D_MCServer/CICheck.log ]; do
             sleep 1;
             WaitTimeS=$[ WaitTimeS + 1]
             if [ ${WaitTimeS} -gt 60 ]; then
-              echo "等待超时"
+              echo "等待超时" > /dev/stderr
               exit 1;
             fi
           done;
-          cat CICheck.log
+          cat ~/D_MCServer/CICheck.log
 
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
