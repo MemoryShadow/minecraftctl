@@ -198,6 +198,7 @@ jobs:
           rm ~/adoptopenjdk-8-openj9-jre.deb;
           # 部署pyCraft
           git clone https://github.com/MemoryShadow/pyCraft.git ../pyCraft;
+          pip install pynbt requests cryptography;
 
       - name: Install old-minecraftctl
         run: |
@@ -229,14 +230,37 @@ jobs:
 
       - name: Run Minecraft Server
         run: |
+          # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
+          CheckID=`date +%s%N |md5sum | cut -c 1-10`
+          ProjectDir=${PWD}
           # 创建一个start事件响应
-          # cat<<EOF>>
-          ls
-          echo ${PWD}
-          # EOF
-          # cd ~/D_MCServer; minecraftctl start;
-          cd ../pyCraft; 
-          cd ../minecraftctl;
+          cat<<EOF>>"/opt/minecraftctl/event/INFO/start"
+
+          # 拉起一个pyCraft实例
+          cd ../pyCraft;
+          screen -dmS "pyCraft"
+          chmod +x ./start.py
+          # 上线
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n"
+          # 发送消息触发插件
+          screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
+          # 退出登陆
+          screen -S "pyCraft" -X quit
+          cd "${ProjectDir}"
+          EOF
+          cat "/opt/minecraftctl/event/INFO/start"
+          # 设置
+          cat<<EOF>>"/opt/minecraftctl/command/ci"
+          #!/bin/bash
+          cd ~/D_MCServer
+          echo "\${1#*\!\!qq }" > CICheck.log
+          minecraftctl stop;
+          EOF
+          cat "/opt/minecraftctl/command/ci"
+          cd ~/D_MCServer; minecraftctl start;
+          sed -i 's/eula=false/eula=true/' eula.txt;
+          sed -i 's/online-mode=true/online-mode=false/' server.properties;
+          minecraftctl start;
 
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
