@@ -198,8 +198,6 @@ jobs:
           rm ~/adoptopenjdk-8-openj9-jre.deb;
           # 部署pyCraft
           git clone https://github.com/MemoryShadow/pyCraft.git ../pyCraft;
-          ls ..
-          cd ../pyCraft
 
       - name: Install old-minecraftctl
         run: |
@@ -228,6 +226,17 @@ jobs:
           cd ~/D_MCServer;
           minecraftctl install -i vanilla -c -v 1.16.5;
           ls -labh; cat minecraftctl.conf;
+
+      - name: Run Minecraft Server
+        run: |
+          # 创建一个start事件响应
+          # cat<<EOF>>
+          ls
+          echo ${PWD}
+          # EOF
+          # cd ~/D_MCServer; minecraftctl start;
+          cd ../pyCraft; 
+          cd ../minecraftctl;
 
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
