@@ -207,9 +207,9 @@ jobs:
 
       - name: Update minecraftctl
         run: |
-          sudo sed -i 's/GamePath=".*"/GamePath="\/Test"/' /etc/minecraftctl/config
+          sudo sed -i 's/GamePath=".*"/GamePath="~\/D_MCServer"/' /etc/minecraftctl/config
           sudo build/Universal.sh update
-          grep Test /etc/minecraftctl/config
+          grep D_MCServer /etc/minecraftctl/config
           if [ $? -ne 0 ]; then
             echo "Update config failed."
             exit 1
@@ -234,7 +234,7 @@ jobs:
           CheckID=`date +%s%N |md5sum | cut -c 1-10`
           ProjectDir=${PWD}
           # 创建一个start事件响应
-          cat<<EOF>>"/opt/minecraftctl/event/INFO/start"
+          sudo tee "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
           # 拉起一个pyCraft实例
           cd ../pyCraft;
@@ -250,12 +250,13 @@ jobs:
           EOF
           cat "/opt/minecraftctl/event/INFO/start"
           # 设置
-          cat<<EOF>>"/opt/minecraftctl/command/ci"
+          sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
           cd ~/D_MCServer
           echo "\${1#*\!\!qq }" > CICheck.log
           minecraftctl stop;
           EOF
+          sudo chmod +x "/opt/minecraftctl/command/ci"
           cat "/opt/minecraftctl/command/ci"
           cd ~/D_MCServer; minecraftctl start;
           sed -i 's/eula=false/eula=true/' eula.txt;
