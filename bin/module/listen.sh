@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 17:54:15
+ # @LastEditTime: 2023-07-19 16:07:41
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -72,7 +72,7 @@ function PIPE() {
 # 建立相互的关系
 
 declare -A EventTypes=(
-  ['INFO']='^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: '
+  ['INFO']='^(> )?\[[0-9:]{0,8}.*?[ \/]INFO\]: (\[Not\ Secure\] )?'
 )
 
 
@@ -151,8 +151,7 @@ while read line; do
     WorkPartIndex=$((${WorkPartIndex}+1))
   fi
   # 在这里处理额外的显示
-  # 去除颜色信息, 方便后续解析信息
-  
+  # 去除非控制信号, 方便后续解析信息
   line_PlainText['original']=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${line}" | sed 's/[[:cntrl:]]//g'`
   for EventType in "${!EventTypes[@]}"; do
     grep -qP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"
