@@ -235,7 +235,7 @@ jobs:
           ProjectDir=${PWD}
 
           #*新增start事件响应, 启动时拉起一个pyCraft实例
-          sudo tee "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
+          sudo tee -a "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
           # 拉起一个pyCraft实例
           cd ../pyCraft;
@@ -248,7 +248,7 @@ jobs:
           cat "/opt/minecraftctl/event/INFO/start"
 
           #*新增login事件响应, 登陆时发送消息
-          sudo tee "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
+          sudo tee -a "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
 
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
@@ -257,7 +257,7 @@ jobs:
           cat "/opt/minecraftctl/event/INFO/login"
 
           #*新增logout事件响应, 退出登陆时关闭服务端
-          sudo tee "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
+          sudo tee -a "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
 
           # 玩家退出时自动关闭服务端
           minecraftctl stop;
