@@ -259,7 +259,9 @@ jobs:
           sudo chmod +x "/opt/minecraftctl/command/ci"
           cat "/opt/minecraftctl/command/ci"
           cd ~/D_MCServer; minecraftctl start;
+          while [ ! -f eula.txt ]; do done
           sed -i 's/eula=false/eula=true/' eula.txt;
+          while [ ! -f server.properties ]; do done
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
           minecraftctl start;
 
