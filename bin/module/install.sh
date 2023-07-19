@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-10 12:12:39
+ # @LastEditTime: 2023-07-19 13:52:46
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -123,14 +123,15 @@ if [[ "${ITEM}" == "vanilla" && ${FORGE} == true ]]; then
   ln minecraft_server.$VERSION.jar ./libraries/net/minecraft/server/$VERSION/server-$VERSION.jar
   DLPara=`bash ${InstallPath}/tools/Download/LinkGet.sh -i forge -v ${VERSION}`
   minecraftctl download $DLPara -o forge-$VERSION.jar
-  JvmPath=`bash ${InstallPath}/tools/JvmCheck.sh -a build -v ${VERSION}`
-  echo ${JvmPath}
-  $JvmPath -jar forge-$VERSION.jar --installServer
+  # 获取构建使用的jvm路径
+  BuildJvmPath=`bash ${InstallPath}/tools/JvmCheck.sh -a build -v ${VERSION}`
+  echo ${BuildJvmPath}
+  $BuildJvmPath -jar forge-$VERSION.jar --installServer
   if [ -e ./run.sh ]; then
     sed -i "s/java/${JvmPath//\//\\/}/" ./run.sh
   fi
   unset DLPara
-  # 回过头来检查一次日志，如果有下载错误的苦就使用加速进行下载修补，
+  # TODO 回过头来检查一次日志，如果有下载错误的话就使用加速进行下载修补
   rm forge-$VERSION.jar forge-$VERSION.jar.log
   # 更新入口JAR的名字
   MainJAR=`ls forge-$VERSION-*.jar`; MainJAR=${MainJAR%.*};
@@ -147,8 +148,11 @@ fi
 # 生成配置文件信息
 if [ ${CONFIG} == true ]; then
   GetI18nText Info_GeneratingConfigurationFile "Generating configuration file..."
-  if [ -z ${JvmPath} ]; then 
-      JvmPath=`bash ${InstallPath}/tools/JvmCheck.sh -a run -v ${VERSION}`
+  # 如果BuildJvmPath被在上面生成过了, 就不再重新生成一次
+  if [ ! -z ${BuildJvmPath} ]; then
+    JvmPath=${BuildJvmPath}
+  else
+    JvmPath=`bash ${InstallPath}/tools/JvmCheck.sh -a run -v ${VERSION}`
   fi
   cat<<EOF>minecraftctl.conf
 export ScreenName='Minecraft[${VERSION}] Java'

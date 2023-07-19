@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 14:23:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-30 14:36:58
+ # @LastEditTime: 2023-07-19 13:54:22
  # @Description: Check which JVM should be used to start the specified task, if there is no suitable JVM try to help
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -19,6 +19,7 @@ declare -A TaskConfig=(
 
 declare -A TaskConfig_default=(
   ['JvmName']=0
+  # 记录Java版本重要的转折点
   ['Critical']="1.19.2,1.18.2,1.18.1,1.17,1.0.0"
   ['latest']="1.19"
   ['1.0.0']='8'
