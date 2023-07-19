@@ -197,11 +197,9 @@ jobs:
           sudo sudo apt install -y ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
           rm ~/adoptopenjdk-8-openj9-jre.deb;
           # 部署pyCraft
-          python -V
-          python3 -V
-          python --version
-          python3 --version
-          sudo apt install -y python3
+          git clone https://github.com/MemoryShadow/pyCraft.git ../pyCraft;
+          ls ..
+          cd ../pyCraft
 
       - name: Install old-minecraftctl
         run: |
@@ -210,7 +208,7 @@ jobs:
 
       - name: Update minecraftctl
         run: |
-          sudo sed -i 's/GamePath=".*"/GamePath="/Test"/' /etc/minecraftctl/config
+          sudo sed -i 's/GamePath=".*"/GamePath="\/Test"/' /etc/minecraftctl/config
           sudo build/Universal.sh update
           grep Test /etc/minecraftctl/config
           if [ $? -ne 0 ]; then
