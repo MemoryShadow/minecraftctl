@@ -288,6 +288,7 @@ jobs:
           while [ ! -f server.properties ]; do sleep 1; done;
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
           minecraftctl start;
+          ls; cat minecraftctl.conf; screen -ls; echo ${PWD};
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
           while [ ! -f /tmp/CICheck.log ]; do
