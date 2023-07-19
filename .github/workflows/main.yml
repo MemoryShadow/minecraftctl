@@ -284,19 +284,25 @@ jobs:
           #*启动服务
           cd ~/D_MCServer; minecraftctl start;
           while [ ! -f eula.txt ]; do sleep 1; done;
+          screen -ls 
           sed -i 's/eula=false/eula=true/' eula.txt;
           while [ ! -f server.properties ]; do sleep 1; done;
+          screen -ls
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
+          cat logs/latest.log
           minecraftctl start;
-          ls; cat minecraftctl.conf; screen -ls; echo ${PWD};
+          ls; cat minecraftctl.conf; echo ${PWD};
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
           while [ ! -f /tmp/CICheck.log ]; do
             sleep 1;
             WaitTimeS=$[ WaitTimeS + 1]
             if [ ${WaitTimeS} -gt 60 ]; then
-              echo "等待超时" > /dev/stderr
-              cat /tmp/E_CICheck.log
+              echo "等待超时" > /dev/stderr;
+              cat /tmp/E_CICheck.log;
+              screen -ls;
+              minecraftctl stop;
+              cat logs/latest.log;
               exit 1;
             fi
           done;
