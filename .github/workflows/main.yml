@@ -203,7 +203,7 @@ jobs:
 
       - name: Update minecraftctl
         run: |
-          sudo sed -i 's/GamePath=".*"/GamePath="Test"/' /etc/minecraftctl/config
+          sudo sed -i 's/GamePath=".*"/GamePath="/Test"/' /etc/minecraftctl/config
           sudo build/Universal.sh update
           grep Test /etc/minecraftctl/config
           if [ $? -ne 0 ]; then
