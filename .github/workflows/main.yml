@@ -233,7 +233,8 @@ jobs:
           # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
           CheckID=`date +%s%N | md5sum | cut -c 1-10`
           ProjectDir=${PWD}
-          # 创建一个start事件响应
+
+          #*新增start事件响应, 启动时拉起一个pyCraft实例
           sudo tee "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
           # 拉起一个pyCraft实例
@@ -243,33 +244,38 @@ jobs:
           # 上线
           screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n";
           EOF
+
+          #*新增login事件响应, 登陆时发送消息
           sudo tee "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
 
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
           EOF
+
+          #*新增logout事件响应, 退出登陆时关闭服务端
           sudo tee "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
 
           # 玩家退出时自动关闭服务端
           minecraftctl stop;
           EOF
-          # 创建CI模块, 输出日志并关闭服务器
+          #*创建CI模块, 输出日志并关闭服务器
           sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
           cd ~/D_MCServer
-          echo "\${1#*\!\!qq }" > ~/D_MCServer/CICheck.log
+          echo "\${1#*\!\!ci }" > ~/D_MCServer/CICheck.log
           # 退出登陆
           screen -S "pyCraft" -X quit;
           EOF
           sudo chmod +x "/opt/minecraftctl/command/ci"
-          # 启动服务
+
+          #*启动服务
           cd ~/D_MCServer; minecraftctl start;
           while [ ! -f eula.txt ]; do sleep 1; done;
           sed -i 's/eula=false/eula=true/' eula.txt;
           while [ ! -f server.properties ]; do sleep 1; done;
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
           minecraftctl start;
-          # 在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
+          #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
           while [ ! -f ~/D_MCServer/CICheck.log ]; do
             sleep 1;
