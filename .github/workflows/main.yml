@@ -292,7 +292,9 @@ jobs:
               screen -ls;
               minecraftctl stop;
               cat logs/latest.log;
-              ls /; ls /tmp; cat /tmp/E_CICheck.log;
+              echo ${USER}; groups;
+              ls -lab /tmp;
+              cat /tmp/E_CICheck.log;
               exit 1;
             fi
           done;
