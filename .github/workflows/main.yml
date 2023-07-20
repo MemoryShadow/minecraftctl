@@ -320,6 +320,7 @@ jobs:
       - name: Init
         run: |
           mkdir packages
+          git log --pretty=format:"%s" -1>CHANGELOG.md
 
       - name: download artifact
         uses: actions/download-artifact@v3
@@ -331,9 +332,8 @@ jobs:
         with:
           body_path: CHANGELOG.md
           files: |
-            packages/${{ needs.build.outputs.DEB_AMD64 }}
-            packages/${{ needs.build.outputs.DEB_I386 }}
-            packages/${{ needs.build.outputs.RPM_AMD64 }}
-            packages/${{ needs.build.outputs.RPM_I386 }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+            packages/amd64.deb/${{ needs.build.outputs.DEB_AMD64 }}
+            packages/i386.deb/${{ needs.build.outputs.DEB_I386 }}
+            packages/amd64.rpm/${{ needs.build.outputs.RPM_AMD64 }}
+            packages/i386.rpm/${{ needs.build.outputs.RPM_I386 }}
+          token: ${{ secrets.ACCESS_TOKEN }}
