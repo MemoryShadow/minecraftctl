@@ -274,7 +274,7 @@ jobs:
           sudo chmod +x "/opt/minecraftctl/command/ci"
 
           #*启动服务
-          sudo sed -i 's/echo "$line";/echo "$line"; echo "$line" > \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh
+          sudo sed -i 's/> \/dev\/stderr;/>> \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh
           cd ~/D_MCServer; minecraftctl start;
           while [ ! -f eula.txt ]; do sleep 1; done;
           sed -i 's/eula=false/eula=true/' eula.txt;
