@@ -25,6 +25,10 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+
+    outputs:
+      TAG: ${{ steps.Init.outputs.TAG }}
+      VERSION: ${{ steps.Init.outputs.VERSION }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -38,12 +42,12 @@ jobs:
           echo "GITHUB_REF: ${GITHUB_REF}"
           # 当由tag触发时, 使用tag指定的版本
           if [[ "${GITHUB_REF}" =~ ^refs/heads/.* ]]; then
-            echo ::set-output name=TAG::v${Version}
-            echo ::set-output name=VERSION::${Version}
+            echo "TAG=v${Version}" >> $GITHUB_OUTPUT
+            echo "VERSION=${Version}" >> $GITHUB_OUTPUT
           fi
           if [[ "${GITHUB_REF}" =~ ^refs/tags/.* ]]; then
-            echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
-            echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+            echo "TAG=${GITHUB_REF/refs\/tags\//}"  >> $GITHUB_OUTPUT
+            echo "VERSION=${GITHUB_REF/refs\/tags\/v/}"  >> $GITHUB_OUTPUT
           fi
           mkdir packages
           bash build/prepare.sh
@@ -335,7 +339,7 @@ jobs:
         with:
           body_path: CHANGELOG.md
           files: |
-            minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
-            minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
+            minecraftctl_${{ needs.build.outputs.VERSION }}_x86_64.deb
+            minecraftctl-${{ needs.build.outputs.VERSION }}-1.el7.x86_64.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
