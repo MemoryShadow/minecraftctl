@@ -235,7 +235,7 @@ jobs:
           ProjectDir=${PWD}
 
           #*新增start事件响应, 启动时拉起一个pyCraft实例
-          sudo tee -a "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
+          sudo tee -a "/opt/minecraftctl/event/INFO/start" >> /dev/null <<EOF
 
           echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
           # 拉起一个pyCraft实例
@@ -245,8 +245,8 @@ jobs:
           echo "  设置权限" >> /tmp/E_CICheck.log
           chmod +x ./start.py
           # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' \&>> /tmp/E_CICheck.log\n";
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o \&>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' >> /tmp/E_CICheck.log 2>&1\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o >> /tmp/E_CICheck.log 2>&1\n";
           EOF
 
           cat "/opt/minecraftctl/event/INFO/start"
