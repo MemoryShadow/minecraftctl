@@ -36,6 +36,7 @@ elif [ "$1" == "update" ]; then
   bash "${MePath}/prerm"
   # install minecraftctl software
   cp -r "${MePath}/../bin" "/opt/minecraftctl"
+  sed -i "s/minecraftctl VSERION/minecraftctl v${Version}/" /opt/minecraftctl/minecraftctl
   # update config file
   bash "${MePath}/postinst"
   echo "Update complete."
