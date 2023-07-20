@@ -243,7 +243,7 @@ jobs:
           screen -dmS "pyCraft"
           chmod +x ./start.py
           # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o &>>/tmp/E_CICheck.log\n";
           EOF
 
           #*新增login事件响应, 登陆时发送消息
@@ -281,7 +281,6 @@ jobs:
           while [ ! -f server.properties ]; do sleep 1; done;
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
           minecraftctl start;
-          echo ${PWD};
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
           while [ ! -f /tmp/CICheck.log ]; do
@@ -289,11 +288,7 @@ jobs:
             WaitTimeS=$[ WaitTimeS + 1]
             if [ ${WaitTimeS} -gt 60 ]; then
               echo "等待超时" > /dev/stderr;
-              screen -ls;
               minecraftctl stop;
-              cat logs/latest.log;
-              echo ${USER}; groups;
-              ls -lab /tmp;
               cat /tmp/E_CICheck.log;
               exit 1;
             fi
