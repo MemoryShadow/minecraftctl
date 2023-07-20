@@ -245,10 +245,12 @@ jobs:
           echo "  设置权限" >> /tmp/E_CICheck.log
           chmod +x ./start.py
           # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' &>> /tmp/E_CICheck.log\n";
-          screen -x -S "pyCraft" -p 0 -X stuff "pip list &>> /tmp/E_CICheck.log\n";
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o &>>/tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' \&>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "pip list \&>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o \&>>/tmp/E_CICheck.log\n";
           EOF
+
+          cat "/opt/minecraftctl/event/INFO/start"
 
           #*新增login事件响应, 登陆时发送消息
           sudo tee -a "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
@@ -292,6 +294,7 @@ jobs:
             WaitTimeS=$[ WaitTimeS + 1]
             if [ ${WaitTimeS} -gt 120 ]; then
               echo "等待超时" > /dev/stderr;
+              pip list
               minecraftctl stop;
               cat logs/latest.log;
               cat /tmp/E_CICheck.log;
