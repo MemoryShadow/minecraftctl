@@ -280,9 +280,8 @@ jobs:
           sed -i 's/eula=false/eula=true/' eula.txt;
           while [ ! -f server.properties ]; do sleep 1; done;
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
-          cat logs/latest.log
           minecraftctl start;
-          ls; screen -ls; cat minecraftctl.conf; echo ${PWD};
+          echo ${PWD};
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0
           while [ ! -f /tmp/CICheck.log ]; do
@@ -293,7 +292,7 @@ jobs:
               screen -ls;
               minecraftctl stop;
               cat logs/latest.log;
-              cat /tmp/E_CICheck.log;
+              ls /; ls /tmp; cat /tmp/E_CICheck.log;
               exit 1;
             fi
           done;
