@@ -289,7 +289,7 @@ jobs:
           while [ ! -f /tmp/CICheck.log ]; do
             sleep 1;
             WaitTimeS=$[ WaitTimeS + 1]
-            if [ ${WaitTimeS} -gt 60 ]; then
+            if [ ${WaitTimeS} -gt 120 ]; then
               echo "等待超时" > /dev/stderr;
               minecraftctl stop;
               cat logs/latest.log;
