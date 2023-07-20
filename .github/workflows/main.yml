@@ -46,15 +46,12 @@ jobs:
           git log --pretty=format:"%s" -1>CHANGELOG.md
           echo "GITHUB_REF: ${GITHUB_REF}"
           # 当由tag触发时, 使用tag指定的版本
-          if [[ "${GITHUB_REF}" =~ ^refs/heads/.* ]]; then
-            echo "这是分支型构建"
-            echo "TAG=v${Version}" >> $GITHUB_OUTPUT
-            echo "VERSION=${Version}" >> $GITHUB_OUTPUT
-          fi
           if [[ "${GITHUB_REF}" =~ ^refs/tags/.* ]]; then
-            echo "这是tag型构建"
             echo "TAG=${GITHUB_REF/refs\/tags\//}"  >> $GITHUB_OUTPUT
             echo "VERSION=${GITHUB_REF/refs\/tags\/v/}"  >> $GITHUB_OUTPUT
+          else
+            echo "TAG=v${Version}" >> $GITHUB_OUTPUT
+            echo "VERSION=${Version}" >> $GITHUB_OUTPUT
           fi
           mkdir packages
           bash build/prepare.sh
