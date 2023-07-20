@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 08:53:17
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-23 09:34:03
+ # @LastEditTime: 2023-07-20 22:37:10
  # @Description: 做构建前的准备, 自动生成构建信息, 将文件复制到构建目录
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ###
@@ -24,6 +24,7 @@ function CopyingFiles(){
 MePath=`dirname $0`
 pwd_path="${MePath}/.."
 source ${MePath}/info
+sed -i "s/minecraftctl VSERION/minecraftctl v${Version}/" ${MePath}/../minecraftctl
 #*生成配置文件目录与信息
 # 创建目录
 Architecture_T=(${Architecture//,/ })

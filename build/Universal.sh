@@ -2,10 +2,12 @@
 ###
  # @Date: 2022-11-03 09:22:27
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-23 09:44:57
+ # @LastEditTime: 2023-07-20 22:34:54
  # @Description: 通用安装与卸载(请以root身份运行)
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
-### 
+###
+
+source `dirname $0`/info
 
 if [ -z $1 ]; then
   echo "Usage: $0 [install|uninstall|update]"
@@ -48,6 +50,7 @@ elif [ "$1" == "install" ]; then
   chmod 755 -R /opt/minecraftctl
   # make `sudo` available
   ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
+  sed -i "s/minecraftctl VSERION/minecraftctl v${Version}/" /opt/minecraftctl/minecraftctl
   # register autocomplete
   cat<<EOF>/etc/profile.d/minecraftctl.sh
 # minecraftctl autocomplete

@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-21 13:13:34
+ # @LastEditTime: 2023-07-20 22:27:51
  # @Description: minecraftctl引导文件, 负责对组件进行统一的引导和管理
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -75,6 +75,29 @@ export WorkDir=`pwd`
 cd "$InstallPath"
 source "tools/Base.sh"
 cd "$WorkDir"
+
+# 检测是否有第一个参数, 如果有就初步检查一遍
+if [ ! -z $1 ]; then
+  case "$1" in
+    -h|--help)
+      $0 help
+      exit $?
+      ;;
+    -A|--About|--About)
+      cat <<-EOF
+Github: https://github.com/MemoryShadow/minecraftctl
+Contributors:
+  MemoryShadow, China
+    The leader of the project, the main contributor
+EOF
+      exit $?
+      ;;
+    -V|--version)
+      echo "minecraftctl VSERION"
+      exit $?
+      ;;
+  esac
+fi
 
 if [ -e "$InstallPath/module/$1.sh" ]; then
   module=$1
