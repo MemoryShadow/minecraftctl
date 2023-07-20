@@ -29,6 +29,10 @@ jobs:
     outputs:
       TAG: ${{ steps.Init.outputs.TAG }}
       VERSION: ${{ steps.Init.outputs.VERSION }}
+      DEB_AMD64: ${{ steps.deb.outputs.amd64 }}
+      DEB_I386: ${{ steps.deb.outputs.i386 }}
+      RPM_AMD64: ${{ steps.rpm.outputs.amd64 }}
+      RPM_I386: ${{ steps.rpm.outputs.i386 }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -57,29 +61,28 @@ jobs:
 
       # 构建deb包 
       - name: Build deb
+        id: deb
         run: |
           source build/info
-          tag=${Version}
-          echo "tag: ${tag}"
-          echo ${{ steps.Init.outputs.TAG }}
-          echo ${{ steps.Init.outputs.VERSION }}
+          echo "TAG: ${{ steps.Init.outputs.TAG }}"
+          echo "VERSION: ${{ steps.Init.outputs.VERSION }}"
           pwd_path=`pwd`
           echo "pwd_path: ${pwd_path}"
           Architecture_T=(${Architecture//,/ })
           for Arch in ${Architecture_T[@]}; do
             work_path="${pwd_path}/build/deb/${Arch}"
-            #tag=${GITHUB_REF/refs\/tags\//}
             echo "work_path: ${work_path}"
-            dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${tag//v/}_${Arch}.deb
+            dpkg -b ${work_path} ${pwd_path}/packages/minecraftctl_${{ steps.Init.outputs.VERSION }}_${Arch}.deb
+            echo "${Arch}=minecraftctl_${{ steps.Init.outputs.VERSION }}_${Arch}.deb" >> $GITHUB_OUTPUT
           done
           ls -lab
           ls -lab packages
 
       # 构建rpm包
       - name: Build RPM
+        id: rpm
         run: |
           source build/info
-          tag=${Version}
           echo $PWD
           pwd_path=$PWD
           Architecture_T=(${Architecture//,/ })
@@ -89,13 +92,13 @@ jobs:
           docker exec -t centos7Instance yum install -y rpmdevtools>/dev/null
           echo install rpmdevtools Finish.
           work_path="${pwd_path}/build/rpm/"
-          #tag=${GITHUB_REF/refs\/tags\//}
           echo "work_path: ${work_path}"
           docker exec -t centos7Instance cp -r ${work_path} /root/rpmbuild
           docker exec -t centos7Instance rpmdev-setuptree
           for Arch in ${Architecture_T[@]}; do
             docker exec -t centos7Instance rpmbuild -bb --target ${Arch/amd64/x86_64} /root/rpmbuild/SPECS/minecraftctl.spec
-            docker exec -t centos7Instance cp /root/rpmbuild/RPMS/${Arch/amd64/x86_64}/minecraftctl-${Version}-1.el7.${Arch/amd64/x86_64}.rpm ${pwd_path}/packages/
+            docker exec -t centos7Instance cp /root/rpmbuild/RPMS/${Arch/amd64/x86_64}/minecraftctl-${{ steps.Init.outputs.VERSION }}-1.el7.${Arch/amd64/x86_64}.rpm ${pwd_path}/packages/
+            echo "${Arch}=minecraftctl-${{ steps.Init.outputs.VERSION }}-1.el7.${Arch/amd64/x86_64}.rpm" >> $GITHUB_OUTPUT
           done
           docker exec -t centos7Instance rm -rf /root/rpmbuild
           docker kill -s KILL centos7Instance
@@ -153,7 +156,6 @@ jobs:
         run: |
           source build/info
           ls -lab packages
-          tag=${Version}
           echo $PWD
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
@@ -161,7 +163,7 @@ jobs:
           # TODO 这里暂时先不测试升级后存档继承的问题. 因为目前只有一个版本
           docker exec -t ubuntuInstance bash -c "apt-get update &> /dev/null; apt-get install -y -q sudo wget tzdata>/dev/null; \
             echo minecraftctl installing...; \
-            sudo apt install -y -q ${pwd_path}/packages/minecraftctl_${Version}_amd64.deb | grep 'minecraftctl'; \
+            sudo apt install -y -q ${pwd_path}/packages/${{ needs.build.outputs.DEB_AMD64 }} | grep 'minecraftctl'; \
             echo minecraftctl installed...;\
             sudo minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';"
@@ -170,19 +172,18 @@ jobs:
         run: |
           source build/info
           ls -lab packages
-          tag=${Version}
           echo $PWD
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name centos7Instance --net="host" docker.io/centos:7.9.2009 /bin/bash
           echo yum update...
           docker exec -t centos7Instance bash -c "yum install -y http://mirror.math.princeton.edu/pub/epel/7/x86_64/Packages/a/aria2-1.34.0-5.el7.x86_64.rpm > /dev/null; \
-            yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]'; \
+            yum install -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]'; \
             minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
             sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
             yum remove -y minecraftctl | grep 'minecraftctl' | grep -v '\[#* *\]';\
             mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
-            yum install -y ${pwd_path}/packages/minecraftctl-${Version}-1.el7.x86_64.rpm | grep 'minecraftctl' | grep -v '\[#* *\]';\
+            yum install -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]';\
             cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
 
   Linux-Universal-Installation-and-testing:
@@ -314,7 +315,7 @@ jobs:
   # 当检测到tag时, 自动生成CHANGELOG与发布构建物
   AutoReleases:
     runs-on: ubuntu-latest
-    needs: [Install-Test, Linux-Universal-Installation-and-testing]
+    needs: [build, Install-Test, Linux-Universal-Installation-and-testing]
     steps:
       - uses: actions/checkout@v3
 
@@ -335,7 +336,9 @@ jobs:
         with:
           body_path: CHANGELOG.md
           files: |
-            minecraftctl_${{ needs.build.outputs.VERSION }}_x86_64.deb
-            minecraftctl-${{ needs.build.outputs.VERSION }}-1.el7.x86_64.rpm
+            packages/${{ needs.build.outputs.DEB_AMD64 }}
+            packages/${{ needs.build.outputs.DEB_I386 }}
+            packages/${{ needs.build.outputs.RPM_AMD64 }}
+            packages/${{ needs.build.outputs.RPM_I386 }}
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
