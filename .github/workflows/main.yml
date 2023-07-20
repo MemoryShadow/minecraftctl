@@ -5,13 +5,15 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: 
+    branches:
       - master
       - develop
       - develop/**
       - dev_*
+    tags:
+      - 'v*.*.*'
   pull_request:
-    branches: 
+    branches:
       - master
 
   # Allows you to run this workflow manually from the Actions tab
@@ -34,6 +36,15 @@ jobs:
           source build/info
           git log --pretty=format:"%s" -1>CHANGELOG.md
           echo "GITHUB_REF: ${GITHUB_REF}"
+          # 当由tag触发时, 使用tag指定的版本
+          if [[ "${GITHUB_REF}" =~ ^refs/heads/.* ]]; then
+            echo ::set-output name=TAG::v${Version}
+            echo ::set-output name=VERSION::${Version}
+          fi
+          if [[ "${GITHUB_REF}" =~ ^refs/tags/.* ]]; then
+            echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+            echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+          fi
           mkdir packages
           bash build/prepare.sh
 
@@ -112,17 +123,6 @@ jobs:
           name: i386.rpm
           path: packages/minecraftctl-*.i386.rpm
           if-no-files-found: error
-      # Releases(这个字段是用于发布的字段)
-      # - name: Releases
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   uses: softprops/action-gh-release@v1 
-      #   with:
-      #     body_path: CHANGELOG.md
-      #     files: |
-      #       minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
-      #       minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
   Install-Test:
     runs-on: ubuntu-latest
@@ -303,3 +303,39 @@ jobs:
 
       - name: Uninstall minecraftctl
         run: sudo build/Universal.sh uninstall
+
+  # 当检测到tag时, 自动生成CHANGELOG与发布构建物
+  AutoReleases:
+    runs-on: ubuntu-latest
+    needs: [Install-Test, Linux-Universal-Installation-and-testing]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Init
+        run: |
+          mkdir packages
+          git log --pretty=format:"%s" -1>CHANGELOG.md
+          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+
+      - name: download artifact
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v3
+        with:
+          path: packages
+      
+      - name: Display structure of downloaded files
+        run: |
+          ls -R
+        working-directory: packages
+
+      - name: Releases
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.md
+          files: |
+            minecraftctl_${{ steps.init.outputs.VERSION }}_x86_64.deb
+            minecraftctl-${{ steps.init.outputs.VERSION }}-1.el7.x86_64.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
