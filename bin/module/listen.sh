@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-19 16:07:41
+ # @LastEditTime: 2023-07-20 10:34:52
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -80,7 +80,7 @@ declare -A EventINFO=(
   ['msg']='<[0-9a-zA-Z ]*> .*$'
   ['login']='[0-9a-zA-Z ]* joined the game$'
   ['logout']='[0-9a-zA-Z ]* left the game$'
-  ['start']=' ?\([0-9]\.[0-9]*s\)[！!].*["“]/?help["”]'
+  ['start']=' ?\([0-9]*\.[0-9]*s\)[！!].*["“]/?help["”]'
   ['stop']='(Stopping server)|(关闭服务器中)'
 )
 
