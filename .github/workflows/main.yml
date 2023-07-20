@@ -240,12 +240,13 @@ jobs:
           echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
           # 拉起一个pyCraft实例
           cd ../pyCraft;
-          echo -e "  创建会话" >> /tmp/E_CICheck.log
+          echo "  创建会话" >> /tmp/E_CICheck.log
           screen -dmS "pyCraft"
-          echo -e "  设置权限" >> /tmp/E_CICheck.log
+          echo "  设置权限" >> /tmp/E_CICheck.log
           chmod +x ./start.py
           # 上线
-          echo -e "  登陆服务器" >> /tmp/E_CICheck.log
+          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' &>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "pip list &>> /tmp/E_CICheck.log\n";
           screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o &>>/tmp/E_CICheck.log\n";
           EOF
 
