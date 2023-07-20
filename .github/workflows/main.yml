@@ -36,16 +36,19 @@ jobs:
 
       # 由于此处没有Tag, 所以Tag从配置文件中读取
       - name: Init
+        id: Init
         run: |
           source build/info
           git log --pretty=format:"%s" -1>CHANGELOG.md
           echo "GITHUB_REF: ${GITHUB_REF}"
           # 当由tag触发时, 使用tag指定的版本
           if [[ "${GITHUB_REF}" =~ ^refs/heads/.* ]]; then
+            echo "这是分支型构建"
             echo "TAG=v${Version}" >> $GITHUB_OUTPUT
             echo "VERSION=${Version}" >> $GITHUB_OUTPUT
           fi
           if [[ "${GITHUB_REF}" =~ ^refs/tags/.* ]]; then
+            echo "这是tag型构建"
             echo "TAG=${GITHUB_REF/refs\/tags\//}"  >> $GITHUB_OUTPUT
             echo "VERSION=${GITHUB_REF/refs\/tags\/v/}"  >> $GITHUB_OUTPUT
           fi
@@ -314,13 +317,6 @@ jobs:
     needs: [Install-Test, Linux-Universal-Installation-and-testing]
     steps:
       - uses: actions/checkout@v3
-
-      - name: Init
-        run: |
-          mkdir packages
-          git log --pretty=format:"%s" -1>CHANGELOG.md
-          echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
-          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
 
       - name: download artifact
         if: startsWith(github.ref, 'refs/tags/')
