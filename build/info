@@ -1,13 +1,13 @@
 ###
  # @Date: 2023-03-10 00:30:00
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 17:51:18
+ # @LastEditTime: 2023-07-20 23:06:13
  # @Description: 
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
 #!/bin/bash
 export PackageType='deb,rpm'
-export Version='1.1.8'
+export Version='1.2.0'
 export Package='minecraftctl'
 export Section='admin'
 export Priority='extra'
