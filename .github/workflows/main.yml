@@ -238,6 +238,7 @@ jobs:
           sudo tee -a "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
           echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
+          set -v
           # 拉起一个pyCraft实例
           cd ../pyCraft;
           screen -dmS "pyCraft"
@@ -289,6 +290,7 @@ jobs:
             if [ ${WaitTimeS} -gt 60 ]; then
               echo "等待超时" > /dev/stderr;
               minecraftctl stop;
+              cat logs/latest.log;
               cat /tmp/E_CICheck.log;
               exit 1;
             fi
