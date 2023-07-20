@@ -238,12 +238,14 @@ jobs:
           sudo tee -a "/opt/minecraftctl/event/INFO/start" >>/dev/null <<EOF
 
           echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
-          set -v
           # 拉起一个pyCraft实例
           cd ../pyCraft;
+          echo -e "  创建会话" >> /tmp/E_CICheck.log
           screen -dmS "pyCraft"
+          echo -e "  设置权限" >> /tmp/E_CICheck.log
           chmod +x ./start.py
           # 上线
+          echo -e "  登陆服务器" >> /tmp/E_CICheck.log
           screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o &>>/tmp/E_CICheck.log\n";
           EOF
 
