@@ -245,8 +245,8 @@ jobs:
           echo "  设置权限" >> /tmp/E_CICheck.log
           chmod +x ./start.py
           # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' &>> /tmp/E_CICheck.log\n";
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o &>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID}' \&>> /tmp/E_CICheck.log\n";
+          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o \&>> /tmp/E_CICheck.log\n";
           EOF
 
           cat "/opt/minecraftctl/event/INFO/start"
