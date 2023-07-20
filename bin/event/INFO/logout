@@ -1,0 +1,12 @@
+#!/bin/bash
+###
+ # @Date: 2023-03-09 21:21:33
+ # @LastEditors: MemoryShadow
+ # @LastEditTime: 2023-07-20 11:07:20
+ # @Description: 响应登出事件
+ # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
+### 
+
+source $InstallPath/tools/Base.sh
+
+echo "${1%% *} 离开了服务器"

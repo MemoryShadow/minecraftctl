@@ -3,10 +3,12 @@
  # @Date: 2022-07-24 14:01:03
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2022-09-21 23:26:50
+ # @LastEditTime: 2023-04-29 00:10:10
  # @Description: 向服务器中说话
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
+
+# TODO 新增-o,--origin参数用于标记消息的来源位置
 
 source $InstallPath/tools/Base.sh
 
@@ -57,6 +59,7 @@ do
 done
 
 # 向服务器发送信息
+# TODO 允许控制哪个玩家能看到
 function say2server() {
   if [ "$2" != "" ]; then
     if [ "$1" != "" ]; then

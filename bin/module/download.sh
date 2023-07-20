@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-02-15 23:49:08
+ # @LastEditTime: 2023-05-08 20:33:08
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -121,13 +121,20 @@ if [ -e "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
 fi
 
 # List of domain names with mirror sources
+# TODO: Ignore the difference between https and http
 declare -A AllowDownloadMirror=(
   ['https://github.com']="GITHUB_def"
   ['https://raw.githubusercontent.com']="GITHUB_raw"
   ['http://launcher.mojang.com']="BMCLAPI_def"
   ['https://launcher.mojang.com']="BMCLAPI_def"
   ['http://launchermeta.mojang.com']="BMCLAPI_def"
+  ['https://launchermeta.mojang.com']="BMCLAPI_def"
   ['https://files.minecraftforge.net']="BMCLAPI_def"
+  ['http://resources.download.minecraft.net']="BMCLAPI_Assets"
+  ['https://libraries.minecraft.net']="BMCLAPI_Maven"
+  ['https://maven.minecraftforge.net']="BMCLAPI_Maven"
+  ['https://files.minecraftforge.net/maven']="BMCLAPI_Maven"
+  ['https://maven.fabricmc.net']="BMCLAPI_Maven"
   ['https://authlib-injector.yushi.moe']="BMCLAPI_AI"
 )
 
@@ -135,7 +142,8 @@ declare -A AllowDownloadMirror=(
 GITHUB_def=(
   "https://ghproxy.com/https://github.com"
   "https://github.rc1844.workers.dev"
-  "https://download.fastgit.org"
+  "https://hub.fgit.ml"
+  "https://hub.fgit.gq"
 )
 GITHUB_raw=(
   "https://raw.staticdn.net"
@@ -148,6 +156,16 @@ GITHUB_raw=(
 BMCLAPI_def=(
   "https://bmclapi2.bangbang93.com"
   "https://download.mcbbs.net"
+)
+
+BMCLAPI_Assets=(
+  "https://bmclapi2.bangbang93.com/assets"
+  "https://download.mcbbs.net/assets"
+)
+
+BMCLAPI_Maven=(
+  "https://bmclapi2.bangbang93.com/maven"
+  "https://download.mcbbs.net/maven"
 )
 
 BMCLAPI_AI=(

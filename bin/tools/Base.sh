@@ -3,30 +3,27 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-22 23:08:30
+ # @LastEditTime: 2023-04-29 10:37:57
  # @Description: 为其他函数提供基本的函数库与初始加载
- # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
+ # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
 
 export TIME_STYLE='+%Y-%m-%d %H:%M:%S'
 
-if [ -e ${GamePath}/minecraftctl.conf ]; then
-  source ${GamePath}/minecraftctl.conf
-fi
+# 检查应该生效哪一个配置, 对应的优先级关系为: 当前工作目录(WorkDir), config中指定的工作目录(GamePath)
 
 # 加载局部配置覆盖全局配置, 当前目录中的minecraftctl.conf文件优先级最高
-if [ -e $WorkDir/minecraftctl.conf ]; then
-  source $WorkDir/minecraftctl.conf
-  # 当检测到当前工作目录为游戏目录时, 将游戏目录设置为当前工作目录
+if [ -e "${WorkDir}/minecraftctl.conf" ]; then
   GamePath=$WorkDir
-else
-  if [ -e ${GamePath}/minecraftctl.conf ]; then
-    source ${GamePath}/minecraftctl.conf
-  fi
-  # 如果工作目录没有配置,就前往配置中的目录
-  if [ ! -d ${GamePath} ]; then
-    mkdir -p ${GamePath}
-  fi
+fi
+# 如果工作目录没有被创建,就前往配置中的目录
+if [ ! -d "${GamePath}" ]; then
+  mkdir -p ${GamePath}
+fi
+if [ -e "${GamePath}/minecraftctl.conf" ]; then
+  cd "${GamePath}"
+  source minecraftctl.conf
+  cd "${WorkDir}"
 fi
 cd ${GamePath}
 
@@ -92,17 +89,20 @@ function ExistServerExample() {
 #?参数1: 要发送的命令
 #?参数2: 要发送到的窗口终端(默认值为0)
 function cmd2server() {
-  if [ "$1" != "" ]; then
-  # 分批推送, 按照长度分批
-  local BatchNum=499
-  local CmdLen=`awk '{print length($0)}' <<< "${1}"`
-  local CmdBatchNum=$[CmdLen/BatchNum]
-  for((batch=0; batch <= CmdBatchNum; batch++)); do
-    local CmdBatch=`awk "{print substr(\\\$0,${batch}*${BatchNum}+1,(${batch}+1)*${BatchNum})}" <<< "${1}"`
-    screen -x -S "$ScreenName" -p ${2:-0} -X stuff "${CmdBatch}"
-  done
-  unset batch
-  screen -x -S "$ScreenName" -p ${2:-0} -X stuff "\n"
+  ExistServerExample
+  if [ $? -eq 0 ]; then
+    if [ "$1" != "" ]; then
+    # 分批推送, 按照长度分批
+    local BatchNum=499
+    local CmdLen=`awk '{print length($0)}' <<< "${1}"`
+    local CmdBatchNum=$[CmdLen/BatchNum]
+    for((batch=0; batch <= CmdBatchNum; batch++)); do
+      local CmdBatch=`awk "{print substr(\\\$0,${batch}*${BatchNum}+1,(${batch}+1)*${BatchNum})}" <<< "${1}"`
+      screen -x -S "$ScreenName" -p ${2:-0} -X stuff "${CmdBatch}"
+    done
+    unset batch
+    screen -x -S "$ScreenName" -p ${2:-0} -X stuff "\n"
+    fi
   fi
   return 0
 }
