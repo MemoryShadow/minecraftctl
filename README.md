@@ -39,7 +39,7 @@
 1. 本项目的CI就是使用本工具进行的测试  
   通过本工具, 我们能够在CI中实现自动化测试与部署, 从而实现自动化运维. 我们还能为其他程序提供基础的CI支持, 例如在本项目的CI中, 我们就为项目[pyCraft](https://github.com/MemoryShadow/pyCraft/ "点击查看")设计了[基础功能的测试](https://github.com/MemoryShadow/minecraftctl/blob/e1c6e89241e255d9e867083c62a5aa924b6bd447/.github/workflows/main.yml#L256 "点击查看"). 通过这些测试, 我们能够保证项目的稳定性, 从而为用户提供更好的体验.
 
-当然, 语言也是必不可少的, 本项目编写了I18n支持, 欢迎各位参照[如何贡献](#如何贡献)章节参与到我们的翻译工作中来, 您也可以直接前往[I18n分支](https://github.com/MemoryShadow/minecraftctl/tree/i18n/ "点击前往")来查看我们的翻译进度
+当然, 语言也是必不可少的, 本项目编写了I18n支持, 欢迎各位参照[如何贡献](#如何贡献)章节参与到我们的翻译工作中来, 您也可以直接前往[I18n仓库](https://github.com/minecraftctl/I18N "点击前往")来查看或参与我们的翻译进度
 
 项目中还附带了一些实用的功能, 如:
 
