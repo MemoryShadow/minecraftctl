@@ -337,3 +337,10 @@ jobs:
             packages/amd64.rpm/${{ needs.build.outputs.RPM_AMD64 }}
             packages/i386.rpm/${{ needs.build.outputs.RPM_I386 }}
           token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Cleanup
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: |
+            amd64.*
+            i386.*
