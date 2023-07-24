@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-05-08 20:33:08
+ # @LastEditTime: 2023-07-24 17:43:30
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -142,6 +142,7 @@ declare -A AllowDownloadMirror=(
 GITHUB_def=(
   "https://ghproxy.com/https://github.com"
   "https://github.rc1844.workers.dev"
+  "https://hub.fastgit.xyz"
   "https://hub.fgit.ml"
   "https://hub.fgit.gq"
 )
