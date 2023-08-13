@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-24 17:43:30
+ # @LastEditTime: 2023-08-13 09:56:57
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -143,14 +143,14 @@ GITHUB_def=(
   "https://ghproxy.com/https://github.com"
   "https://github.rc1844.workers.dev"
   "https://hub.fastgit.xyz"
-  "https://hub.fgit.ml"
-  "https://hub.fgit.gq"
+  "https://hub.njuu.cf"
 )
 GITHUB_raw=(
   "https://raw.staticdn.net"
   "https://raw.githubusercontents.com"
   "https://raw.fastgit.org"
   "https://ghproxy.com/https://raw.githubusercontent.com"
+  "https://raw.kgithub.com"
 )
 
 # BMCLAPI mirror list
