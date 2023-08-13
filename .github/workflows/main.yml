@@ -199,7 +199,7 @@ jobs:
           sudo apt update>/dev/null;
           sudo apt install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null;
           # 安装Java环境
-          curl -s https://github.com/ibmruntimes/semeru8-binaries/releases/download/jdk8u372-b07_openj9-0.38.0/ibm-semeru-open-jre_x64_linux_8u372b07_openj9-0.38.0.tar.gz -o adoptopenjdk-8-openj9-jre.tar.gz > /dev/null;
+          wget -q https://github.com/ibmruntimes/semeru8-binaries/releases/download/jdk8u372-b07_openj9-0.38.0/ibm-semeru-open-jre_x64_linux_8u372b07_openj9-0.38.0.tar.gz -O adoptopenjdk-8-openj9-jre.tar.gz > /dev/null;
           mkdir -p /usr/lib/jvm/
           sudo tar -xzf adoptopenjdk-8-openj9-jre.tar.gz -C /usr/lib/jvm/
           rm adoptopenjdk-8-openj9-jre.tar.gz;
