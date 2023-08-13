@@ -198,17 +198,19 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive;
           sudo apt update>/dev/null;
           sudo apt install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null;
-          curl -s https://adoptopenjdk.jfrog.io/artifactory/deb/pool/main/a/adoptopenjdk-8-openj9-jre/adoptopenjdk-8-openj9-jre_8u292-b10.openj9-0.26.0-3_amd64.deb -o ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
-          sudo sudo apt install -y ~/adoptopenjdk-8-openj9-jre.deb>/dev/null;
-          rm ~/adoptopenjdk-8-openj9-jre.deb;
+          # 安装Java环境
+          curl -s https://github.com/ibmruntimes/semeru8-binaries/releases/download/jdk8u372-b07_openj9-0.38.0/ibm-semeru-open-jre_x64_linux_8u372b07_openj9-0.38.0.tar.gz -o adoptopenjdk-8-openj9-jre.tar.gz > /dev/null;
+          mkdir -p /usr/lib/jvm/
+          sudo tar -xzf adoptopenjdk-8-openj9-jre.tar.gz -C /usr/lib/jvm/
+          rm adoptopenjdk-8-openj9-jre.tar.gz;
           # 部署pyCraft
           git clone https://github.com/MemoryShadow/pyCraft.git ~/pyCraft;
           pip install pynbt requests cryptography;
 
       - name: Install old-minecraftctl
         run: |
-          sudo build/Universal.sh install
-          minecraftctl help
+          sudo build/Universal.sh install;
+          minecraftctl help;
 
       - name: Update minecraftctl
         run: |
