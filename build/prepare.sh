@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 08:53:17
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-20 22:37:10
+ # @LastEditTime: 2023-08-17 21:07:52
  # @Description: 做构建前的准备, 自动生成构建信息, 将文件复制到构建目录
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ###
@@ -12,11 +12,11 @@
  # 参数2: 目标路径
 ###
 function CopyingFiles(){
-  mkdir -p ${work_path}/usr/sbin ${work_path}/opt ${work_path}/etc/profile.d
+  mkdir -p ${work_path}/usr/bin ${work_path}/opt ${work_path}/etc/profile.d
   cp -r ${1}/bin ${2}/opt/minecraftctl
   cp -r ${1}/etc ${2}/etc/minecraftctl
   cp ${1}/build/complete ${2}/etc/profile.d/minecraftctl.sh
-  ln -s /opt/minecraftctl/minecraftctl ${2}/usr/sbin/minecraftctl
+  ln -s /opt/minecraftctl/minecraftctl ${2}/usr/bin/minecraftctl
   rm -rf ${2}/etc/minecraftctl/i18n
 }
 
