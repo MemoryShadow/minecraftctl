@@ -2,7 +2,7 @@
 ###
  # @Date: 2022-11-03 09:22:27
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-20 22:34:54
+ # @LastEditTime: 2023-08-21 10:53:56
  # @Description: 通用安装与卸载(请以root身份运行)
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved.
 ###
@@ -20,7 +20,7 @@ if [ "$1" == "uninstall" ]; then
   echo "Uninstalling..."
   cd "${MePath}/../../" 
   # uninstall minecraftctl software(remove the source code directory, installation directory, and the symbolic link)
-  rm -rf "${MePath}/../" /opt/minecraftctl /usr/sbin/minecraftctl
+  rm -rf "${MePath}/../" /opt/minecraftctl /usr/sbin/minecraftctl /usr/bin/minecraftctl
   # remove config file
   rm -rf /etc/minecraftctl
   # remove autocomplete file
@@ -50,7 +50,7 @@ elif [ "$1" == "install" ]; then
   chmod 755 /etc/minecraftctl /etc/minecraftctl/theme 
   chmod 755 -R /opt/minecraftctl
   # make `sudo` available
-  ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
+  ln -s /opt/minecraftctl/minecraftctl /usr/bin/minecraftctl
   sed -i "s/minecraftctl VSERION/minecraftctl v${Version}/" /opt/minecraftctl/minecraftctl
   # register autocomplete
   cat<<EOF>/etc/profile.d/minecraftctl.sh
