@@ -192,16 +192,16 @@ jobs:
       - name: Setup run environment
         run: |
           # 部署运行环境
-          source build/info
-          sudo apt install -y ${Depends//,/ }
+          source build/info;
+          sudo apt install -y ${Depends//,/ };
           export TZ=Asia/Shanghai;
           export DEBIAN_FRONTEND=noninteractive;
           sudo apt update>/dev/null;
           sudo apt install -y -q sudo wget tzdata openjdk-8-jre-headless>/dev/null;
           # 安装Java环境
           wget -q https://github.com/ibmruntimes/semeru8-binaries/releases/download/jdk8u372-b07_openj9-0.38.0/ibm-semeru-open-jre_x64_linux_8u372b07_openj9-0.38.0.tar.gz -O adoptopenjdk-8-openj9-jre.tar.gz > /dev/null;
-          mkdir -p /usr/lib/jvm/
-          sudo tar -xzf adoptopenjdk-8-openj9-jre.tar.gz -C /usr/lib/jvm/
+          mkdir -p /usr/lib/jvm/;
+          sudo tar -xzf adoptopenjdk-8-openj9-jre.tar.gz -C /usr/lib/jvm/;
           rm adoptopenjdk-8-openj9-jre.tar.gz;
           # 部署pyCraft
           git clone https://github.com/MemoryShadow/pyCraft.git ~/pyCraft;
@@ -214,18 +214,18 @@ jobs:
 
       - name: Update minecraftctl
         run: |
-          sudo sed -i 's/GamePath=".*"/GamePath="~\/D_MCServer"/' /etc/minecraftctl/config
-          sudo build/Universal.sh update
-          grep D_MCServer /etc/minecraftctl/config
+          sudo sed -i 's/GamePath=".*"/GamePath="~\/D_MCServer"/' /etc/minecraftctl/config;
+          sudo build/Universal.sh update;
+          grep D_MCServer /etc/minecraftctl/config;
           if [ $? -ne 0 ]; then
-            echo "Update config failed."
-            exit 1
+            echo "Update config failed.";
+            exit 1;
           fi
-          minecraftctl help
-          sudo build/Universal.sh uninstall
+          minecraftctl help;
+          sudo build/Universal.sh uninstall;
 
       - name: Install minecraftctl
-        run: sudo build/Universal.sh install && minecraftctl help
+        run: sudo build/Universal.sh install && minecraftctl help;
 
       - name: Download Minecraft Server
         run: |
@@ -238,21 +238,21 @@ jobs:
       - name: Run Minecraft Server
         run: |
           # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
-          CheckID=`date +%s%N | md5sum | cut -c 1-10`
+          CheckID=`date +%s%N | md5sum | cut -c 1-10`;
 
           #*新增start事件响应, 启动时拉起一个pyCraft实例
-          sudo tee -a "/opt/minecraftctl/event/INFO/start" >> /dev/null <<EOF
+          sudo tee -a "/opt/minecraftctl/event/INFO/start" >> /dev/null <<EOF;
 
-          echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log
+          echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log;
           # 拉起一个pyCraft实例
-          ls -lab ./ >> /tmp/E_CICheck.log
-          echo "======" >> /tmp/E_CICheck.log
-          ls -lab ../ >> /tmp/E_CICheck.log
-          cd ~/pyCraft;
-          echo "  创建会话" >> /tmp/E_CICheck.log
-          screen -dmS "pyCraft"
-          echo "  设置权限" >> /tmp/E_CICheck.log
-          chmod +x ./start.py
+          ls -lab ./ >> /tmp/E_CICheck.log;
+          echo "======" >> /tmp/E_CICheck.log;
+          ls -lab ../ >> /tmp/E_CICheck.log;
+          cd ~/pyCraft;;
+          echo "  创建会话" >> /tmp/E_CICheck.log;
+          screen -dmS "pyCraft";
+          echo "  设置权限" >> /tmp/E_CICheck.log;
+          chmod +x ./start.py;
           # 上线
           screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID} \${PWD}' >> /tmp/E_CICheck.log 2>&1\n";
           screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o >> /tmp/E_CICheck.log 2>&1\n";
@@ -261,7 +261,7 @@ jobs:
           #*新增login事件响应, 登陆时发送消息
           sudo tee -a "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
 
-          echo "发送消息触发插件" >> /tmp/E_CICheck.log
+          echo "发送消息触发插件" >> /tmp/E_CICheck.log;
           # 发送消息触发插件
           screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
           EOF
@@ -269,7 +269,7 @@ jobs:
           #*新增logout事件响应, 退出登陆时关闭服务端
           sudo tee -a "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
 
-          echo "玩家退出时自动关闭服务端" >> /tmp/E_CICheck.log
+          echo "玩家退出时自动关闭服务端" >> /tmp/E_CICheck.log;
           # 玩家退出时自动关闭服务端
           minecraftctl stop;
           EOF
@@ -277,16 +277,16 @@ jobs:
           #*创建CI模块, 输出日志并关闭服务器
           sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
           #!/bin/bash
-          cd ~/D_MCServer
-          echo "\${1#*\!\!ci }" > /tmp/CICheck.log
-          echo "退出登陆" >> /tmp/E_CICheck.log
+          cd ~/D_MCServer;
+          echo "\${1#*\!\!ci }" > /tmp/CICheck.log;
+          echo "退出登陆" >> /tmp/E_CICheck.log;
           # 退出登陆
           screen -S "pyCraft" -X quit;
           EOF
-          sudo chmod +x "/opt/minecraftctl/command/ci"
+          sudo chmod +x "/opt/minecraftctl/command/ci";
 
           #*启动服务
-          sudo sed -i 's/> \/dev\/stderr;/>> \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh
+          sudo sed -i 's/> \/dev\/stderr;/>> \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh;
           cd ~/D_MCServer; minecraftctl start;
           while [ ! -f eula.txt ]; do sleep 1; done;
           sed -i 's/eula=false/eula=true/' eula.txt;
@@ -294,10 +294,10 @@ jobs:
           sed -i 's/online-mode=true/online-mode=false/' server.properties;
           minecraftctl start;
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
-          WaitTimeS=0
+          WaitTimeS=0;
           while [ ! -f /tmp/CICheck.log ]; do
             sleep 1;
-            WaitTimeS=$[ WaitTimeS + 1]
+            WaitTimeS=$[ WaitTimeS + 1];
             if [ ${WaitTimeS} -gt 120 ]; then
               echo "等待超时" > /dev/stderr;
               minecraftctl stop;
@@ -306,10 +306,10 @@ jobs:
               exit 1;
             fi
           done;
-          cat /tmp/CICheck.log | grep ${CheckID}
+          cat /tmp/CICheck.log | grep ${CheckID};
 
       - name: Uninstall minecraftctl
-        run: sudo build/Universal.sh uninstall
+        run: sudo build/Universal.sh uninstall;
 
   # 当检测到tag时, 自动生成CHANGELOG与发布构建物
   AutoReleases:
