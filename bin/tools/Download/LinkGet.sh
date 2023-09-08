@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 20:13:48
+ # @LastEditTime: 2023-09-08 23:04:11
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -58,9 +58,11 @@ function mohist(){
     ['1.7.10']='1.7.10'
     ['1.12.2']='1.12.2'
     ['1.16.5']='1.16.5'
-    ['1.18.2']='1.18.2-testing'
-    ['1.18.2-testing']='1.18.2-testing'
-    ['latest']='1.18.2-testing'
+    ['1.18.2']='1.18.2'
+    ['1.19.2']='1.19.2'
+    ['1.19.4']='1.19.4'
+    ['1.20.1']='1.20.1'
+    ['latest']='1.20.1'
   )
   if [ -z ${versionList[$1]} ]; then
     return 2;
