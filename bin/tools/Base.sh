@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 10:37:57
+ # @LastEditTime: 2023-09-08 21:15:48
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -80,9 +80,11 @@ function GetServerCoreVersion() {
   esac
 }
 
-# 检查是否有服务器实例已经存在,如果存在则返回0，否则返回其他值
+# 检查是否有服务实例已经存在,如果存在则返回0，否则返回其他值
+#?参数1: 服务实例名称
 function ExistServerExample() {
-  grep -q "${ScreenName//[/\\[}" < <(screen -ls)
+  ServerName=${1:-$ScreenName};
+  grep -q "${ServerName//[/\\[}" < <(screen -ls);
 }
 
 # 向服务器发送命令
