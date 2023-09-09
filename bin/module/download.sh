@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-08-13 09:56:57
+ # @LastEditTime: 2023-09-09 15:06:04
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -31,8 +31,7 @@ function helpMenu() {
 function ImageList2DLpara() {
   local DownloadDomain=$1
   local DownloadURL=""
-  for Domain in ${DownloadDomain[@]};
-  do
+  for Domain in ${DownloadDomain[@]}; do
     DownloadURL="${DownloadURL} ${Domain}/$2"
   done
   echo ${DownloadURL}

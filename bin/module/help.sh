@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 15:05:22
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-01-17 20:15:53
+ # @LastEditTime: 2023-09-09 15:02:41
  # @Description: 获取当前软件的帮助菜单
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -18,8 +18,7 @@ function _helpMenu() {
   local ModuleList=`ls ${InstallPath}/module/`
   ModuleList=(${ModuleList// /})
   local Module=''
-  for Module in "${ModuleList[@]}"
-  do
+  for Module in "${ModuleList[@]}"; do
     Module=${Module%.*}
     local Separate=
     if [ "${#Module}" -gt 7 ]; then Separate="\n\t\t"; 
