@@ -204,7 +204,7 @@ jobs:
           sudo tar -xzf adoptopenjdk-8-openj9-jre.tar.gz -C /usr/lib/jvm/;
           rm adoptopenjdk-8-openj9-jre.tar.gz;
           # 部署pyCraft
-          git clone https://github.com/MemoryShadow/pyCraft.git ~/pyCraft;
+          git clone --depth 1 -b master https://github.com/MemoryShadow/pyCraft.git ~/pyCraft;
           pip install pynbt requests cryptography;
 
       - name: Install old-minecraftctl
