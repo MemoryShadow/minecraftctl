@@ -2,7 +2,7 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-09 12:17:59
+ # @LastEditTime: 2023-09-09 16:48:39
  # @Description: 响应玩家消息
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -13,9 +13,13 @@ str=`sed -E 's/<//' <<< "$1"`
 # 取出玩家名和玩家说的话
 PlayerName="${str%%\>*}"
 PlayerMessage="${str#*> }"
-# echo "[msg@Listen] 玩家是$PlayerName, 内容是$PlayerMessage" > /dev/stderr
-# 检测是否以!!开头, 如果是就去掉!!并检测对应的command事件是否存在, 如果存在就异步转发到command事件
-grep -qe '^!!' <<< "$PlayerMessage"
-if [ $? -eq 0 ]; then
-  env "${InstallPath}/event/VIRTUAL/command" "${PlayerMessage#*\!\!}" "${PlayerName}" &
+
+#*在这里检测并加载子事件(必须放在这里, 因为特质是每个事件独有的)
+# 如果, 存在和当前一样名称的.d目录, 就依次调用并执行这部分
+if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
+  SubEventTargetList=`ls "${InstallPath}/event/${EventType}/${EventTarget}.d"`
+  SubEventTargetList=(${SubEventTargetList// /})
+  for SubEventTarget in "${SubEventTargetList[@]}"; do
+    source "${InstallPath}/event/${EventType}/${EventTarget}.d/${SubEventTarget}"
+  done
 fi

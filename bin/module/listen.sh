@@ -203,6 +203,6 @@ while read line; do
 done <&0;    #从标准输入读取数据
 
 wait
-# 初始化线程池
+# 清理化线程池
 PIPE Close
 exec 0<&-   #关闭标准输出。（是否也意味着解除之前的文件绑定？？）
