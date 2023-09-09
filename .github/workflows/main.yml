@@ -248,7 +248,9 @@ jobs:
           ls -lab ./ >> /tmp/E_CICheck.log;
           echo "======" >> /tmp/E_CICheck.log;
           ls -lab ../ >> /tmp/E_CICheck.log;
-          cd ~/pyCraft;;
+          echo "======" >> /tmp/E_CICheck.log;
+          ls -lab ~/ >> /tmp/E_CICheck.log;
+          cd ~/pyCraft;
           echo "  创建会话" >> /tmp/E_CICheck.log;
           screen -dmS "pyCraft";
           echo "  设置权限" >> /tmp/E_CICheck.log;
