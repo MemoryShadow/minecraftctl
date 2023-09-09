@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-08 21:15:48
+ # @LastEditTime: 2023-09-09 22:07:28
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -55,7 +55,7 @@ fi
 # 参数3(可选): 需要被格式化输出的内容, 参数会被直接提交给printf进行处理
 function GetI18nText() {
   if [ -z "${I18n_Cache[$1]}" ]; then
-    printf "$2\n"; "$@"
+    printf "$2\n" "$@";
     return 1;
   else
     Text=$1
