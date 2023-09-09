@@ -2,7 +2,7 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-04-29 00:21:40
+ # @LastEditTime: 2023-09-09 12:17:59
  # @Description: 响应玩家消息
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -17,5 +17,5 @@ PlayerMessage="${str#*> }"
 # 检测是否以!!开头, 如果是就去掉!!并检测对应的command事件是否存在, 如果存在就异步转发到command事件
 grep -qe '^!!' <<< "$PlayerMessage"
 if [ $? -eq 0 ]; then
-  env "${InstallPath}/event/${EventType}/command" "${PlayerMessage#*\!\!}" "${PlayerName}" &
+  env "${InstallPath}/event/VIRTUAL/command" "${PlayerMessage#*\!\!}" "${PlayerName}" &
 fi
