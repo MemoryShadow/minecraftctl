@@ -241,7 +241,7 @@ jobs:
           CheckID=`date +%s%N | md5sum | cut -c 1-10`;
           echo -e "\n\nexport CheckID='${CheckID}'" | sudo tee -a /etc/minecraftctl/config;
 
-          minecraftctl install -mE -i https://github.com/minecraftctl/Expansion-CI.git
+          minecraftctl install -mE -i https://github.com/minecraftctl/EventExpansion-CI.git
 
           #*启动服务
           sudo sed -i 's/> \/dev\/stderr;/>> \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh;
