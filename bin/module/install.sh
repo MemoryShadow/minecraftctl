@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 14:19:44
+ # @LastEditTime: 2023-09-10 17:20:04
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -260,6 +260,7 @@ EventExpansion)
       sudo cp -rf ${TmpInstallExpansionRepo}/${EventDivide}/${EventType}.d/* "/opt/minecraftctl/event/${EventDivide}/${EventType}.d/"
     fi
   done
+  sudo chmod +x -R ${InstallPath}/*
   ;;
 
 ModuleExpansion)

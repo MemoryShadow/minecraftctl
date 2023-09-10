@@ -205,7 +205,7 @@ jobs:
           rm adoptopenjdk-8-openj9-jre.tar.gz;
           # 部署pyCraft
           git clone --depth 1 -b master https://github.com/MemoryShadow/pyCraft.git ~/pyCraft;
-          pip install pynbt requests cryptography;
+          pip install --user pynbt requests cryptography;
 
       - name: Install old-minecraftctl
         run: |
@@ -264,7 +264,7 @@ jobs:
               cat /tmp/E_CICheck.log;
               exit 1;
             fi
-          done;
+          done
           cat /tmp/CICheck.log | grep ${CheckID};
 
       - name: Uninstall minecraftctl
