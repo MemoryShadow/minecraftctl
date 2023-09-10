@@ -2,7 +2,7 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-09 16:48:39
+ # @LastEditTime: 2023-09-10 20:56:38
  # @Description: 响应玩家消息
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -19,6 +19,6 @@ PlayerMessage="${str#*> }"
 if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
   SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`
   for SubEventTarget in "${SubEventTargetList[@]}"; do
-    source "${InstallPath}/event/${EventType}/${EventTarget}.d/${SubEventTarget}"
+    source "${SubEventTarget}"
   done
 fi

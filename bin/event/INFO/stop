@@ -2,7 +2,7 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 20:37:01
+ # @LastEditTime: 2023-09-10 20:56:49
  # @Description: 响应服务端停运事件
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
@@ -14,6 +14,6 @@ source $InstallPath/tools/Base.sh
 if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
   SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`
   for SubEventTarget in "${SubEventTargetList[@]}"; do
-    source "${InstallPath}/event/${EventType}/${EventTarget}.d/${SubEventTarget}"
+    source "${SubEventTarget}"
   done
 fi
