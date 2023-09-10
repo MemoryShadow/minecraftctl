@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 22:52:16
+ # @LastEditTime: 2023-09-10 23:03:51
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -189,7 +189,7 @@ fi
 Thanks ${MirrorProject}
 
 echo ${OUTPUT}
-aria2c -c -s 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT} ${DownloadURL}
+aria2c -c -s 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT##*/} ${DownloadURL}
 
 Thanks ${MirrorProject}
 

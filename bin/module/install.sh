@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 17:20:04
+ # @LastEditTime: 2023-09-10 22:41:59
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -199,13 +199,15 @@ EOF
   ;;
 
 EventExpansion)
-  TmpInstallExpansion='/tmp/minecraftctl/install/Expansion/';
+  TmpInstallExpansion='/tmp/minecraftctl/install/Expansion';
   mkdir -p "${TmpInstallExpansion}";
   # 第一步, 确认使用的格式. 允许的格式为: 一个仓库URL, 一个zip压缩包, 一个直接的名字(后续支持, 默认值)
   # 使用-i来指定需要安装的目标.
   declare -A TargetTypes=(
     # 认为是一个仓库链接
     ['GitUrl']='^https?://.*\.git$'
+    # 认为是一个需要下载的ZIP链接
+    ['ZIPUrl']='^https?://.*\.zip$'
     # 认为这是一个本地路径
     ['ZIPPath']='^(?!.*://).*\.zip$'
   )
@@ -223,30 +225,41 @@ EventExpansion)
           cd "${TmpInstallExpansionRepo}";
           git checkout .;
           git pull -f;
-          if [ $? != 0 ]; then GetI18nText Error_Internal "Internal error!" > /dev/stderr; exit 1; fi
+          if [ $? != 0 ]; then GetI18nText Error_Extension_NotFound "No extension found, please check that your path /URL/ module name is correct." > /dev/stderr; exit 1; fi
           cd "${WD}";
           unset WD;
         else
           if [ -d "${TmpInstallExpansionRepo}" ]; then sudo rm -rf "${TmpInstallExpansionRepo}"; fi;
           git clone --depth 1 "${ITEM}" "${TmpInstallExpansionRepo}";
-          if [ $? != 0 ]; then GetI18nText Error_Internal "Internal error!" > /dev/stderr; exit 1; fi
+          if [ $? != 0 ]; then GetI18nText Error_Extension_NotFound "No extension found, please check that your path /URL/ module name is correct." > /dev/stderr; exit 1; fi
         fi
         ;;
+      ZIPUrl)
+        ${InstallPath}/minecraftctl download -u "${ITEM}" -o "${TmpInstallExpansion}/${RepoName}.zip";
+        ITEM="${TmpInstallExpansion}/${RepoName}.zip";
+        ;&
       ZIPPath)
         if [ -d "${TmpInstallExpansionRepo}" ]; then sudo rm -rf "${TmpInstallExpansionRepo}/*"; fi;
         mkdir -p "${TmpInstallExpansionRepo}";
         unzip -o "${ITEM}" -d "${TmpInstallExpansionRepo}";
-        if [ $? != 0 ]; then GetI18nText Error_Internal "Internal error!" > /dev/stderr; exit 1; fi
+        if [ $? != 0 ]; then GetI18nText Error_Extension_NotFound "No extension found, please check that your path /URL/ module name is correct." > /dev/stderr; exit 1; fi
         ;;
       esac
     fi
   done
 
-  # TODO 这两个都无法识别的情况下, 认为这是一个默认的名字, 前往仓库去寻找(索引仓库等待建立)
   if [ -z $RepoName ]; then
     RepoName="${ITEM}";
     TmpInstallExpansionRepo="${TmpInstallExpansion}/${RepoName}";
-    echo "暂未开放此类型 ${RUNMODE}";
+    # 获取仓库中的配置信息
+    ExpansionConfig=`curl -s "https://fastly.jsdelivr.net/gh/minecraftctl/ExpansionIndex/Event/${RepoName}.conf"`;
+    TargetURL=`grep -iP "^(GitUrl|ZipUrl|Target): " <<< "${ExpansionConfig}"`;
+    if [ $? != 0 ];
+      then GetI18nText Error_Extension_NotFound "No extension found, please check that your path/URL/module name is correct." > /dev/stderr;
+      exit 1;
+    else
+      ${InstallPath}/minecraftctl install -mE -i ${TargetURL#*: };
+    fi
     exit 0;
   fi
 
