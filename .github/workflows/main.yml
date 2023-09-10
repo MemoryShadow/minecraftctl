@@ -239,53 +239,9 @@ jobs:
         run: |
           # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
           CheckID=`date +%s%N | md5sum | cut -c 1-10`;
+          echo "export CheckID='${CheckID}'"
 
-          #*新增start事件响应, 启动时拉起一个pyCraft实例
-          sudo tee -a "/opt/minecraftctl/event/INFO/start" >> /dev/null <<EOF;
-
-          echo "拉起一个pyCraft实例" >> /tmp/E_CICheck.log;
-          # 拉起一个pyCraft实例
-          ls -lab ./ >> /tmp/E_CICheck.log;
-          echo "======" >> /tmp/E_CICheck.log;
-          ls -lab ../ >> /tmp/E_CICheck.log;
-          echo "======" >> /tmp/E_CICheck.log;
-          ls -lab ~/ >> /tmp/E_CICheck.log;
-          cd ~/pyCraft;
-          echo "  创建会话" >> /tmp/E_CICheck.log;
-          screen -dmS "pyCraft";
-          echo "  设置权限" >> /tmp/E_CICheck.log;
-          chmod +x ./start.py;
-          # 上线
-          screen -x -S "pyCraft" -p 0 -X stuff "echo '  检查环境: ${CheckID} \${PWD}' >> /tmp/E_CICheck.log 2>&1\n";
-          screen -x -S "pyCraft" -p 0 -X stuff "./start.py -u ${CheckID} -s localhost -o >> /tmp/E_CICheck.log 2>&1\n";
-          EOF
-
-          #*新增login事件响应, 登陆时发送消息
-          sudo tee -a "/opt/minecraftctl/event/INFO/login" >>/dev/null <<EOF
-
-          echo "发送消息触发插件" >> /tmp/E_CICheck.log;
-          # 发送消息触发插件
-          screen -x -S "pyCraft" -p 0 -X stuff "\!\!ci ${CheckID}\n";
-          EOF
-
-          #*新增logout事件响应, 退出登陆时关闭服务端
-          sudo tee -a "/opt/minecraftctl/event/INFO/logout" >>/dev/null <<EOF
-
-          echo "玩家退出时自动关闭服务端" >> /tmp/E_CICheck.log;
-          # 玩家退出时自动关闭服务端
-          minecraftctl stop;
-          EOF
-
-          #*创建CI模块, 输出日志并关闭服务器
-          sudo tee "/opt/minecraftctl/command/ci" >/dev/null <<EOF
-          #!/bin/bash
-          cd ~/D_MCServer;
-          echo "\${1#*\!\!ci }" > /tmp/CICheck.log;
-          echo "退出登陆" >> /tmp/E_CICheck.log;
-          # 退出登陆
-          screen -S "pyCraft" -X quit;
-          EOF
-          sudo chmod +x "/opt/minecraftctl/command/ci";
+          minecraftctl install -mE -i https://github.com/minecraftctl/Expansion-CI.git
 
           #*启动服务
           sudo sed -i 's/> \/dev\/stderr;/>> \/tmp\/E_CICheck.log;/' /opt/minecraftctl/module/listen.sh;
