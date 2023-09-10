@@ -253,7 +253,6 @@ jobs:
           minecraftctl start;
           #*在这里记录等待的时间, 通过循环可以尽可能快的返回(节约CI时间)
           WaitTimeS=0;
-          echo "桩点1"
           while [ ! -f /tmp/CICheck.log ]; do
             sleep 1;
             WaitTimeS=$[ WaitTimeS + 1];
@@ -265,9 +264,6 @@ jobs:
               exit 1;
             fi
           done
-          echo "桩点2"
-          cat /tmp/CICheck.log
-          echo "桩点3"
           cat /tmp/CICheck.log | grep ${CheckID};
 
       - name: Uninstall minecraftctl
