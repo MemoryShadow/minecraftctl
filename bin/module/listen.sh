@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-20 10:34:52
+ # @LastEditTime: 2023-09-10 09:55:44
  # @Description: 倾听传入的信息,并执行相应的操作
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -154,7 +154,7 @@ while read line; do
   # 去除非控制信号, 方便后续解析信息
   line_PlainText['original']=`sed 's/[[:cntrl:]]\[[0-9;?]*[mhlK]//g' <<< "${line}" | sed 's/[[:cntrl:]]//g'`
   for EventType in "${!EventTypes[@]}"; do
-    grep -qP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"
+    grep -iqP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"
     if [ $? -eq 0 ]; then
       line_PlainText[EventType]=$EventType
       # 将Event映射到对应的事件源去作为当前事件供后续处理, EventXXXX->Event
@@ -163,12 +163,12 @@ while read line; do
       unset temp
 
       # 删去前缀信息
-      line_PlainText['prefix']=`grep -oP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"`
+      line_PlainText['prefix']=`grep -ioP "${EventTypes[$EventType]}" <<< "${line_PlainText[original]}"`
       # 取出主体内容
       line_PlainText['content']=${line_PlainText[original]#*${line_PlainText[prefix]//\]/\\]}}
       # 将此信息与Event对应的数组进行匹配以得到事件的转发源
       for EventTarget in "${!Event[@]}"; do
-        grep -qP "${Event[$EventTarget]}" <<< "${line_PlainText[content]}"
+        grep -iqP "${Event[$EventTarget]}" <<< "${line_PlainText[content]}"
         if [ $? -eq 0 ]; then
           # 将消息异步发送给对应的事件
           source "${InstallPath}/event/${EventType}/${EventTarget}" "${line_PlainText[content]}"
