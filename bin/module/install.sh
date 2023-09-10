@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 13:50:45
+ # @LastEditTime: 2023-09-10 14:19:44
  # @Description: Auto install minecraft server on linux
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -227,13 +227,13 @@ EventExpansion)
           cd "${WD}";
           unset WD;
         else
-          sudo rm "${TmpInstallExpansionRepo}"
+          if [ -d "${TmpInstallExpansionRepo}" ]; then sudo rm -rf "${TmpInstallExpansionRepo}"; fi;
           git clone --depth 1 "${ITEM}" "${TmpInstallExpansionRepo}";
           if [ $? != 0 ]; then GetI18nText Error_Internal "Internal error!" > /dev/stderr; exit 1; fi
         fi
         ;;
       ZIPPath)
-        sudo rm -rf "${TmpInstallExpansionRepo}/*"
+        if [ -d "${TmpInstallExpansionRepo}" ]; then sudo rm -rf "${TmpInstallExpansionRepo}/*"; fi;
         mkdir -p "${TmpInstallExpansionRepo}";
         unzip -o "${ITEM}" -d "${TmpInstallExpansionRepo}";
         if [ $? != 0 ]; then GetI18nText Error_Internal "Internal error!" > /dev/stderr; exit 1; fi
