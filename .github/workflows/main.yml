@@ -239,7 +239,8 @@ jobs:
         run: |
           # 生成一个随机ID, 这个ID也会成为在这个CI校验流程中的重要ID, 
           CheckID=`date +%s%N | md5sum | cut -c 1-10`;
-          echo "export CheckID='${CheckID}'"
+          echo -e "\n\nexport CheckID='${CheckID}'" > /etc/minecraftctl/config;
+          cat /etc/minecraftctl/config;
 
           minecraftctl install -mE -i https://github.com/minecraftctl/Expansion-CI.git
 
