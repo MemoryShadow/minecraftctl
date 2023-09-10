@@ -265,6 +265,9 @@ jobs:
               exit 1;
             fi
           done
+          echo "桩点2"
+          cat /tmp/CICheck.log
+          echo "桩点3"
           cat /tmp/CICheck.log | grep ${CheckID};
 
       - name: Uninstall minecraftctl
