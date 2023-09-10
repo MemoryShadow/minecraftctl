@@ -12,8 +12,9 @@ source $InstallPath/tools/Base.sh
 #*在这里检测并加载子事件(必须放在这里, 因为特质是每个事件独有的)
 # 如果, 存在和当前一样名称的.d目录, 就依次调用并执行这部分
 if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
-  SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`
+  SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`;
+  SubEventTargetList=(${SubEventTargetList// / });
   for SubEventTarget in "${SubEventTargetList[@]}"; do
-    source "${SubEventTarget}"
+    source "${SubEventTarget}";
   done
 fi
