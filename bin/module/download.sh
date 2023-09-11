@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-10 23:03:51
+ # @LastEditTime: 2023-09-11 00:50:21
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -188,7 +188,10 @@ fi
 
 Thanks ${MirrorProject}
 
-echo ${OUTPUT}
+# 当OUTPUT为相对路径时, 转为绝对路径
+if [[ ${OUTPUT} != /* ]]; then
+  OUTPUT=${PWD}/${OUTPUT};
+fi
 aria2c -c -s 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT##*/} ${DownloadURL}
 
 Thanks ${MirrorProject}
