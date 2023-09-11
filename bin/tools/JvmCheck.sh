@@ -88,15 +88,13 @@ function GameVersionCompare() {
 
   # 如果右侧的版本数量大于左侧的版本数量，则左侧的版本数量补齐0
   if [ ${#RightVersion[@]} -gt ${#LeftVersion[@]} ]; then
-  for ((i=0;i<(${#RightVersion[@]}-${#LeftVersion[@]});i++))
-    do
+  for ((i=0;i<(${#RightVersion[@]}-${#LeftVersion[@]});i++)); do
       LeftVersion[${#LeftVersion[@]}]=0
     done
   fi
 
   # 循环比较版本号
-  for Version in ${!LeftVersion[@]}
-  do
+  for Version in ${!LeftVersion[@]}; do
     if [[ ${LeftVersion[$Version]} != ${RightVersion[$Version]} ]]; then
       if [[ ${LeftVersion[$Version]} -gt ${RightVersion[$Version]} ]]; then
         return 1
@@ -118,8 +116,7 @@ function GameVersionFind() {
   local Version=''
   
   # 循环比较版本号
-  for Version in ${GameVersionList[@]}
-  do
+  for Version in ${GameVersionList[@]}; do
     GameVersionCompare $Version ${2}
     if [[ $? != 1 ]]; then
       echo "$Version"
@@ -201,8 +198,7 @@ eval "${temp/TaskConfig_default=/ThisTaskConfig=}"
 unset temp
 
 # 将配置信息合并到ThisTaskConfig中
-for key in ${!ThisTaskUniqueConfig[@]}
-do
+for key in ${!ThisTaskUniqueConfig[@]}; do
   if [[ ! -z "${ThisTaskUniqueConfig[${key}]}" ]]; then
     ThisTaskConfig[${key}]=${ThisTaskUniqueConfig[${key}]}
   fi
@@ -221,8 +217,7 @@ SelectGameVersion=`GameVersionFind "${ThisTaskConfig[Critical]}" $VERSION`
 # 接受的版本列表
 AllowJvmVerList="${ThisTaskConfig[${SelectGameVersion}]}" > /dev/stderr
 # 获取Jvm版本信息并写入AvailableJvmList中，等待后续的判断
-for Jvm in "${JvmList[@]}"
-do
+for Jvm in "${JvmList[@]}"; do
   # 检测已经安装的JVM版本, 并根据请求的任务保存请求的JVM版本
   JvmInfo=`JvmCheck $Jvm`
   JvmInfo=(${JvmInfo/,/ })
@@ -235,8 +230,7 @@ done
 if [ ${#AvailableJvmList[@]} == 0 ]; then GetI18nText Info_NoSuitableJavaFound "No suitable Java found, please try to install the Java ${ThisTaskConfig[${SelectGameVersion}]}\n" ${ThisTaskConfig[${SelectGameVersion}]} > /dev/stderr; exit 3; fi
 
 # 判断是否有合适的JVM实现，如果没有，就返回次一级的并返回1
-for JvmInfo in "${AvailableJvmList[@]}"
-do
+for JvmInfo in "${AvailableJvmList[@]}"; do
   JvmInfo=(${JvmInfo/,/ })
   if [[ "${ThisTaskConfig[JvmName]}" == "0" || "${JvmInfo[0]}" == "${ThisTaskConfig[JvmName]}" ]]; then
     echo "${JvmInfo[1]}"

@@ -1,0 +1,2 @@
+ElapsedTime=${1##*(}
+echo "服务器启动完成, 耗时: ${ElapsedTime%)*}秒"

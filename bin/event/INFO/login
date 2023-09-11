@@ -2,11 +2,19 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-03-09 23:34:39
+ # @LastEditTime: 2023-09-10 20:56:25
  # @Description: 响应登陆事件
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
 
 source $InstallPath/tools/Base.sh
 
-echo "${1%% *} 登陆了服务器"
+#*在这里检测并加载子事件(必须放在这里, 因为特质是每个事件独有的)
+# 如果, 存在和当前一样名称的.d目录, 就依次调用并执行这部分
+if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
+  SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`;
+  SubEventTargetList=(${SubEventTargetList// / });
+  for SubEventTarget in "${SubEventTargetList[@]}"; do
+    source "${SubEventTarget}";
+  done
+fi

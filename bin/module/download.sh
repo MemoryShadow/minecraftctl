@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-08-13 09:56:57
+ # @LastEditTime: 2023-09-11 00:50:21
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -31,8 +31,7 @@ function helpMenu() {
 function ImageList2DLpara() {
   local DownloadDomain=$1
   local DownloadURL=""
-  for Domain in ${DownloadDomain[@]};
-  do
+  for Domain in ${DownloadDomain[@]}; do
     DownloadURL="${DownloadURL} ${Domain}/$2"
   done
   echo ${DownloadURL}
@@ -113,9 +112,9 @@ if [ -z "${OUTPUT}" ]; then OUTPUT=${URL##*/}; fi
 
 if [ -e "${OUTPUT}" ] && [[ ! -z "${MD5}" || ! -z "${SHA1}" ]]; then
   if [ ! -z ${MD5} ] ; then
-    grep -q ${MD1} < <(md5sum ${OUTPUT})
+    grep -iq ${MD1} < <(md5sum ${OUTPUT})
   elif [ ! -z ${SHA1} ] ; then
-    grep -q ${SHA1} < <(sha1sum ${OUTPUT}) 
+    grep -iq ${SHA1} < <(sha1sum ${OUTPUT}) 
   fi
   if [ $? == 0 ]; then GetI18nText Info_NoNeedDownloadFiles "The file ${OUTPUT} already exists and the hash value is correct, no need to download\n" ${OUTPUT}; exit 0; fi
 fi
@@ -189,18 +188,22 @@ fi
 
 Thanks ${MirrorProject}
 
-aria2c -c -s 9 -k 3M -o $OUTPUT ${DownloadURL}
+# 当OUTPUT为相对路径时, 转为绝对路径
+if [[ ${OUTPUT} != /* ]]; then
+  OUTPUT=${PWD}/${OUTPUT};
+fi
+aria2c -c -s 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT##*/} ${DownloadURL}
 
 Thanks ${MirrorProject}
 
 # Verify the hash value of the downloaded file
 if [ ! -z ${MD5}${SHA1}${SHA256} ] ; then
   if [ ! -z ${MD5} ] ; then
-    grep -q ${MD1} < <(md5sum ${OUTPUT})
+    grep -iq ${MD1} < <(md5sum ${OUTPUT})
   elif [ ! -z ${SHA1} ] ; then
-    grep -q ${SHA1} < <(sha1sum ${OUTPUT})
+    grep -iq ${SHA1} < <(sha1sum ${OUTPUT})
   elif [ ! -z ${SHA256} ] ; then
-    grep -q ${SHA256} < <(sha256sum ${OUTPUT})
+    grep -iq ${SHA256} < <(sha256sum ${OUTPUT})
   fi
   if [ $? -ne 0 ]; then
     GetI18nText Info_HashCheckFailed "Hash check failed, script has exited";exit 3;

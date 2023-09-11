@@ -105,7 +105,7 @@ rpmbuild -bb --target ${Arch} ~/rpmbuild/SPECS/minecraftctl.spec
 
 ## 安装
 
-这个项目使用 [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "点击查看")。请确保你本地安装了它们。
+这个项目使用 [git](https://git-scm.com "点击查看"), [screen](https://www.gnu.org/software/screen/ "点击查看") 和 [aric2](https://github.com/aria2/aria2 "点击查看")。请确保你本地安装了它们。
 
 ```bash
 sudo yum/apt-get install screen aria2
@@ -201,6 +201,7 @@ minecraftctl <功能名称> [可能的参数]
 
 ## 相关仓库
 
+- [git](https://git-scm.com "点击查看")  — 版本控制器
 - [screen](https://git.savannah.gnu.org/cgit/screen.git) — 一个优秀的会话管理工具
 - [aric2](https://github.com/aria2/aria2.git) — 一个支持多线程和多协议的下载程序
 - [whiptail](https://salsa.debian.org/mckinstry/newt/-/tree/debian/master) - 用于支持whiptail窗口，来实现部分区域的窗口化交互 [文档](https://linux.die.net/man/1/whiptail)

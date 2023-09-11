@@ -2,12 +2,19 @@
 ###
  # @Date: 2023-03-09 21:21:33
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-20 11:09:13
+ # @LastEditTime: 2023-09-10 23:39:43
  # @Description: 响应服务端启动事件
  # Copyright (c) 2023 by MemoryShadow@outlook.com, All Rights Reserved.
 ### 
 
 source $InstallPath/tools/Base.sh
 
-ElapsedTime=${1##*(}
-echo "服务器启动完成, 耗时: ${ElapsedTime%)*}秒"
+#*在这里检测并加载子事件(必须放在这里, 因为特质是每个事件独有的)
+# 如果, 存在和当前一样名称的.d目录, 就依次调用并执行这部分
+if [ -d "${InstallPath}/event/${EventType}/${EventTarget}.d" ]; then
+  SubEventTargetList=`find "${InstallPath}/event/${EventType}/${EventTarget}.d" -maxdepth 1 -type f`;
+  SubEventTargetList=(${SubEventTargetList// / });
+  for SubEventTarget in "${SubEventTargetList[@]}"; do
+    source "${SubEventTarget}";
+  done
+fi

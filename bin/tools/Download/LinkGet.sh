@@ -3,7 +3,7 @@
  # @Date: 2022-07-06 11:11:33
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-08 23:04:11
+ # @LastEditTime: 2023-09-09 15:07:38
  # @Description: Get file download parameters for the specified item and game version
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -95,8 +95,7 @@ function forge(){
   # 收集每一行的信息，由于是无序列表，只能逐个查找, 速度比较慢
   local MaxBuildID=0
   local ThisBuildID=0
-  for ThisBuildID in ${buildID[@]}
-  do
+  for ThisBuildID in ${buildID[@]}; do
     if [ ${ThisBuildID##*:} -gt ${MaxBuildID} ]; then
       MaxBuildID=${ThisBuildID##*:}
     fi
