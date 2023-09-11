@@ -233,6 +233,10 @@ jobs:
           mkdir -p ~/D_MCServer;
           cd ~/D_MCServer;
           minecraftctl install -i vanilla -c -v 1.16.5;
+          if [ $? -ne 0 ]; then
+            echo "Install Minecraft Server failed.";
+            exit 1;
+          fi
           ls -labh; cat minecraftctl.conf;
 
       - name: Run Minecraft Server
