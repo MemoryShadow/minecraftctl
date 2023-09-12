@@ -3,7 +3,7 @@
  # @Date: 2022-07-23 20:45:10
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-07-21 11:51:36
+ # @LastEditTime: 2023-09-12 08:34:20
  # @Description: minecraftctl引导文件, 负责对组件进行统一的引导和管理
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -15,7 +15,7 @@ function DLLangFile(){
   # 先检查本地有没有翻译列表, 没有就下载
   if [ ! -e "/etc/minecraftctl/i18n/lang.list" ]; then
     echo "Download and install language index files...";
-    sudo aria2c "https://cdn.jsdelivr.net/gh/minecraftctl/i18n/lang.list" -d "/etc/minecraftctl" -o "i18n/lang.list"
+    sudo aria2c "https://fastly.jsdelivr.net/gh/minecraftctl/i18n/lang.list" -d "/etc/minecraftctl" -o "i18n/lang.list"
   fi
   # 检查请求的语言是否存在翻译文件
   grep -qwe "^${Language}$" /etc/minecraftctl/i18n/lang.list
@@ -31,10 +31,10 @@ function DLLangFile(){
     sudo rm -rf "/etc/minecraftctl/i18n/${Language}.lang.tmp" "/etc/minecraftctl/i18n/${Language}";
   fi
   # 设置下载基址
-  local DownloadBaseURL="https://cdn.jsdelivr.net/gh/minecraftctl/i18n/i18n/${Language}";
+  local DownloadBaseURL="https://fastly.jsdelivr.net/gh/minecraftctl/i18n/i18n/${Language}";
   # 标志开始下载
   sudo aria2c -c "${DownloadBaseURL}.lang" -d "/etc/minecraftctl/i18n" -o "${Language}.lang.tmp";
-  local ModuleLanguageFilesIndex=`curl -s https://cdn.jsdelivr.net/gh/minecraftctl/i18n/index`;
+  local ModuleLanguageFilesIndex=`curl -s https://fastly.jsdelivr.net/gh/minecraftctl/i18n/index`;
   # 将列表转为数组
   ModuleLanguageFilesIndex=(${ModuleLanguageFilesIndex// / });
   # 遍历数组, 生成下载列表

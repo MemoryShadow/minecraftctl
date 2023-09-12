@@ -3,7 +3,7 @@
  # @Date: 2022-07-24 12:35:58
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-09 22:07:28
+ # @LastEditTime: 2023-09-11 15:32:01
  # @Description: 为其他函数提供基本的函数库与初始加载
  # Copyright (c) 2022 by MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -28,7 +28,9 @@ fi
 cd ${GamePath}
 
 # i18n文件内容缓存
-declare -A I18n_Cache=()
+if ! declare -p I18n_Cache >/dev/null 2>&1; then
+  declare -Ax I18n_Cache=()
+fi
 
 #*预处理i18n文件, 避免频繁读盘
 # 语言不为default并且在本地存在的情况下才预加载
@@ -47,6 +49,7 @@ if [[ "${Language}" != "default" && -e "/etc/minecraftctl/i18n/${Language}.lang"
     done <"/etc/minecraftctl/i18n/${Language}.lang"
   fi
 fi
+export I18n_Cache;
 
 
 # 通过echo返回一个字符串, 通过返回值返回是否成功
