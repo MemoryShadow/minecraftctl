@@ -151,19 +151,18 @@ jobs:
 
       - name: DEB Install and test
         run: |
-          source build/info
-          ls -lab packages
-          echo $PWD
-          pwd_path=$PWD
+          source build/info;
+          ls -lab packages;
+          echo $PWD;
+          pwd_path=$PWD;
           CheckID=`date +%s%N | md5sum | cut -c 1-10`;
-          docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
+          docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash;
           echo Apt update...
-          # TODO 这里暂时先不测试升级后存档继承的问题. 因为目前只有一个版本
           docker exec -t ubuntuInstance bash -c "apt-get update &> /dev/null; apt-get install -y -q sudo wget tzdata>/dev/null; \
             echo minecraftctl installing...; \
             sudo apt install -y -q ${pwd_path}/packages/${{ needs.build.outputs.DEB_AMD64 }} | grep 'minecraftctl'; \
-            echo minecraftctl installed...;\
-            sudo minecraftctl help;\
+            echo minecraftctl installed...; \
+            sudo minecraftctl help; \
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$'; \
             echo minecraftctl uninstalling...; \
             sudo apt remove --purge -y minecraftctl; \
@@ -171,7 +170,6 @@ jobs:
             download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep browser_download_url | grep amd64.deb`; \
             download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
             wget ${download_url}; sudo apt install -y -q ./${download_url##*/}; rm ${download_url##*/}; \
-            CheckID=`date +%s%N | md5sum | cut -c 1-10`; \
             echo -e "\n\nexport CheckID='${CheckID}'" | sudo tee -a /etc/minecraftctl/config; \
             cat /etc/minecraftctl/config | grep --color \"^export CheckID='${CheckID}'\"; \
             echo minecraftctl updating...; \
@@ -180,21 +178,31 @@ jobs:
 
       - name: RPM Install and test
         run: |
-          source build/info
-          ls -lab packages
-          echo $PWD
-          pwd_path=$PWD
-          docker run -itd -v ${pwd_path}:${pwd_path} --name centos7Instance --net="host" docker.io/centos:7.9.2009 /bin/bash
-          echo yum update...
+          source build/info;
+          ls -lab packages;
+          echo $PWD;
+          pwd_path=$PWD;
+          CheckID=`date +%s%N | md5sum | cut -c 1-10`;
+          docker run -itd -v ${pwd_path}:${pwd_path} --name centos7Instance --net="host" docker.io/centos:7.9.2009 /bin/bash;
+          echo yum update...;
           docker exec -t centos7Instance bash -c "yum install -y http://mirror.math.princeton.edu/pub/epel/7/x86_64/Packages/a/aria2-1.34.0-5.el7.x86_64.rpm > /dev/null; \
+            echo minecraftctl installing...; \
             yum install -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]'; \
+            echo minecraftctl installed...; \
             minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$';\
-            sed '\$a\export ScreenName=Test' /etc/minecraftctl/config > ~/config.bak;\
-            yum remove -y minecraftctl | grep 'minecraftctl' | grep -v '\[#* *\]';\
-            mkdir /etc/minecraftctl; cp ~/config.bak /etc/minecraftctl/config;\
-            yum install -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]';\
-            cat /etc/minecraftctl/config | grep --color '^export ScreenName=\"Test\"$';"
+            echo minecraftctl uninstalling...; \
+            yum remove -y minecraftctl;\
+            echo minecraftctl Install the latest release...; \
+            download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep browser_download_url | grep x86_64.rpm`; \
+            download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
+            wget ${download_url}; sudo yum install -y -q ./${download_url##*/}; rm ${download_url##*/}; \
+            echo -e "\n\nexport CheckID='${CheckID}'" | sudo tee -a /etc/minecraftctl/config; \
+            cat /etc/minecraftctl/config | grep --color \"^export CheckID='${CheckID}'\"; \
+            echo minecraftctl updating...; \
+            # TODO 这里理论上在当前阶段会失败, 因为配置文件升级没有考虑有自定变量的因素. 但是随着拓展的出现, 支持自定义变量是肯定要有的. \
+            yum update -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]';\
+            cat /etc/minecraftctl/config | grep ${CheckID};"
 
   Linux-Universal-Installation-and-testing:
     runs-on: ubuntu-latest
