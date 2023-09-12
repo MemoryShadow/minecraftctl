@@ -5,10 +5,10 @@ if [ -e /etc/minecraftctl/config ]; then
   sed -i "s/\\\$/\\\\\$/g" /etc/minecraftctl/config.bak
 fi
 # 如果/usr/sbin/minecraftctl存在就将其删除
-if [ ! -e /usr/sbin/minecraftctl ]; then
+if [ -e /usr/sbin/minecraftctl ]; then
   rm /usr/sbin/minecraftctl
 fi
 # 如果/usr/bin/minecraftctl不存在就创建软链
 if [ ! -e /usr/bin/minecraftctl ]; then
-  ln -s /opt/minecraftctl/minecraftctl /usr/sbin/minecraftctl
+  ln -s /opt/minecraftctl/minecraftctl /usr/bin/minecraftctl
 fi
