@@ -167,10 +167,13 @@ jobs:
             echo minecraftctl uninstalling...; \
             sudo apt remove --purge -y minecraftctl &> /dev/null; \
             echo minecraftctl Install the latest release...; \
-            download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep browser_download_url | grep amd64.deb`; \
+            download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url' | grep 'amd64.deb'`; \
             download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
+            echo "定位桩点1"; \
             wget ${download_url}; sudo apt install -y -q ./${download_url##*/}; rm ${download_url##*/}; \
+            echo "定位桩点2"; \
             echo -e \"\n\nexport CheckID='${CheckID}'\" | sudo tee -a /etc/minecraftctl/config; \
+            echo "定位桩点3"; \
             cat /etc/minecraftctl/config | grep --color \"^export CheckID='${CheckID}'\"; \
             echo minecraftctl updating...; \
             sudo apt install -y -q ${pwd_path}/packages/${{ needs.build.outputs.DEB_AMD64 }} | grep 'minecraftctl'; \
