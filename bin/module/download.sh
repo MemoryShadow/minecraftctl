@@ -3,7 +3,7 @@
  # @Date: 2022-06-25 23:51:25
  # @Author: MemoryShadow
  # @LastEditors: MemoryShadow
- # @LastEditTime: 2023-09-11 00:50:21
+ # @LastEditTime: 2023-11-02 22:14:25
  # @Description: Analyze the incoming URL and try to use the most appropriate download method found
  # Copyright (c) 2022 by MemoryShadow MemoryShadow@outlook.com, All Rights Reserved. 
 ### 
@@ -124,6 +124,7 @@ fi
 declare -A AllowDownloadMirror=(
   ['https://github.com']="GITHUB_def"
   ['https://raw.githubusercontent.com']="GITHUB_raw"
+  ['https://github.githubassets.com']="GITHUB_assets"
   ['http://launcher.mojang.com']="BMCLAPI_def"
   ['https://launcher.mojang.com']="BMCLAPI_def"
   ['http://launchermeta.mojang.com']="BMCLAPI_def"
@@ -139,17 +140,20 @@ declare -A AllowDownloadMirror=(
 
 # Github mirror list
 GITHUB_def=(
-  "https://ghproxy.com/https://github.com"
-  "https://github.rc1844.workers.dev"
-  "https://hub.fastgit.xyz"
+  "https://ghproxy.net/https://github.com"
+  # "https://github.rc1844.workers.dev"
+  "https://hub.fgit.cf"
   "https://hub.njuu.cf"
 )
 GITHUB_raw=(
   "https://raw.staticdn.net"
   "https://raw.githubusercontents.com"
-  "https://raw.fastgit.org"
+  "https://raw.fgit.cf"
   "https://ghproxy.com/https://raw.githubusercontent.com"
   "https://raw.kgithub.com"
+)
+GITHUB_assets=(
+  "https://assets.fgit.cf"
 )
 
 # BMCLAPI mirror list
