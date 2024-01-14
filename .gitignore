@@ -1,0 +1,8 @@
+etc/i18n
+etc/*i18n
+.vscode
+.Template
+build/deb
+build/rpm
+*/ci
+bin/event/VIRTUAL/command.d/spectator

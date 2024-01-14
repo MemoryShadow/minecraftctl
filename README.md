@@ -60,11 +60,11 @@ A3:
 1. minecraftctl能够帮助您快速的下载, 部署, 启动, 停止, 重启, 备份, 恢复备份, 向玩家发送消息, 监控玩家消息并响应等等.
 2. minecraftctl能够帮助您实现自动化运维, 例如: 自动化测试, 自动化部署, 自动化备份等等. 例如: 本项目的CI就是使用minecraftctl与[pyCraft](https://github.com/MemoryShadow/pyCraft/ "点击查看")进行的测试
 
-[![GitHub](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE)
-[![language support](https://img.shields.io/badge/language%20support-i18n-success)](https://github.com/MemoryShadow/minecraftctl/tree/i18n)
 [![Build/release](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/MemoryShadow/minecraftctl/actions/workflows/main.yml)
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
+[![language support](https://img.shields.io/badge/language%20support-i18n-success)](https://github.com/MemoryShadow/minecraftctl/tree/i18n)
 [![GitHub release (latest by date)](https://img.shields.io/github/downloads/MemoryShadow/minecraftctl/latest/total)](https://github.com/MemoryShadow/minecraftctl/releases/latest)
+[![License](https://img.shields.io/github/license/MemoryShadow/minecraftctl)](LICENSE)
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)](https://github.com/RichardLitt/standard-readme)
 
 ## 构建包管理器安装包
 
@@ -216,7 +216,7 @@ minecraftctl <功能名称> [可能的参数]
 
 ### 如何贡献
 
-非常欢迎你的加入！[提一个 Issue](https://github.com/MemoryShadow/minecraftctl/issues/new) 或者提交一个 Pull Request。
+非常欢迎你的加入！参阅[贡献指南](.github/CONTRIBUTING.md "点击前往")
 
 标准 Readme 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
 
