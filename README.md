@@ -216,7 +216,7 @@ minecraftctl <功能名称> [可能的参数]
 
 ### 如何贡献
 
-非常欢迎你的加入！参阅[贡献指南](.github/CONTRIBUTING.md "点击前往")
+非常欢迎你的加入！参阅[贡献指南](docs/CONTRIBUTING.md "点击前往")
 
 标准 Readme 遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
 
