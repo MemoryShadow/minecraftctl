@@ -140,8 +140,10 @@ declare -A AllowDownloadMirror=(
 
 # Github mirror list
 GITHUB_def=(
+  "https://github.moeyy.xyz/https://github.com"
   "https://ghproxy.net/https://github.com"
   # "https://github.rc1844.workers.dev"
+  "https://kkgithub.com"
   "https://hub.fgit.cf"
   "https://hub.njuu.cf"
 )
