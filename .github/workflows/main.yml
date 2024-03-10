@@ -166,10 +166,10 @@ jobs:
             sudo minecraftctl help;\
             cat /etc/minecraftctl/config | grep --color '^export GamePath=\"\${HOME}/Minecraft\"$'; \
             echo minecraftctl uninstalling...; \
-            sudo apt remove --purge -y minecraftctl; \
+            sudo apt remove --purge -y minecraftctl > /dev/null; \
             echo minecraftctl Install the latest release...; \
             download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url' | grep amd64.deb`; \
-            curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url'; \
+            curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url' | grep amd64.deb; \
             echo download_url: ${download_url}; \
             download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
             echo download_url: ${download_url}; \
