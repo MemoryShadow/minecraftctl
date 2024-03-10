@@ -155,6 +155,9 @@ jobs:
           ls -lab packages
           echo $PWD
           pwd_path=$PWD
+          download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep browser_download_url | grep amd64.deb`;
+          download_url=${download_url#*: \"}; download_url=${download_url%\"*};
+          echo download_url: ${download_url};
           CheckID=`date +%s%N | md5sum | cut -c 1-10`;
           docker run -itd -v ${pwd_path}:${pwd_path} --name ubuntuInstance --env TZ=Asia/Shanghai --env DEBIAN_FRONTEND=noninteractive --net="host" docker.io/ubuntu:20.04 /bin/bash
           echo Apt update...
@@ -168,12 +171,6 @@ jobs:
             echo minecraftctl uninstalling...; \
             sudo apt remove --purge -y minecraftctl > /dev/null; \
             echo minecraftctl Install the latest release...; \
-            T_download_url=$(curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url'); \
-            echo T_download_url: ${T_download_url}
-            download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url' | grep amd64.deb`; \
-            echo download_url: ${download_url}; \
-            download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
-            echo download_url: ${download_url}; \
             wget ${download_url}; sudo apt install -y -q ./${download_url##*/}; rm ${download_url##*/}; \
             CheckID=`date +%s%N | md5sum | cut -c 1-10`; \
             echo -e "\n\nexport CheckID='${CheckID}'" | sudo tee -a /etc/minecraftctl/config; \
