@@ -169,6 +169,8 @@ jobs:
             sudo apt remove --purge -y minecraftctl; \
             echo minecraftctl Install the latest release...; \
             download_url=`curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url' | grep amd64.deb`; \
+            curl -s https://api.github.com/repos/MemoryShadow/minecraftctl/releases/latest | grep 'browser_download_url'; \
+            echo download_url: ${download_url}; \
             download_url=${download_url#*: \"}; download_url=${download_url%\"*}; \
             echo download_url: ${download_url}; \
             wget ${download_url}; sudo apt install -y -q ./${download_url##*/}; rm ${download_url##*/}; \
