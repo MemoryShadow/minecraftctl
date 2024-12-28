@@ -177,6 +177,8 @@ systemctl enable crond
 
 ## 用法示例
 
+想要快速开始? 请查看[最佳实践](https://github.com/MemoryShadow/minecraftctl/wiki/Best-Practices)
+
 ```bash
 [hostname@username ~]$ minecraftctl help
 此脚本用于以尽可能简洁的方式对Minecraft服务端进行控制
