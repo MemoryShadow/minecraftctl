@@ -187,6 +187,7 @@ jobs:
           echo $PWD
           pwd_path=$PWD
           docker run -itd -v ${pwd_path}:${pwd_path} --name centos7Instance --net="host" docker.io/centos:7.9.2009 /bin/bash
+          docker exec -t centos7Instance curl -so /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
           echo yum update...
           docker exec -t centos7Instance bash -c "yum install -y http://mirror.math.princeton.edu/pub/epel/7/x86_64/Packages/a/aria2-1.34.0-5.el7.x86_64.rpm > /dev/null; \
             yum install -y ${pwd_path}/packages/${{ needs.build.outputs.RPM_AMD64 }} | grep 'minecraftctl' | grep -v '\[#* *\]'; \
