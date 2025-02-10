@@ -198,7 +198,7 @@ Thanks ${MirrorProject}
 if [[ ${OUTPUT} != /* ]]; then
   OUTPUT=${PWD}/${OUTPUT};
 fi
-aria2c -c -s 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT##*/} ${DownloadURL}
+aria2c -c -s 9 -x 9 -k 3M --dir ${OUTPUT%/*} -o ${OUTPUT##*/} ${DownloadURL}
 
 Thanks ${MirrorProject}
 
