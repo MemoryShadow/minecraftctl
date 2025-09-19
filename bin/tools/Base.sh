@@ -13,7 +13,7 @@ export TIME_STYLE='+%Y-%m-%d %H:%M:%S'
 # 检查应该生效哪一个配置, 对应的优先级关系为: 当前工作目录(WorkDir), config中指定的工作目录(GamePath)
 
 # 加载局部配置覆盖全局配置, 当前目录中的minecraftctl.conf文件优先级最高
-if [ -e "${WorkDir}/minecraftctl.conf" ]; then
+if [[ -e "${WorkDir}/minecraftctl.conf" || -e "${WorkDir}/.env" ]]; then
   GamePath=$WorkDir
 fi
 # 如果工作目录没有被创建,就前往配置中的目录
@@ -23,6 +23,11 @@ fi
 if [ -e "${GamePath}/minecraftctl.conf" ]; then
   cd "${GamePath}"
   source minecraftctl.conf
+  cd "${WorkDir}"
+fi
+if [ -e "${GamePath}/.env" ]; then
+  cd "${GamePath}"
+  source "${GamePath}/.env"
   cd "${WorkDir}"
 fi
 cd ${GamePath}
